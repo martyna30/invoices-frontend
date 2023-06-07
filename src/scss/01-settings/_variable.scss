@@ -1,0 +1,38 @@
+$blue: #3B99E1;
+$wheat: #faebd7;
+$beige: #fdf0e3;
+$medium-blue: #1e1eff;
+$dark-blue: #00008B;
+$green: #60DC64;
+$orange: #FFA500;
+$dark-orange: #FF8C00;
+$blue-light: #D3EAFA;
+$blue-dark: #3E5CC5;
+$blue-text: #3B99E1;
+
+$white: #FFFFFF;
+$gray-light: #F9FBFE;
+$gray-dark: #444444;
+$ivory: #fffff0;
+$blue-gradient: linear-gradient(45deg, #3E5CC5 0%, #5B8AF8 100%);
+
+//text
+$font-size-base: 1em;
+$font-size-1: $font-size-base * 3; //48px
+$font-size-2: $font-size-base * 1.5; //24px
+$font-size-3: $font-size-base * 1.125; //18px
+$font-size-4: $font-size-base * 1;
+$font-size-5: $font-size-base * .875;
+$font-size-6: $font-size-base * .75;
+$font-size-7: $font-size-base * .625; //10px
+
+$line-height-base: 1.5;
+$line-height-sm: 1.2;
+$line-height-lg: 1.8;
+//siatka
+$grid-base: 10px;
+$gutter: $grid-base * 1.5; //kolumny, paddingi
+$border-radius: $grid-base * .5;
+//breakpoint
+$bp-medium: '800px';
+$bp-large: '1200px';

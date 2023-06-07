@@ -1,0 +1,141 @@
+@import 'src/styles.scss';
+
+@import 'src/scss/01-settings/_settings.scss';
+@import 'src/scss/02-tools/_tools.scss';
+@import 'src/scss/03-generic/_generic.scss';
+@import 'src/scss/04-elements/_elements.scss';
+@import 'src/scss/05-objects/_objects.scss';
+@import 'src/scss/06-components/_components.scss';
+@import 'src/scss/07-templates/_templates.scss';
+@import 'src/scss/08-utilities/_utilities.scss';
+
+mat-form-field {
+  width: 220px;
+}
+
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
+
+.input-fieldset {
+  margin-bottom: $gutter*3;
+}
+
+.mat-dialog {
+  label {
+    font-size: $font-size-5;
+    text-transform: uppercase;
+    display: block;
+  }
+}
+
+mat-label {
+  font-size: $font-size-5;
+  text-transform: uppercase;
+  display: block;
+}
+
+
+
+td {
+  position: relative;
+  width: 30px;
+  min-width: 30px;
+  height: auto;
+  vertical-align: middle;
+  text-align: center;
+  display: table-cell;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 100%;
+}
+.bi-bi-x-circle {
+  width: auto;
+  height: auto;
+  min-height: 20px;
+  min-width: 20px;
+  position: absolute;
+  color: black;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+
+
+.button-group {
+
+  text-align: center;
+  margin: 0 auto;
+  justify-content: space-between;
+}
+
+table {
+  padding: 2em;
+  flex-wrap: wrap;
+  margin-top: $grid-base*3;
+
+}
+.custom-modalbox {
+  font-size: $font-size-5;
+  border: 1px solid #000;
+  color: black;
+  height: auto;
+  width: auto;
+  min-width: 800px;
+  max-width: 1000px;
+  min-height: 400px;
+  max-height: 800px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: $grid-base*4 $grid-base*3 $grid-base*3 $grid-base*3;
+  //overflow: scroll;
+  overflow-y: visible;
+
+
+  /*mat-option {
+    position: absolute;
+    //z-index: 1100;
+    z-index: 1;
+  }
+
+  span {
+    height: 10px;
+    width: 10px;
+  }
+
+  .select {
+    position: relative;
+    z-index: 1000 !important;
+    overflow-y: initial
+
+  }*/
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+

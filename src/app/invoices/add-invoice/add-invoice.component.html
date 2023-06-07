@@ -1,0 +1,257 @@
+<section class="custom-modalbox" [hidden]="isHidden" xmlns="http://www.w3.org/1999/html">
+  <h2 mat-dialog-title></h2>
+  <mat-dialog-content class="mat-dialog" method="post">
+    <form [formGroup]="myFormModel">
+    <div formGroupName="contractor">
+
+
+      <fieldset class="input-fieldset">
+        <label class="input-label">Buyer's name</label>
+      <mat-form-field appearance="fill">
+        <input matInput type="text" [matAutocomplete]="auto"  (ngModelChange)="toggleNamePlaceholder()" placeholder="Insert a buyer's name" required formControlName="nameInput">
+
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let name of filteredName"  [value]="name">{{name}}</mat-option>
+           </mat-autocomplete>
+          </mat-form-field>
+        <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractor.name'] !== undefined">
+            {{validationErrors['contractor.name'][0]}}
+          </div>
+      </fieldset>
+
+      <fieldset class="input-fieldset">
+        <label class="input-label">VAT identification number</label>
+        <mat-form-field appearance="fill">
+            <input matInput type="number" (ngModelChange)="toggleVATPlaceholder()" placeholder="Insert a VATIN number" required formControlName="vatIdentificationNumberInput">
+        </mat-form-field>
+      <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractor.vatIdentificationNumber'] !== undefined">
+        {{validationErrors['contractor.vatIdentificationNumber'][0]}}
+      </div>
+      </fieldset>
+
+      <div formGroupName="address">
+        <fieldset class="input-fieldset">
+          <label class="input-label">Street</label>
+        <mat-form-field appearance="fill">
+                <input matInput type="text" placeholder="Insert a street" required formControlName="streetInput">
+        </mat-form-field>
+
+        <div class="invalid-feedback d-block" *ngIf="addressValidationErrors !== undefined && addressValidationErrors?.street">
+          {{addressValidationErrors.street[0]}}
+        </div>
+        </fieldset>
+
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">Street number</label>
+              <mat-form-field appearance="fill">
+                <input matInput type="text" placeholder="Insert a street number" required formControlName="streetNumberInput">
+              </mat-form-field>
+
+              <div class="invalid-feedback d-block" *ngIf="addressValidationErrors !== undefined && addressValidationErrors?.streetNumber">
+                {{addressValidationErrors.streetNumber[0]}}
+              </div>
+        </fieldset>
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">Post code</label>
+              <mat-form-field appearance="fill">
+                <input matInput type="text"  placeholder="Insert a post code"   required formControlName="postcodeInput">
+              </mat-form-field>
+
+              <div class="invalid-feedback d-block" *ngIf="addressValidationErrors !== undefined && addressValidationErrors?.postcode">
+                {{addressValidationErrors.postcode[0]}}
+              </div>
+        </fieldset>
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">City</label>
+          <mat-form-field appearance="fill">
+                <input matInput type="text"  placeholder="Insert a city" required formControlName="cityInput">
+              </mat-form-field>
+
+              <div class="invalid-feedback d-block"*ngIf="contractorValidationErrors !== undefined && addressValidationErrors?.city">
+                {{addressValidationErrors.city[0]}}
+              </div>
+           </fieldset>
+      </div>
+    </div>
+
+
+    <fieldset class="input-fieldset">
+      <label class="input-label">Date of issue</label>
+      <mat-form-field appearance="fill">
+        <input matInput type="date" name="dateOfIssue" (ngModelChange)="toggleDateOfIssuePlaceholder()" placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
+      </mat-form-field>
+
+      <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.dateOfInvoice">
+        <span class="text text-danger">{{validationErrors.dateOfInvoice[0]}}</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="input-fieldset">
+      <label class="input-label">Date of sale</label>
+      <mat-form-field appearance="fill">
+        <input matInput type="date" name="dateOfSale" (ngModelChange)="toggleDateOfSalePlaceholder()" placeholder="Insert a date of sale" required formControlName="dateOfSaleInput">
+      </mat-form-field>
+
+      <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.dateOfSale">
+        <span class="text text-danger">{{validationErrors.dateOfSale[0]}}</span>
+      </div>
+    </fieldset>
+
+    <fieldset class="input-fieldset">
+      <label class="input-label">Period of payment</label>
+      <select  class="select" placeholder="Insert a period of payment" required formControlName="periodOfPaymentInput">
+        <option *ngFor="let periodOfPayment of periodsOfPayment" [value]="periodOfPayment.value">
+          {{periodOfPayment.viewValue}}
+        </option>
+      </select>
+    </fieldset>
+
+     <fieldset class="input-fieldset">
+       <label class="input-label">Method of payment</label>
+
+       <select  class="select" formControlName="methodOfPaymentInput">
+       <option *ngFor="let methodOfPayment of methodsOfPayment" [value]="methodOfPayment.value">
+        {{methodOfPayment.viewValue}}
+       </option>
+      </select>
+
+     </fieldset>
+
+      <fieldset class="input-fieldset">
+      <label class="input-label"></label>
+      <mat-form-field appearance="fill">
+        <input matInput type="number" name="paid" (ngModelChange)="togglePaidPlaceholder()" placeholder="Insert a amount paid" required formControlName="paidInput">
+      </mat-form-field>
+    </fieldset>
+
+      <fieldset class="input-fieldset">
+        <label class="input-label">Products</label>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Lp</th>
+            <th scope="col">Product</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Net Worth</th>
+            <th scope="col">Vat Rate</th>
+            <th scope="col">Gross Value</th>
+          </tr>
+          <th scope="col">Sum Total</th>
+          </thead>
+
+
+
+
+             <tbody>
+             <ng-container formArrayName="items">
+            <tr *ngFor="let item of myFormModel.get('items')['controls']; let i = index;" formGroupName="{{ i }}">
+              <th>{{ i + 1 }}</th>
+              <td>
+
+
+                <mat-form-field appearance="fill">
+
+                  <input matInput type="text" [matAutocomplete]="auto"  (ngModelChange)="toggleProductPlaceholder()" placeholder="Insert a product" required formControlName="productInput">
+
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let product of filteredProductsList[i]"  [value]="product">{{product}}</mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+
+                <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].product'] !== undefined">
+                  {{validationErrors['items[' + i + '].product'][0]}}
+                </div>
+              </td>
+
+              <td>
+                <mat-form-field appearance="fill">
+                  <input  matInput type="number" placeholder="Insert a amount"  (change)="sumNetValue()" required formControlName="amountInput">
+
+                </mat-form-field>
+
+                <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].amount'] !== undefined">
+                  {{validationErrors['items[' + i + '].amount'][0]}}
+                </div>
+              </td>
+
+              <td>
+                <mat-form-field appearance="fill">
+                  <input matInput type="number" placeholder="Insert a net worth" (change)="setGrossValue(selectElement)" (change)="sumNetValue()"  required formControlName="netWorthInput">
+                </mat-form-field>
+
+                <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].netWorth'] !== undefined">
+                  {{validationErrors['items[' + i + '].netWorth'][0]}}
+                </div>
+              </td>
+
+              <td>
+
+                <select #selectElement class="select" placeholder="Insert a vat rate"  (change)="setGrossValue(selectElement)" required formControlName="vatRateInput">
+                  <option #option value="23" [selected]="23">23%</option>
+                  <option value="8">8%</option>
+                  <option value="5" >5%</option>
+                  <option value="0">0%</option>
+                </select>
+              </td>
+
+              <td>
+                <mat-form-field appearance="fill">
+                  <input #inputElement matInput type="number"    placeholder="Insert a gross value"   (change)="sumGrossValue()"  required formControlName="grossValueInput">
+                </mat-form-field>
+
+                <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].grossValue'] !== undefined">
+                  {{validationErrors['items[' + i + '].grossValue'][0]}}
+                </div>
+              </td>
+
+              <td>
+                <i #circle [id]="i" class="bi-bi-x-circle" (click)="deleteItem(circle)">X</i>
+              </td>
+
+            </tr>
+
+             </ng-container>
+          </tbody>
+
+
+          <tfoot>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Sum total</td>
+            <td>
+              <mat-form-field appearance="fill">
+                <input matInput type="number"    placeholder="0,00"  required formControlName="netAmountInput">
+              </mat-form-field>
+            </td>
+            <td></td>
+            <td>
+              <mat-form-field appearance="fill">
+                <input matInput type="number"    placeholder="0,00"  required formControlName="sumTotalInput">
+              </mat-form-field>
+            </td>
+
+          </tr>
+          </tfoot>
+
+
+        </table>
+
+
+
+        <button type="button" class="btn btn-outline-primary" (click)="addNextItem()">Add a next product</button>
+      </fieldset>
+    </form>
+  </mat-dialog-content>
+
+  <div mat-dialog-actions [align]="'end'" class="button-group">
+    <button mat-raised-button  class="mat-raised-button btn-lg" type="submit" (click)="saveInvoice()">Submit</button>
+    <button mat-raised-button (click)="closeDialog()">Close </button>
+  </div>
+
+</section>
+
+

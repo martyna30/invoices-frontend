@@ -1,0 +1,34 @@
+//własne zminne
+
+@import 'custom/base/variables';
+
+//import boostrap
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+
+
+//import własnych stylów
+@import 'custom/base/mixins';
+@import 'custom/base/typhography';
+@import 'custom/base/variables';
+@import 'custom/components/components';
+@import 'custom/pages/pages';
+
+//własne zmienne
+
+@import 'scss/01-settings/_settings.scss';
+@import 'scss/02-tools/_tools.scss';
+@import 'scss/03-generic/_generic.scss';
+@import 'scss/04-elements/_elements.scss';
+@import 'scss/05-objects/_objects.scss';
+@import 'scss/06-components/_components.scss';
+@import 'scss/07-templates/_templates.scss';
+@import 'scss/08-utilities/_utilities.scss';
+
+
+
+
+
+
+
+

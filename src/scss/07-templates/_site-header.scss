@@ -1,0 +1,136 @@
+.t-side-header {
+
+
+  &_top {
+    font-size: $font-size-5;
+    padding-top: $grid-base*2.5;
+    padding-left: $grid-base*2.5;
+    padding-right: $grid-base*2.5;
+    height: 125px;
+    width: 1800px;
+    display: inline-block;
+    justify-content: end;
+    margin: 0 auto;
+
+    @include medium-up {
+      padding-bottom: $grid-base*2.5;
+      height: 125px;
+    }
+  }
+
+  &_menu {
+
+    margin-top: $grid-base*2;
+
+
+    @include large-up {
+      text-align: right;
+      margin-top: 0;
+    }
+  }
+  &_divider {
+    background-color: $white;
+    height: 2px;
+    opacity:  .75;
+  }
+
+  &_hero {
+    background-color: $blue;
+    padding-bottom: $grid-base*4;
+    padding-top: $grid-base*4;
+    padding-left: $grid-base*4;
+    padding-right: $grid-base*2.5;
+    display: flex;
+    text-align: center;
+    justify-content: space-between;
+    margin: 0 auto;
+    height: 125px;
+    width: 1140px;
+    //margin-bottom: $grid-base*2;
+
+
+    @include large-up {
+      //padding-bottom: $grid-base *2;
+      //text-align: center;
+      //padding-top: $grid-base*2;
+      //max-width: 800px;
+     // margin-bottom: $grid-base*2;
+    }
+  }
+
+  &_hero2 {
+    background-color: $blue;
+    padding-bottom: $grid-base*4;
+    padding-top: $grid-base*4;
+    padding-left: $grid-base*4;
+    padding-right: $grid-base*2.5;
+    display: flex;
+    text-align: center;
+    justify-content: space-evenly;
+    margin: 0 auto;
+    height: 125px;
+    width: 1140px;
+    //margin-bottom: $grid-base*2;
+    @include large-up {
+      //padding-bottom: $grid-base *2;
+      //text-align: center;
+      //padding-top: $grid-base*2;
+      //max-width: 800px;
+      // margin-bottom: $grid-base*2;
+    }
+  }
+    &_hero3 {
+      background-color: $blue;
+      padding-bottom: $grid-base*4;
+      padding-top: $grid-base*4;
+      padding-left: $grid-base*4;
+      padding-right: $grid-base*2.5;
+      display: flex;
+      text-align: center;
+      justify-content: space-evenly;
+      justify-items: end;
+      align-items: end;
+      margin: 0 auto;
+      height: 300px;
+      width: 1140px;
+
+    @include large-up {
+      //padding-bottom: $grid-base *2;
+      //text-align: center;
+      //padding-top: $grid-base*2;
+      //max-width: 800px;
+      // margin-bottom: $grid-base*2;
+    }
+  }
+
+
+  &_intro-text {
+    color: $white;
+    text-transform: uppercase;
+    display: block;
+    font-size: $font-size-5;
+    padding-bottom: $grid-base *.75;
+    padding-top: $grid-base * 3;
+    text-align: center;
+    width: 100%;
+    letter-spacing: 2px;
+
+    @include large-up {
+      font-size:  $font-size-4;
+    }
+  }
+
+  &_btn-divider {
+    color: $white;
+    display: block;
+    font-size: $font-size-5;
+    font-weight: 700;
+    //margin: $grid-base*5;
+
+    @include medium-up {
+      display: inline-block;
+    }
+  }
+
+
+}

@@ -1,0 +1,15 @@
+.sk-result-list {
+  background-color: $ivory;
+  //padding-top: $grid-base*4;
+  //margin: 0 auto;
+
+
+  &_content {
+
+    @include large-up {
+      //text-align: center;
+      background-color: $ivory;
+      max-width: 800px;
+    }
+  }
+}
