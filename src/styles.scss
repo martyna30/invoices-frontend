@@ -25,6 +25,32 @@
 @import 'scss/07-templates/_templates.scss';
 @import 'scss/08-utilities/_utilities.scss';
 
+*{
+  font-family: sans-serif;
+}
+
+
+.mat-autocomplete-panel {
+  width: 400px;
+  background-color: #fff;
+  border: 1px solid black;
+}
+
+.cdk-overlay-container{
+  position:fixed;
+  z-index:1000;
+}
+.cdk-global-overlay-wrapper{
+  display:flex;
+  position:absolute;
+  z-index:1000;
+}
+.cdk-overlay-pane {
+  position:absolute;
+  pointer-events:auto;
+  box-sizing:border-box;
+  z-index:1000
+}
 
 
 

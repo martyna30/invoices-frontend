@@ -1,0 +1,70 @@
+@import 'src/styles.scss';
+
+@import 'src/scss/01-settings/_settings.scss';
+@import 'src/scss/02-tools/_tools.scss';
+@import 'src/scss/03-generic/_generic.scss';
+@import 'src/scss/04-elements/_elements.scss';
+@import 'src/scss/05-objects/_objects.scss';
+@import 'src/scss/06-components/_components.scss';
+@import 'src/scss/07-templates/_templates.scss';
+@import 'src/scss/08-utilities/_utilities.scss';
+
+#contractors {
+  position: relative;
+}
+
+#contractors {
+  display: flex;
+}
+
+.table-container {
+  display: block;
+  color: $dark-blue;
+  width: 1800px;
+}
+
+table {
+  //display: block;
+  color: $dark-blue;
+  max-height: 100%;
+  width: 1800px;
+  height: 160px;
+  border: 1px solid #3B99E1;
+  text-align: center;
+  background-color: mintcream;
+  padding: 2em;
+  flex-wrap: wrap;
+  margin-top: $grid-base*1.5;
+  margin-left:$grid-base*1.5;
+  margin-right: $grid-base*1.5;
+
+}
+
+.table-primary {
+  color: $dark-blue;
+  font-size: $font-size-5;
+}
+
+td {
+  position: relative;
+  width: auto;
+  min-width: 50px;
+  height: auto;
+  vertical-align: middle;
+  text-align: center;
+  display: table-cell;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 100%;
+}
+
+.form-check-input {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#contractorIdInput{
+  color: black;
+  background-color: #d3dfd3;
+
+}

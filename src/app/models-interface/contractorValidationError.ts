@@ -1,10 +1,11 @@
 import {Address} from './address';
+import {AddressDto} from './addressDto';
 
 export interface ContractorValidationError {
 
   name?: string;
-  vatIdentificationNumber?: number;
-  address?: Address;
+  vatIdentificationNumber?: string;
+  addressDto?: AddressDto;
 
 
 

@@ -4,6 +4,6 @@ export interface ContractorDto {
 
 id: number;
 name?: string;
-vatIdentificationNumber?: number;
+vatIdentificationNumber?: string;
 address?: Address;
 }

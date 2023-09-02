@@ -9,21 +9,56 @@
 @import 'src/scss/07-templates/_templates.scss';
 @import 'src/scss/08-utilities/_utilities.scss';
 
-mat-form-field {
-  width: 220px;
+
+
+
+.bi {
+  //margin-right: 5px;
+ // margin-left: 5px;
+  //margin-right:$grid-base;
+  //width: 30px;
+  //height: 30px;
+  background-position: center;
+  padding: 5px 5px;
 }
 
 
-:host {
+
+
+#menu {
+  display: inline-flex;
+}
+#menuSelect {
+  width: 22px;
+}
+
+.invalid-feedback {
+  width: 100%;
+  margin-top: .25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+//#nameInput {
+ // width: 160px;  //t
+//}
+
+#contractorInput {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  width: 300px;
 }
 
+mat-form-field {
+  width: 300px;
+}
 
 
 .input-fieldset {
   margin-bottom: $gutter*3;
+  //width: 400px;
+  //display: inline-block;
+  //margin-right: $gutter*5;//t
+
 }
 
 .mat-dialog {
@@ -82,6 +117,39 @@ table {
   margin-top: $grid-base*3;
 
 }
+
+
+
+#nameId {
+  display: flex;
+  justify-content: flex-start;
+  margin-right: 5px;
+
+}
+
+#contractorId {
+  display: flex;
+  justify-content: flex-start;
+}
+
+#dates {
+  display: flex;
+  justify-content: flex-start;
+}
+#payments {
+  margin-right: $grid-base*5;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#addressId {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+
+
 .custom-modalbox {
   font-size: $font-size-5;
   border: 1px solid #000;
@@ -100,27 +168,6 @@ table {
   padding: $grid-base*4 $grid-base*3 $grid-base*3 $grid-base*3;
   //overflow: scroll;
   overflow-y: visible;
-
-
-  /*mat-option {
-    position: absolute;
-    //z-index: 1100;
-    z-index: 1;
-  }
-
-  span {
-    height: 10px;
-    width: 10px;
-  }
-
-  .select {
-    position: relative;
-    z-index: 1000 !important;
-    overflow-y: initial
-
-  }*/
-
-
 
 
 

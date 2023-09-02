@@ -31,17 +31,14 @@ export class InvoicesComponent implements OnInit {
   invoicesList$: Observable<Array<Invoice>>;
 
   checkboxOfInvoice: number;
+  private isHidden: boolean;
 
   constructor(private dialog: MatDialog, private invoiceService: InvoiceService,
               private checkboxService: CheckboxService) {
   }
 
   ngOnInit(): void {
-    /*this.myFormModel = this.fb.group({
-      nameInput: '',
-    });*/
     this.loadData();
-    // this.checkTheChangeName();
   }
 
   getColor(): string {
@@ -82,7 +79,7 @@ export class InvoicesComponent implements OnInit {
 
   // tslint:disable-next-line:typedef
   loadData() {
-    const page = this.page - 1;
+    const page = this.page - 1 ;
     this.invoiceService.getInvoicesListObservable(page, this.size);
     this.invoicesList$ = this.invoiceService.getInvoicesFromService();
     // @ts-ignore
@@ -122,8 +119,19 @@ export class InvoicesComponent implements OnInit {
   }*/
 
   deleteInvoice() {
-    this.deleteComponent.deleteInvoice();
+    // if (this.token !== null && this.token !== undefined) {
+      // if (this.userRole.toString() === 'ROLE_ADMIN') {
+      this.deleteComponent.deleteInvoice();
   }
+      // else {
+       // alert('Function available only for the administrator');
+    //  }
+    // }else {
+     // alert('Function available only for the administrator');
+    // }
+
+
+
 
 
 

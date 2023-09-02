@@ -42,6 +42,10 @@ export class ContractorsComponent implements OnInit {
     this.loadData();
   }
 
+  getColor() {
+    return 'blue';
+  }
+
   openDialog(mode: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -80,7 +84,7 @@ export class ContractorsComponent implements OnInit {
     this.contractorService.getContractorsListObservable(page, this.size);
     this.contractorsList$ = this.contractorService.getContractorsFromService();
     // @ts-ignore
-    this.total = this.invoiceService.getTotalCountContractors();
+    this.total = this.contractorService.getTotalCountContractors();
     if (this.checkboxService.lengthContractorsMap() > 0) {
       this.checkboxService.removeFromContractorsMap(this.checkboxOfContractor);
     }
@@ -101,5 +105,6 @@ export class ContractorsComponent implements OnInit {
     // if (this.userRole.toString() === 'ROLE_ADMIN') {
     this.deleteComponent.deleteContractor();
   }
+
 
 }

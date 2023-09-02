@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Invoice} from '../models-interface/invoice';
 import {HttpService} from './http.service';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {Contractor} from '../models-interface/contractor';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,7 @@ export class InvoiceService {
     });
   }
 
-  getInvoicesFromService(): Observable<Array<Invoice>>{
+  getInvoicesFromService(): Observable<Array<Invoice>> {
     return this.invoiceListObs$.asObservable();
   }
 
@@ -45,7 +46,12 @@ export class InvoiceService {
     return this.totalCountInvoices$.asObservable();
   }
 
-  deleteInvoice(id: number): Observable<{}> {
+  deleteInvoice(id: number): Observable<Invoice> {
     return this.httpService.deleteInvoice(id);
+  }
+
+
+  updateContractor(contractor: Contractor): Observable<Contractor> {
+    return this.httpService.updateContractor(contractor);
   }
 }

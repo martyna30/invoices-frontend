@@ -62,6 +62,7 @@
 
     </table>
   </ng-container>
+
     <ng-template #noInvoices>
     <p>No invoices</p>
   </ng-template>
@@ -96,14 +97,15 @@
         </li>
       </ng-template>
     </ngb-pagination>
-    <hr>
+    <hr/>
 
     <pre>Current page: {{page}}</pre>
   </div>
+
 </div>
 
 <app-add-invoice #childAddRef (loadData)="loadData()" [invoicesList$]="invoicesList$" [checkboxOfInvoice]="checkboxOfInvoice"></app-add-invoice>
-  <app-delete-invoice #childDeleteRef ></app-delete-invoice>
+  <app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
 </section>
 
 

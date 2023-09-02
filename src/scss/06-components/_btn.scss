@@ -9,7 +9,8 @@
   text-align: center;
   text-transform: uppercase;
   transition: all .25s ease-in-out;
-  width: $grid-base *22;
+  width: $grid-base *11;
+  height: $grid-base* 4;
 
   &:hover {
     text-decoration: none;

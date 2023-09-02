@@ -1,56 +1,70 @@
-<section class="custom-modalbox" [hidden]="isHidden" xmlns="http://www.w3.org/1999/html">
+<section class="custom-modalbox" [hidden]="isHidden" xmlns="http://www.w3.org/1999/html"
+         xmlns="http://www.w3.org/1999/html">
   <h2 mat-dialog-title></h2>
-  <mat-dialog-content class="mat-dialog" method="post">
+  <mat-dialog-content [formGroup]="myFormModel" class="mat-dialog" method="post">
     <form [formGroup]="myFormModel">
     <div formGroupName="contractor">
 
-
+      <div id="nameId">
       <fieldset class="input-fieldset">
         <label class="input-label">Buyer's name</label>
-      <mat-form-field appearance="fill">
-        <input matInput type="text" [matAutocomplete]="auto"  (ngModelChange)="toggleNamePlaceholder()" placeholder="Insert a buyer's name" required formControlName="nameInput">
+        <div id="contractorInput">
+        <mat-form-field  appearance="fill">
+        <input id="nameInput"  matInput type="text" [matAutocomplete]="auto"  (ngModelChange)="toggleNamePlaceholder()" placeholder="Insert a buyer's name" required formControlName="nameInput">
 
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let name of filteredName"  [value]="name">{{name}}</mat-option>
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let name of filteredName" [value]="name">{{name}}</mat-option>
+
            </mat-autocomplete>
-          </mat-form-field>
-        <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractor.name'] !== undefined">
-            {{validationErrors['contractor.name'][0]}}
-          </div>
+
+        </mat-form-field>
+
+        <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractorDto.name'] !== undefined">
+          <span class="text text-danger"> {{validationErrors['contractorDto.name'][0] }}</span>
+        </div>
+
+          <button #buttonElement type="button" class="close" aria-label="Close"  [hidden]="isCloseButtonHidden" (click)="deleteDateFromForm()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+
+          <select id="menuSelect"  class="select" required   formControlName="contractorSelect">
+          <option (click)="openDialog()">Szukaj w katalogu</option>
+          <option value="2" >Pobież z GUS</option>
+          <option value="3">3</option>
+        </select>
+        </div>
+
+
+
       </fieldset>
 
+      </div>
+
+      <div [hidden]="contractorFormIsHidden">
       <fieldset class="input-fieldset">
         <label class="input-label">VAT identification number</label>
         <mat-form-field appearance="fill">
-            <input matInput type="number" (ngModelChange)="toggleVATPlaceholder()" placeholder="Insert a VATIN number" required formControlName="vatIdentificationNumberInput">
+            <input matInput type="text" (ngModelChange)="toggleVATPlaceholder()" placeholder="Insert a VATIN number" required formControlName="vatIdentificationNumberInput">
         </mat-form-field>
-      <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractor.vatIdentificationNumber'] !== undefined">
-        {{validationErrors['contractor.vatIdentificationNumber'][0]}}
-      </div>
+
+        <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractorDto.vatIdentificationNumber'] !== undefined">
+          <span class="text text-danger"> {{validationErrors['contractorDto.vatIdentificationNumber'][0] }}</span>
+        </div>
       </fieldset>
 
-      <div formGroupName="address">
+        <div id="addressId" formGroupName="address">
         <fieldset class="input-fieldset">
           <label class="input-label">Street</label>
         <mat-form-field appearance="fill">
                 <input matInput type="text" placeholder="Insert a street" required formControlName="streetInput">
         </mat-form-field>
-
-        <div class="invalid-feedback d-block" *ngIf="addressValidationErrors !== undefined && addressValidationErrors?.street">
-          {{addressValidationErrors.street[0]}}
-        </div>
         </fieldset>
 
-
-        <fieldset class="input-fieldset">
+          <fieldset class="input-fieldset">
           <label class="input-label">Street number</label>
               <mat-form-field appearance="fill">
                 <input matInput type="text" placeholder="Insert a street number" required formControlName="streetNumberInput">
               </mat-form-field>
-
-              <div class="invalid-feedback d-block" *ngIf="addressValidationErrors !== undefined && addressValidationErrors?.streetNumber">
-                {{addressValidationErrors.streetNumber[0]}}
-              </div>
         </fieldset>
 
         <fieldset class="input-fieldset">
@@ -59,9 +73,9 @@
                 <input matInput type="text"  placeholder="Insert a post code"   required formControlName="postcodeInput">
               </mat-form-field>
 
-              <div class="invalid-feedback d-block" *ngIf="addressValidationErrors !== undefined && addressValidationErrors?.postcode">
-                {{addressValidationErrors.postcode[0]}}
-              </div>
+          <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractorDto.addressDto.postcode'] !== undefined">
+            <span class="text text-danger"> {{validationErrors['contractorDto.addressDto.postcode'][0] }}</span>
+          </div>
         </fieldset>
 
         <fieldset class="input-fieldset">
@@ -70,36 +84,40 @@
                 <input matInput type="text"  placeholder="Insert a city" required formControlName="cityInput">
               </mat-form-field>
 
-              <div class="invalid-feedback d-block"*ngIf="contractorValidationErrors !== undefined && addressValidationErrors?.city">
-                {{addressValidationErrors.city[0]}}
-              </div>
-           </fieldset>
+          <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['contractorDto.addressDto.city'] !== undefined">
+            <span class="text text-danger"> {{validationErrors['contractorDto.addressDto.city'][0] }}</span>
+          </div>
+        </fieldset>
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">Country</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="text"  placeholder="Insert a country" required formControlName="countryInput">
+          </mat-form-field>
+        </fieldset>
       </div>
     </div>
+    </div>
 
-
+      <div id="dates">
     <fieldset class="input-fieldset">
       <label class="input-label">Date of issue</label>
       <mat-form-field appearance="fill">
-        <input matInput type="date" name="dateOfIssue" (ngModelChange)="toggleDateOfIssuePlaceholder()" placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
+        <input matInput type="date" name="dateOfIssue" (ngModelChange)="toggleDateOfIssuePlaceholder()" (change)="setDate()" placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
       </mat-form-field>
 
-      <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.dateOfInvoice">
-        <span class="text text-danger">{{validationErrors.dateOfInvoice[0]}}</span>
-      </div>
+
     </fieldset>
 
     <fieldset class="input-fieldset">
       <label class="input-label">Date of sale</label>
       <mat-form-field appearance="fill">
-        <input matInput type="date" name="dateOfSale" (ngModelChange)="toggleDateOfSalePlaceholder()" placeholder="Insert a date of sale" required formControlName="dateOfSaleInput">
+        <input matInput  type="date" name="dateOfSale" (ngModelChange)="toggleDateOfSalePlaceholder()" placeholder="Insert a date of sale" required formControlName="dateOfSaleInput" >
       </mat-form-field>
 
-      <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.dateOfSale">
-        <span class="text text-danger">{{validationErrors.dateOfSale[0]}}</span>
-      </div>
     </fieldset>
-
+  </div>
+  <div id=payments>
     <fieldset class="input-fieldset">
       <label class="input-label">Period of payment</label>
       <select  class="select" placeholder="Insert a period of payment" required formControlName="periodOfPaymentInput">
@@ -119,12 +137,17 @@
       </select>
 
      </fieldset>
+   </div>
 
       <fieldset class="input-fieldset">
-      <label class="input-label"></label>
+      <label class="input-label">Amount paid</label>
       <mat-form-field appearance="fill">
         <input matInput type="number" name="paid" (ngModelChange)="togglePaidPlaceholder()" placeholder="Insert a amount paid" required formControlName="paidInput">
       </mat-form-field>
+        <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.paid">
+          <span class="text text-danger"> {{validationErrors.paid[0]}}</span>
+        </div>
+
     </fieldset>
 
       <fieldset class="input-fieldset">
@@ -141,13 +164,10 @@
           </tr>
           <th scope="col">Sum Total</th>
           </thead>
-
-
-
-
-             <tbody>
+          <tbody>
              <ng-container formArrayName="items">
-            <tr *ngFor="let item of myFormModel.get('items')['controls']; let i = index;" formGroupName="{{ i }}">
+            <tr *ngFor="let item of  myFormModel.get('items')['controls']; let i = index;" formGroupName="{{ i }}">
+
               <th>{{ i + 1 }}</th>
               <td>
 
@@ -179,7 +199,7 @@
 
               <td>
                 <mat-form-field appearance="fill">
-                  <input matInput type="number" placeholder="Insert a net worth" (change)="setGrossValue(selectElement)" (change)="sumNetValue()"  required formControlName="netWorthInput">
+                  <input matInput type="number"  placeholder="Insert a net worth"   (change)="roundNetWorth()"  (change)="setGrossValue(selectElement)" (change)="sumNetValue()"  required formControlName="netWorthInput">
                 </mat-form-field>
 
                 <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].netWorth'] !== undefined">
@@ -199,7 +219,7 @@
 
               <td>
                 <mat-form-field appearance="fill">
-                  <input #inputElement matInput type="number"    placeholder="Insert a gross value"   (change)="sumGrossValue()"  required formControlName="grossValueInput">
+                  <input #inputElement  matInput  type="number"    placeholder="Insert a gross value"   (change)="sumGrossValue()"  required formControlName="grossValueInput">
                 </mat-form-field>
 
                 <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].grossValue'] !== undefined">
@@ -245,12 +265,15 @@
         <button type="button" class="btn btn-outline-primary" (click)="addNextItem()">Add a next product</button>
       </fieldset>
     </form>
+
   </mat-dialog-content>
 
   <div mat-dialog-actions [align]="'end'" class="button-group">
     <button mat-raised-button  class="mat-raised-button btn-lg" type="submit" (click)="saveInvoice()">Submit</button>
     <button mat-raised-button (click)="closeDialog()">Close </button>
   </div>
+
+<app-contractors-catalog #childContractorCatalogRef  (addContratorFromTheCatalog)="addContratorFromTheCatalog()" ></app-contractors-catalog>
 
 </section>
 
