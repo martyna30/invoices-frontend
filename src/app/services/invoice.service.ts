@@ -54,4 +54,8 @@ export class InvoiceService {
   updateContractor(contractor: Contractor): Observable<Contractor> {
     return this.httpService.updateContractor(contractor);
   }
+
+  saveInvoiceWithoutContractor(invoice: Invoice): Observable<Invoice> {
+    return this.httpService.saveInvoiceWithoutContractor(invoice);
+  }
 }
