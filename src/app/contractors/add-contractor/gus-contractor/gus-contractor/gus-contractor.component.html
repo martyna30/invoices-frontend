@@ -1,0 +1,29 @@
+
+<ng-container>
+  <section class="gus-modalbox" [hidden]="gusFormIsHidden">
+    <mat-dialog-content [formGroup]="myFormModel" class="mat-dialog">
+    <div class="card card-container">
+      <h3 class="text-center text-uppercase"></h3>
+      <form class="form-signin" [formGroup]="myFormModel">
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">VAT identification number</label>
+          <mat-form-field appearance="fill">
+            <input #nipInput matInput type="text" placeholder="Insert a VATIN number" required formControlName="vatIdentificationNumberInput">
+          </mat-form-field>
+
+          <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors.vatIdentificationNumber !== undefined">
+            <span class="text text-danger"> {{validationErrors.vatIdentificationNumber[0]}}</span>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="c-btn c-btn--standard" (click)="download(nipInput.value)">Download</button>
+        <button type="button" class="c-btn c-btn--standard" (click)="cancel()">Cancel</button>
+      </form>
+
+    </div>
+    </mat-dialog-content>
+  </section>
+
+</ng-container>
+<app-add-contractor #childContractor  > </app-add-contractor>

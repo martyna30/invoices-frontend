@@ -1,5 +1,5 @@
-@import 'src/styles.scss';
 
+@import 'src/styles.scss';
 @import 'src/scss/01-settings/_settings.scss';
 @import 'src/scss/02-tools/_tools.scss';
 @import 'src/scss/03-generic/_generic.scss';
@@ -9,6 +9,9 @@
 @import 'src/scss/07-templates/_templates.scss';
 @import 'src/scss/08-utilities/_utilities.scss';
 
+.input-label {
+  width: 190px;
+}
 .invalid-feedback {
   width: 100%;
   margin-top: .25rem;
@@ -20,18 +23,9 @@ mat-form-field {
   width: 220px;
 }
 
-
-/*:host {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}*/
-
-
-
 .input-fieldset {
   margin-bottom: $gutter*3;
-  margin-right: $gutter*5;
+  margin-right: $gutter*3;
 }
 
 .mat-dialog {
@@ -47,8 +41,6 @@ mat-label {
   text-transform: uppercase;
   display: block;
 }
-
-
 
 td {
   position: relative;
@@ -74,21 +66,33 @@ td {
   transform: translateX(-50%);
   cursor: pointer;
 }
-
+.c-btn--accent {
+  width: 70px;
+  height: 25px;
+  text-align: center;
+  line-height: 6px;
+  padding-bottom: 7px;
+  padding-top: 6px;
+  margin-right: $gutter;
+}
 
 
 .button-group {
-
-  text-align: center;
-  margin: 0 auto;
-  justify-content: space-between;
+  text-align: start;
+  height: 150px;
+  justify-content: end;
+  align-items: start;
+  margin-bottom: $gutter;
 }
 
 table {
   padding: 2em;
   flex-wrap: wrap;
   margin-top: $grid-base*3;
+}
 
+#buyerId {
+  display: flex;
 }
 
 #contractorId {
@@ -106,30 +110,33 @@ table {
   justify-content: flex-start;
 }
 
+#streetId {
+  display: flex;
+
+}
+
 #addressId {
   display: flex;
-  justify-content: space-between;
+
 }
 
 
-
-
-.custom-modalbox {
+.seller-modalbox {
   font-size: $font-size-5;
   border: 1px solid #000;
   color: black;
-  height: auto;
-  width: auto;
-  min-width: 800px;
-  max-width: 1000px;
-  min-height: 400px;
-  max-height: 800px;
+  height: 500px;
+  width: 500px;
   background-color: #fff;
   position: absolute;
-  bottom: 10%;
+  bottom: 40%;
   left: 50%;
   transform: translateX(-50%);
   padding: $grid-base*4 $grid-base*3 $grid-base*3 $grid-base*3;
-  //overflow: scroll;
-  overflow-y: visible;
+  overflow: scroll;
+
 }
+
+
+
+

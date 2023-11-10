@@ -1,5 +1,5 @@
 import {Address} from './address';
-export interface ContractorDto {
+export interface ContractorFromGusDto {
 id: number;
 name: string;
 vatIdentificationNumber: string;
@@ -7,6 +7,5 @@ street: string;
 streetNumber: string;
 postcode: string;
 city: string;
-country: string;
 
 }

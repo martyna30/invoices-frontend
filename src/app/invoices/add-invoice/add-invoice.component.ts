@@ -29,11 +29,10 @@ import {DatePipe, DecimalPipe, formatDate} from '@angular/common';
 import {ContractorDto} from '../../models-interface/contractorDto';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {ContractorsCatalogComponent} from '../../contractors/contractors-catalog/contractors-catalog/contractors-catalog.component';
-import {MatMenuTrigger} from '@angular/material/menu';
-import {by, element} from 'protractor';
-import {isNumber} from '@ng-bootstrap/ng-bootstrap/util/util';
 import {Contractor} from '../../models-interface/contractor';
-import {filter, map, switchMap} from 'rxjs/operators';
+import {ContractorsComponent} from '../../contractors/contractors.component';
+import {GusContractorComponent} from '../../contractors/add-contractor/gus-contractor/gus-contractor/gus-contractor.component';
+
 
 
 @Component({
@@ -43,13 +42,20 @@ import {filter, map, switchMap} from 'rxjs/operators';
 
 })
 export class AddInvoiceComponent implements OnInit, OnDestroy {
+  private positionRelativeToElement: ElementRef;
   contractorError: ContractorDto;
   contractors: Array<Contractor>;
   contractorWithName: Contractor;
   private subscriptions = new Subscription();
-
+  gusFormIsHidden = true;
   @ViewChild('childContractorCatalogRef')
   contractorCatalog: ContractorsCatalogComponent;
+
+  @ViewChild('childContractorFromGus')
+  contractorFromGus: GusContractorComponent;
+
+  //@ViewChild('childContractor')
+  //contractorComponent: ContractorsComponent;
   @Input()
   invoicesList$: Observable<Array<Invoice>>;
   @Input()
@@ -87,6 +93,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   private invoiceToModified: Invoice;
   invoiceFromDb: Invoice;
   contractorToModified: ContractorDto;
+  contractorFromDB: Contractor;
+  saveInvoiceWithContractor: boolean;
   private addressToModified: Address;
   private isCreated: boolean;
   private invoiceExist: boolean;
@@ -297,6 +305,9 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   saveInvoice() {
     if (this.mode === 'edit') {
       this.changeInvoice();
+    }
+    else if (this.saveInvoiceWithContractor === false) {
+        this.saveInvoiceWithoutContractor();
     } else {
       const invoice: Invoice = {
         id: null,
@@ -355,6 +366,61 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
     }
     // });
+  }
+
+  // tslint:disable-next-line:typedef
+  private saveInvoiceWithoutContractor() {
+    const invoice: Invoice = {
+      id: null,
+      contractor: {
+        id: null,
+        name: null,
+        vatIdentificationNumber: null,
+        address: {
+          id: null,
+          street: null,
+          streetNumber: null,
+          postcode: null,
+          city: null,
+          country: null
+        }
+      },
+      dateOfInvoice: this.myFormModel.get('dateOfInvoiceInput').value,
+      dateOfSale: this.myFormModel.get('dateOfSaleInput').value,
+      periodOfPayment: this.myFormModel.get('periodOfPaymentInput').value,
+      methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
+      paid: this.myFormModel.get('paidInput').value,
+      items: [],
+      netAmount: this.myFormModel.get('netAmountInput').value,
+      sumTotal: this.myFormModel.get('sumTotalInput').value
+    };
+
+    this.items.controls.forEach(productControl => {
+      const item: Item = {
+        id: null,
+        product: productControl.get('productInput').value,
+        amount: productControl.get('amountInput').value,
+        netWorth: productControl.get('netWorthInput').value,
+        vatRate: productControl.get('vatRateInput').value,
+        grossValue: productControl.get('grossValueInput').value,
+      };
+      invoice.items.push(item);
+    });
+    this.invoiceService.saveInvoiceWithoutContractor(invoice).subscribe(saveInvoice => {
+      if (saveInvoice !== undefined) {
+        this.isCreated = true;
+        this.invoiceExist = false;
+      }
+      if (this.isCreated) {
+        this.loadData.emit();
+        this.closeDialog();
+      }
+    }, (response: HttpErrorResponse) => {
+      this.validationErrors = response.error;
+      this.isCreated = false;
+      console.log(response.error['contractorDto.name'][0]);
+      console.log(this.validationErrors);
+    });
   }
 
 
@@ -456,7 +522,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     this.myFormModel.get('contractor').get('nameInput').valueChanges.subscribe(
       response => this.filterContractor(response)
     );
-
   }
 
   // tslint:disable-next-line:typedef
@@ -466,6 +531,9 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       this.filteredName = contractors.map(buyer => buyer.name);
       this.contractors = contractors;
     });
+    if (this.contractorFormIsHidden) {
+      this.contractorFormIsHidden = !this.contractorFormIsHidden;
+    }
     const name = this.myFormModel.get('contractor').get('nameInput').value;
     if (this.filteredName.find(e => e === name)) {
       if (this.isCloseButtonHidden) {
@@ -508,8 +576,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   toggleVATPlaceholder() {
     this.showVATPlaceholder = (this.myFormModel.get('contractor').get('vatIdentificationNumberInput').value === '');
   }
-
-  // contractor/address
 
 
   toggleDateOfIssuePlaceholder() {
@@ -567,19 +633,25 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   }
 
 
-  openDialog() {
+  openDialog(mode: string) {
+    this.mode = mode;
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.panelClass = 'contractors-modalbox';
-    this.dialog.open(ContractorsCatalogComponent, dialogConfig);
-    this.contractorCatalog.showContractorCatalog();
-
+    const gusDialogConfig = new MatDialogConfig();
+    gusDialogConfig.disableClose = true;
+    gusDialogConfig.autoFocus = true;
+    gusDialogConfig.panelClass = 'gus-modalbox';
+    if (mode === 'catalog') {
+      this.dialog.open(ContractorsCatalogComponent, dialogConfig);
+      this.contractorCatalog.showContractorCatalog();
+    }
+    if (mode === 'gus') {
+      this.dialog.open(GusContractorComponent, gusDialogConfig);
+    }
   }
-// <p class="bi bi-x" (click)="deleteDateFromForm()">X</p>
 
-
-  // tslint:disable-next-line:typedef
   deleteDateFromForm() {
     this.clearContractorForm();
     if (!this.contractorFormIsHidden) {
@@ -598,6 +670,16 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       this.myFormModel.get('contractor').get('address').get('postcodeInput').setValue(''),
       this.myFormModel.get('contractor').get('address').get('cityInput').setValue(''),
       this.myFormModel.get('contractor').get('address').get('countryInput').setValue('');
+  }
+
+
+  savingChanges(contractorInput: HTMLInputElement) {
+    if (contractorInput.checked) {
+      this.saveInvoiceWithContractor = true;
+    }
+    else {
+      this.saveInvoiceWithContractor = false;
+    }
   }
 
 

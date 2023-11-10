@@ -1,7 +1,7 @@
 <section id="invoices">
 
   <div class="sk-sidebar">
-    <ul class="nav flex-column text-uppercase">
+    <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link sk-header-item-link"  (click)="openDialog('add')">Create an invoice</a>
       </li>
@@ -11,9 +11,12 @@
       <li class="nav-item">
         <a class="nav-link sk-header-item-link" (click)="deleteInvoice()">Delete an Invoice</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link sk-header-item-link"></a>
-      </li>
+
+      <li class="nav-item-settings" >
+          <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
+        </li>
+
+
     </ul>
   </div>
 <div class ="table-container">
@@ -105,7 +108,7 @@
 </div>
 
 <app-add-invoice #childAddRef (loadData)="loadData()" [invoicesList$]="invoicesList$" [checkboxOfInvoice]="checkboxOfInvoice"></app-add-invoice>
-  <app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
+
 </section>
 
-
+<app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>

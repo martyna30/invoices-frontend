@@ -1,0 +1,63 @@
+<ng-container>
+<section id="register" [hidden]="registerFormIsHidden">
+  <div class="card card-container">
+    <h3 class="text-center text-uppercase"></h3>
+    <form class="form-signin" [formGroup]="myFormModel">
+
+      <fieldset class="input-fieldset">
+
+        <mat-form-field appearance="fill">
+      <input matInput name="username" type="text" id="inputUsername"  class="form-control"  placeholder="Login" required formControlName="loginInput">
+        </mat-form-field>
+          <div class="invalid-feedback d-block" *ngIf="loggingValidationError !== undefined && loggingValidationError.username !== undefined">
+        <span class="text text-danger">{{loggingValidationError.username[0]}}</span>
+      </div>
+      </fieldset>
+
+      <fieldset class="input-fieldset">
+
+        <mat-form-field appearance="fill">
+      <input matInput  name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required formControlName="passwordInput">
+        </mat-form-field>
+          <div class="invalid-feedback d-block" *ngIf="loggingValidationError !== undefined && loggingValidationError.password !== undefined">
+        <span class="text text-danger">{{loggingValidationError.password[0]}}</span>
+      </div>
+      </fieldset>
+
+      <fieldset class="input-fieldset">
+
+        <mat-form-field appearance="fill">
+      <input matInput  name="email" type="email" id="inputEmail" class="form-control" placeholder="Email" required formControlName="emailInput">
+        </mat-form-field>
+      <div class="invalid-feedback d-block" *ngIf="loggingValidationError !== undefined && loggingValidationError.email !== undefined">
+        <span class="text text-danger">{{loggingValidationError.email[0]}}</span>
+      </div>
+      </fieldset>
+
+        <fieldset class="input-fieldset">
+
+         <mat-form-field appearance="fill">
+            <input matInput name="nip" type="nip" id="inputNip" class="form-control" placeholder="Nip" required formControlName="nipInput">
+        </mat-form-field>
+      <div class="invalid-feedback d-block" *ngIf="loggingValidationError !== undefined && loggingValidationError.nip !== undefined">
+        <span class="text text-danger">{{loggingValidationError.nip[0]}}</span>
+      </div>
+        </fieldset>
+
+        <div class="register-button">
+
+        <button type="submit" class="c-btn c-btn--standard" (click)="register()">Register</button>
+
+          </div>
+    </form>
+  </div>
+
+</section>
+
+
+
+  <app-seller #childSellerRef [isHidden]="sellerComponentIsHidden" ></app-seller>
+  </ng-container>
+
+
+

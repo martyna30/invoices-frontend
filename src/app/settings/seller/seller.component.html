@@ -1,0 +1,90 @@
+
+<section class="seller-modalbox" [hidden]="isHidden" xmlns="http://www.w3.org/1999/html">
+  <h2 mat-dialog-title></h2>
+  <mat-dialog-content [formGroup]="myFormModel" class="mat-dialog" method="post">
+    <form [formGroup]="myFormModel">
+      <div id="buyerId">
+      <fieldset class="input-fieldset">
+        <label class="input-label">Buyer's name</label>
+        <mat-form-field appearance="fill">
+          <input  matInput type="text"  placeholder="Insert a buyer's name" required formControlName="nameInput">
+          <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors.name!== undefined">
+            <span class="text text-danger"> {{validationErrors.name[0] }}</span>
+          </div>
+        </mat-form-field>
+      </fieldset>
+
+      <fieldset class="input-fieldset">
+        <label class="input-label">VAT identification number</label>
+        <mat-form-field appearance="fill">
+          <input matInput type="text" placeholder="Insert a VATIN number" required formControlName="vatIdentificationNumberInput">
+        </mat-form-field>
+
+        <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors.vatIdentificationNumber !== undefined">
+          <span class="text text-danger"> {{validationErrors.vatIdentificationNumber[0] }}</span>
+        </div>
+      </fieldset>
+      </div>
+      <div formGroupName="address">
+      <div id="streetId">
+        <fieldset class="input-fieldset">
+          <label class="input-label">Street</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="text" placeholder="Insert a street" required formControlName="streetInput">
+          </mat-form-field>
+        </fieldset>
+
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">Street number</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="text" placeholder="Insert a street number" required formControlName="streetNumberInput">
+          </mat-form-field>
+        </fieldset>
+      </div>
+      <div id="addressId">
+        <fieldset class="input-fieldset">
+          <label class="input-label">Post code</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="text"  placeholder="Insert a post code"   required formControlName="postcodeInput">
+          </mat-form-field>
+
+          <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['addressDto.postcode'] !== undefined">
+            <span class="text text-danger"> {{validationErrors['addressDto.postcode'][0] }}</span>
+          </div>
+
+        </fieldset>
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">City</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="text"  placeholder="Insert a city" required formControlName="cityInput">
+          </mat-form-field>
+
+          <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['addressDto.city'] !== undefined">
+            <span class="text text-danger"> {{validationErrors['addressDto.city'][0] }}</span>
+          </div>
+
+        </fieldset>
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">Country</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="text"  placeholder="Insert a country" required formControlName="countryInput">
+          </mat-form-field>
+        </fieldset>
+      </div>
+      </div>
+
+
+    </form>
+    <div mat-dialog-actions  class="button-group">
+      <button type="button" class="c-btn c-btn--accent" (click)="saveSeller()">Save</button>
+
+      <button mat-raised-button (click)="closeDialog()">Close </button>
+    </div>
+  </mat-dialog-content>
+
+
+
+</section>

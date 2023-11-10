@@ -1,4 +1,4 @@
-<section class="custom-modalbox" [hidden]="isHidden" xmlns="http://www.w3.org/1999/html"
+<section class="custom-modalbox" [hidden]="isHidden"
          xmlns="http://www.w3.org/1999/html">
   <h2 mat-dialog-title></h2>
   <mat-dialog-content [formGroup]="myFormModel" class="mat-dialog" method="post">
@@ -28,14 +28,11 @@
           </button>
 
           <select id="menuSelect"  class="select" required   formControlName="contractorSelect">
-          <option (click)="openDialog()">Szukaj w katalogu</option>
-          <option value="2" >Pobież z GUS</option>
+          <option (click)="openDialog('catalog')">Szukaj w katalogu</option>
+          <option value="2"  (click)="openDialog('gus')">Pobież z GUS</option>
           <option value="3">3</option>
         </select>
         </div>
-
-
-
       </fieldset>
 
       </div>
@@ -96,7 +93,18 @@
           </mat-form-field>
         </fieldset>
       </div>
-    </div>
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <input #contractorInput checked type="checkbox" aria-label="Checkbox for following text input" (change)="savingChanges(contractorInput)">
+            </div>
+          </div>
+          <input type="text" class="form-control1" aria-label="Text input with checkbox" placeholder="Saving changes to contractor's catalogue">
+        </div>
+
+
+      </div>
     </div>
 
       <div id="dates">
@@ -274,7 +282,7 @@
   </div>
 
 <app-contractors-catalog #childContractorCatalogRef  (addContratorFromTheCatalog)="addContratorFromTheCatalog()" ></app-contractors-catalog>
-
+<app-gus-contractor #childContractorFromGus [gusFormIsHidden]="(gusFormIsHidden)" ></app-gus-contractor>
 </section>
 
 

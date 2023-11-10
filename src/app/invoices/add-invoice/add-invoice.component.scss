@@ -13,16 +13,9 @@
 
 
 .bi {
-  //margin-right: 5px;
- // margin-left: 5px;
-  //margin-right:$grid-base;
-  //width: 30px;
-  //height: 30px;
   background-position: center;
   padding: 5px 5px;
 }
-
-
 
 
 #menu {
@@ -39,9 +32,6 @@
   color: #dc3545;
 }
 
-//#nameInput {
- // width: 160px;  //t
-//}
 
 #contractorInput {
   display: flex;
@@ -55,11 +45,9 @@ mat-form-field {
 
 .input-fieldset {
   margin-bottom: $gutter*3;
-  //width: 400px;
-  //display: inline-block;
-  //margin-right: $gutter*5;//t
 
 }
+
 
 .mat-dialog {
   label {
@@ -101,7 +89,9 @@ td {
   transform: translateX(-50%);
   cursor: pointer;
 }
-
+.mat-dialog {
+  //position: relative;
+}
 
 
 .button-group {
@@ -135,6 +125,7 @@ table {
 #dates {
   display: flex;
   justify-content: flex-start;
+  margin-top: 40px;
 }
 #payments {
   margin-right: $grid-base*5;
@@ -147,8 +138,15 @@ table {
   justify-content: space-between;
 }
 
+.form-control1 {
+  width: $gutter*20;
+}
 
 
+
+.input-group mb-3 {
+  margin-bottom: 5px;
+}
 
 .custom-modalbox {
   font-size: $font-size-5;

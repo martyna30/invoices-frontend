@@ -16,7 +16,6 @@ import {DatePipe, DecimalPipe} from '@angular/common';
 import {Item} from '../../models-interface/item';
 import {HttpErrorResponse} from '@angular/common/http';
 
-
 @Component({
   selector: 'app-add-contractor',
   templateUrl: './add-contractor.component.html',
@@ -108,6 +107,26 @@ export class AddContractorComponent implements OnInit {
     console.log('zostałem zniszczony');
   }
 
+
+
+  getContractorFromGus(nip) {
+    this.mode = 'gus';
+    //this.isHidden = false;
+    //this.settingsIsHidden.emit(false);
+    this.contractorService.getContractorByNip(nip).subscribe((contractorFromGus) => {
+      if (contractorFromGus !== undefined) {
+        this.myFormModel.get('nameInput').setValue(contractorFromGus.name);
+        this.myFormModel.get('vatIdentificationNumberInput').setValue(contractorFromGus.vatIdentificationNumber);
+        this.myFormModel.get('address').get('streetInput').setValue(contractorFromGus.address.street);
+        this.myFormModel.get('address').get('streetNumberInput').setValue(contractorFromGus.address.streetNumber);
+        this.myFormModel.get('address').get('postcodeInput').setValue(contractorFromGus.address.postcode);
+        this.myFormModel.get('address').get('cityInput').setValue(contractorFromGus.address.city);
+        this.myFormModel.get('address').get('countryInput').setValue('Poland');
+      }
+    });
+  }
+
+
   saveContractor() {
     if (this.mode === 'edit') {
       this.changeContractor();
@@ -137,7 +156,7 @@ export class AddContractorComponent implements OnInit {
         }
       }, (response: HttpErrorResponse) => {
         this.validationErrors = response.error;
-        console.log(response.error.contractorDto.name[0]);
+        //console.log(response.error.contractorDto.name[0]);
         console.log(this.validationErrors);
       });
       this.isCreated = false;

@@ -1,0 +1,24 @@
+<ng-container>
+  <section id="login" [hidden]="loginFormIsHidden">
+    <div class="card card-container">
+      <h3 class="text-center text-uppercase"></h3>
+      <form class="form-signin" [formGroup]="myFormModel">
+
+        <input [(ngModel)]="login" name="login" type="text"  id="inputUsername" class="form-control"  placeholder="Login" required formControlName="loginInput">
+        <div class="col-10" *ngIf="loggingValidationError !== null && loggingValidationError?.username">
+          <span class="text text-danger">{{loggingValidationError.username[0]}}</span>
+        </div>
+
+        <input [(ngModel)]="password" name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required formControlName="passwordInput">
+        <div class="col-10" *ngIf="loggingValidationError !== null && loggingValidationError?.password">
+          <span class="text text-danger">{{loggingValidationError.password[0]}}</span>
+        </div>
+        <button type="submit" class="c-btn c-btn--standard" (click)="signIn(login)">Sign in</button>
+        <button type="button" class="c-btn c-btn--standard" (click)="registerNewUser()">Create an account</button>
+      </form>
+
+    </div>
+  </section>
+
+</ng-container>
+<app-registration #childRegistrationRef  [registerFormIsHidden]="registerFormIsHidden" (loginFormIsHidden)="loginFormIsHidden" ></app-registration>

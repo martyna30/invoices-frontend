@@ -35,6 +35,16 @@
     }
   }
 
+  &--standard {
+    background-color: $sk-standard-color;
+    color: $white;
+
+    &:hover {
+      background-color: darken($green, 15%);
+      color: $white;
+    }
+  }
+
   &--dark-blue {
     background-color:$blue-dark;
     color: $white;

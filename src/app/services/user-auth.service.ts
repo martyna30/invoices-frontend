@@ -98,7 +98,8 @@ export class UserAuthService {
           return true;
         }));
   }
-  register(user: NewUserDto): Observable<string> {
+  register(user: NewUserDto): Observable<NewUserDto> {
+    this.userName$.next(user.username);
     return this.httpService.register(user);
   }
 

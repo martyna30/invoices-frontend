@@ -2,7 +2,7 @@
 <section id="contractors">
 
   <div class="sk-sidebar">
-    <ul class="nav flex-column text-uppercase">
+    <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link sk-header-item-link"  (click)="openDialog('add')">Create a Contractor</a>
       </li>
@@ -12,9 +12,11 @@
       <li class="nav-item">
         <a class="nav-link sk-header-item-link" (click)="deleteContractor()">Delete a Contractor</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link sk-header-item-link"></a>
+
+      <li class="nav-item-settings" >
+        <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
       </li>
+
     </ul>
   </div>
 

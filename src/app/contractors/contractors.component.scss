@@ -9,6 +9,8 @@
 @import 'src/scss/07-templates/_templates.scss';
 @import 'src/scss/08-utilities/_utilities.scss';
 
+
+
 #contractors {
   position: relative;
 }
@@ -17,11 +19,6 @@
   display: flex;
 }
 
-.table-container {
-  display: block;
-  color: $dark-blue;
-  width: 1800px;
-}
 
 table {
   //display: block;
@@ -68,3 +65,4 @@ td {
   background-color: #d3dfd3;
 
 }
+

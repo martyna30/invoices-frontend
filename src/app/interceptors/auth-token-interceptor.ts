@@ -3,14 +3,15 @@ import {EventEmitter, Injectable, Injector, Input, Output} from '@angular/core';
 import {Token} from '../models-interface/token';
 import {BehaviorSubject, Observable, throwError} from 'rxjs';
 import {catchError, map, switchMap} from 'rxjs/operators';
-import {HttpService} from '../../services/http.service';
-import {Router} from '@angular/router';
-import {UserProfile} from '../models-interface/user-profile';
+
+
 import {JwtHelperService} from '@auth0/angular-jwt';
-import {UserAuthService} from '../../services/user-auth.service';
+
 import {A} from '@angular/cdk/keycodes';
 import {getToken} from 'codelyzer/angular/styles/cssLexer';
 import {UserDto} from '../models-interface/userDto';
+import {UserAuthService} from '../services/user-auth.service';
+import {UserProfile} from '../models-interface/user-profile';
 
 
 @Injectable()
@@ -60,7 +61,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
             if (!refreshExpired) {
               AuthTokenInterceptor.accessToken = AuthTokenInterceptor.refreshToken;
               localStorage.removeItem('access_token');
-              return this.http.post('http://localhost:8080/v1/library/token/refresh', {}, {}).pipe(
+              return this.http.post('http://localhost:8080/v1/invoice/token/refresh', {}, {}).pipe(
                 switchMap((res: any) => {
                   const newtoken = res as Token;
                   AuthTokenInterceptor.refresh = true;
@@ -85,10 +86,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
             }
           }
         }
-
-            /*if (refreshExpired && (err.status === 403 || err.status === 401) && this.islogout === true) {
-              return next.handle(req);
-            }*/
         if ((err.status === 403 || err.status === 401) && AuthTokenInterceptor.refresh === true) {
           const newToken = localStorage.getItem('new_token');
           if (newToken !== null && newToken !== undefined) {
@@ -105,18 +102,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
               return this.userAuthService.logout();
             }
           }
-        }/*else if (newToken === null && newToken === undefined && !AuthTokenInterceptor.isLogout) {
-            this.islogout = true;
-            AuthTokenInterceptor.accessToken = '';
-            localStorage.removeItem('new_token');
-            return this.userAuthService.logout();
-          }*/
-          /*if (!this.islogout && (err.status === 403 || err.status === 401) && AuthTokenInterceptor.refresh === true) {
-            this.islogout = true;
-            AuthTokenInterceptor.accessToken = '';
-            localStorage.removeItem('new_token');
-            return this.userAuthService.logout();
-        }*/
+        }
         if (err.status === 422 ) {
             return next.handle(req);
         }

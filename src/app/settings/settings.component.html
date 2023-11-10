@@ -1,0 +1,60 @@
+<section id="settings"  [hidden]="settingsComponentIsHidden">
+
+  <div class="settings-container">
+    <div class="company-container">
+  <div class="company">
+    <header class="t-side-header">
+
+      <div class="o-col--md25">
+      My Company
+      </div>
+      <div class="o-col--md75">
+      <button type="button" class="c-btn c-btn--primary" (click)="openDialog('add')">Add Company</button>
+        <button type="button" class="c-btn c-btn--primary" (click)="openDialog('edit')">Edit</button>
+      </div>
+    </header>
+
+    <div class="t-side-header_divider">
+    </div>
+       <div class="o-row--center-y">
+         <form class="company-form" [formGroup]="formModel">
+        <fieldset class="input-fieldset">
+          <label class="input-label">Company name</label>
+          <mat-form-field  appearance="fill">
+              <input id="nameInput"  matInput type="text"  placeholder="Insert name of the company" required  formControlName="nameInput">
+          </mat-form-field>
+        </fieldset>
+
+         <fieldset class="input-fieldset">
+           <label class="input-label">Address</label>
+           <mat-form-field appearance="fill">
+             <input matInput type="text" placeholder="Insert a address" required disabled formControlName="addressInput">
+           </mat-form-field>
+         </fieldset>
+
+           <fieldset class="input-fieldset">
+          <label class="input-label">VATIN</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="text"  placeholder="Insert a VATIN number" required disabled formControlName="vatIdentificationNumberInput">
+          </mat-form-field>
+        </fieldset>
+         </form>
+      </div>
+</div>
+</div>
+
+  <div class="company-user">
+    <header class="t-side-header">User</header>
+    <div class="t-side-header_divider"></div>
+      <div class="o-row--center-y"></div>
+</div>
+  </div>
+
+
+  <app-seller #childSellerDataRef  (addSellerToTheSettings)="addSellerToTheSettings($event)" (settingsIsHidden)="settingsComponentIsHidden" > </app-seller>
+
+</section>
+
+
+
+

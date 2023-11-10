@@ -35,7 +35,11 @@ export class SellerService {
   }
 
   getSellerByVatIdentificationNumber(vatIdentificationNumber: string): Observable<any>  {
-    return this.httpService.getContractorByNip(vatIdentificationNumber);
+    return this.httpService.getSellerByVatIdentificationNumber(vatIdentificationNumber);
+  }
+
+  getSellerFromGus(nip:string) {
+    return this.httpService.getSellerByNip(nip);
   }
 
   getSellerByAppUser(loggedInUsername: string) {

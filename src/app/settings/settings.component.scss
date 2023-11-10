@@ -1,0 +1,110 @@
+@import 'src/styles.scss';
+
+
+@import 'src/scss/01-settings/_settings.scss';
+@import 'src/scss/02-tools/_tools.scss';
+@import 'src/scss/03-generic/_generic.scss';
+@import 'src/scss/04-elements/_elements.scss';
+@import 'src/scss/05-objects/_objects.scss';
+@import 'src/scss/06-components/_components.scss';
+@import 'src/scss/07-templates/_templates.scss';
+@import 'src/scss/08-utilities/_utilities.scss';
+
+
+
+.settings-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: $gutter;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: 800px;
+}
+
+.company-container {
+  display: flex;
+  max-height: 500px;
+
+}
+
+
+.company {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 550px;
+  height: 250px;
+  background-color: $sk-gray-200;
+  color: black;
+  margin: $gutter;
+  padding:$gutter;
+  font-size:$font-size-base;
+  text-align: start;
+  box-shadow: 1px 1px 1px 1px $sk-gray-200 rgba(0, 0 ,0 ,0.4);
+}
+
+
+.t-side-header {
+  height: 80px;
+  display: flex;
+  justify-content: space-around;
+
+}
+.o-row--center-y {
+  display: flex;
+  height: 320px;
+  flex-direction: column;
+  justify-content: center;
+
+}
+
+.o-col--md25 {
+  text-align: center;
+  align-self: center;
+}
+.t-side-header_divider {
+  margin: 5px 5px;
+}
+
+.input-fieldset {
+  width: 450px;
+}
+
+.input-label {
+  width: 120px;
+  text-align: end;
+
+}
+
+mat-form-field {
+  width: 220px;
+  margin-left: $gutter;
+}
+
+
+
+
+#addressId{
+  height: 200px;
+}
+.company-user {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 550px;
+  height: 300px;
+
+  background-color: $sk-gray-200;
+  color: black;
+  margin: $gutter;
+  padding:$gutter;
+  font-size:$font-size-base;
+  text-align: start;
+  box-shadow: 1px 1px 1px 1px $sk-gray-200 rgba(0, 0 ,0 ,0.4);
+}
+
+.c-btn  {
+  margin-right: $gutter;
+}
+

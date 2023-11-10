@@ -1,8 +1,12 @@
 import {Address} from './address';
+import {LoggedinUser} from './loggedinUser';
+import {AppUser} from './appUser';
+
 
 export interface Seller {
   id: number;
   name: string;
-  vatIdentificationNumber: number;
-  adress?: Address;
+  vatIdentificationNumber: string;
+  address?: Address;
+  appUser: AppUser;
 }

@@ -40,6 +40,10 @@ export class ContractorService {
     return this.httpService.getContractorByName(name);
   }
 
+  getContractorByNip(nip:string) {
+    return this.httpService.getContractorByNip(nip);
+  }
+
 
   saveContractor(contractor: Contractor): Observable<Contractor> {
     return this.httpService.saveContractor(contractor);

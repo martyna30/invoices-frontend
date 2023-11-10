@@ -11,6 +11,7 @@ import {NewUserDto} from '../models-interface/newUserDto';
 import {Seller} from '../models-interface/seller';
 import {AppUser} from '../models-interface/appUser';
 import {ContractorFromGusDto} from '../models-interface/contractorFromGusDto';
+import {ContractorDto} from '../models-interface/contractorDto';
 
 
 @Injectable({
@@ -155,12 +156,13 @@ export class HttpService {
     });
   }
 
-  register(user: NewUserDto): Observable<string> {
-    return this.http.post(this.URL_DB + 'register', user, {
-      responseType: 'text',
+  register(user: NewUserDto): Observable<NewUserDto> {
+    return this.http.post<NewUserDto>(this.URL_DB + 'register', user, {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
       observe: 'body'
     });
   }
+
 
   logout() {
     return this.http.post(this.URL_DB + 'logout', {}, {});
@@ -255,16 +257,26 @@ export class HttpService {
     });
   }
 
+
   getContractorByNip(nip: string) {
     const param = new HttpParams()
       .set('nip', nip);
-    return this.http.get<ContractorFromGusDto>(this.URL_DB_GUS + 'getContractorFromGus', {
+    return this.http.get<ContractorDto>(this.URL_DB_GUS + 'getContractorFromGus', {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
       params: param,
       observe: 'body',
     });
   }
 
+  getSellerByNip(nip: string) {
+    const param = new HttpParams()
+      .set('nip', nip);
+    return this.http.get<Seller>(this.URL_DB_GUS + 'getSellerFromGus', {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      params: param,
+      observe: 'body',
+    });
+  }
 
 
 }

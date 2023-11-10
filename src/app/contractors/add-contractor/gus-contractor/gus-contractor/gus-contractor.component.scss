@@ -1,5 +1,4 @@
 @import 'src/styles.scss';
-
 @import 'src/scss/01-settings/_settings.scss';
 @import 'src/scss/02-tools/_tools.scss';
 @import 'src/scss/03-generic/_generic.scss';
@@ -8,35 +7,19 @@
 @import 'src/scss/06-components/_components.scss';
 @import 'src/scss/07-templates/_templates.scss';
 @import 'src/scss/08-utilities/_utilities.scss';
-.settings {
-  display: flex;
+
+
+.gus-modalbox {
+  font-size: $font-size-5;
+  border: 1px solid #000;
+  color: black;
+  height: 400px;
+  width: 400px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 40%;
+  left: 70%;
+  transform: translateX(-50%);
+  padding: $grid-base*4 $grid-base*3 $grid-base*3 $grid-base*3;
+  overflow: scroll;
 }
-.container {
-  max-width: 1795px;
-  display: block;
-  height: 900px;
-
-
-}
-
-.sk-sidebar {
-  display: flex;
-  align-items: end;
-  justify-content: end;
-}
-.nav-item-settings {
-  height: 80px;
-  width: 212px;
-  text-align: center;
-  background-color: bisque;
-  justify-content: start;
-  flex-direction: column;
-  color: $sk-accent-color;
-}
-
-
-
-
-
-
-
