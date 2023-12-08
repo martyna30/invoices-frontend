@@ -109,7 +109,7 @@ export class AddContractorComponent implements OnInit {
 
 
 
-  getContractorFromGus(nip) {
+  /*getContractorFromGus(nip) {
     this.mode = 'gus';
     //this.isHidden = false;
     //this.settingsIsHidden.emit(false);
@@ -124,7 +124,7 @@ export class AddContractorComponent implements OnInit {
         this.myFormModel.get('address').get('countryInput').setValue('Poland');
       }
     });
-  }
+  }*/
 
 
   saveContractor() {

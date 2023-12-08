@@ -42,6 +42,7 @@ import { RegistrationComponent } from './login-registration/registration/registr
 import { SettingsComponent } from './settings/settings.component';
 import { SellerComponent } from './settings/seller/seller.component';
 import { GusContractorComponent } from './contractors/add-contractor/gus-contractor/gus-contractor/gus-contractor.component';
+import { PrintInvoiceComponent } from './invoices/print-invoice/print-invoice.component';
 
 
 
@@ -73,6 +74,7 @@ export function jwtOptionsFactory(userAuthService: UserAuthService) {
     SettingsComponent,
     SellerComponent,
     GusContractorComponent,
+    PrintInvoiceComponent,
 
   ],
   imports: [

@@ -11,6 +11,9 @@
       <li class="nav-item">
         <a class="nav-link sk-header-item-link" (click)="deleteInvoice()">Delete an Invoice</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link sk-header-item-link" (click)="printInvoice()">Print an Invoice</a>
+      </li>
 
       <li class="nav-item-settings" >
           <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
@@ -112,3 +115,4 @@
 </section>
 
 <app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
+<app-print-invoice #childPrintInvoice ></app-print-invoice>

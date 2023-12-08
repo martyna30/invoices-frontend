@@ -64,11 +64,10 @@ mat-label {
 }
 
 
-
-td {
+table td {
   position: relative;
-  width: 30px;
-  min-width: 30px;
+  max-width: 150px;
+  min-width: 50px;
   height: auto;
   vertical-align: middle;
   text-align: center;
@@ -76,6 +75,9 @@ td {
   margin-left: auto;
   margin-right: auto;
   max-height: 100%;
+}
+table #td-amount {
+    max-width: 50px;
 }
 .bi-bi-x-circle {
   width: auto;
@@ -89,13 +91,8 @@ td {
   transform: translateX(-50%);
   cursor: pointer;
 }
-.mat-dialog {
-  //position: relative;
-}
-
 
 .button-group {
-
   text-align: center;
   margin: 0 auto;
   justify-content: space-between;
@@ -109,6 +106,20 @@ table {
 }
 
 
+table mat-form-field {
+  //max-width: 200px;
+}
+
+.numberInput {
+  width: 50px;
+}
+
+
+
+table input.amount,
+table input.number {
+  width: 50px;
+}
 
 #nameId {
   display: flex;

@@ -58,4 +58,8 @@ export class InvoiceService {
   saveInvoiceWithoutContractor(invoice: Invoice): Observable<Invoice> {
     return this.httpService.saveInvoiceWithoutContractor(invoice);
   }
+
+  generateInvoice(idInvoice: number) {
+    return this.httpService.generateInvoice(idInvoice);
+  }
 }

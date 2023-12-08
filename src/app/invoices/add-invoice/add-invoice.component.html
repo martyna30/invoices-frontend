@@ -128,7 +128,7 @@
   <div id=payments>
     <fieldset class="input-fieldset">
       <label class="input-label">Period of payment</label>
-      <select  class="select" placeholder="Insert a period of payment" required formControlName="periodOfPaymentInput">
+      <select  class="select"  required  formControlName="periodOfPaymentInput">
         <option *ngFor="let periodOfPayment of periodsOfPayment" [value]="periodOfPayment.value">
           {{periodOfPayment.viewValue}}
         </option>
@@ -138,8 +138,8 @@
      <fieldset class="input-fieldset">
        <label class="input-label">Method of payment</label>
 
-       <select  class="select" formControlName="methodOfPaymentInput">
-       <option *ngFor="let methodOfPayment of methodsOfPayment" [value]="methodOfPayment.value">
+       <select class="select"  [value]="value" formControlName="methodOfPaymentInput">
+       <option *ngFor="let methodOfPayment of methodsOfPayment" >
         {{methodOfPayment.viewValue}}
        </option>
       </select>
@@ -150,7 +150,7 @@
       <fieldset class="input-fieldset">
       <label class="input-label">Amount paid</label>
       <mat-form-field appearance="fill">
-        <input matInput type="number" name="paid" (ngModelChange)="togglePaidPlaceholder()" placeholder="Insert a amount paid" required formControlName="paidInput">
+        <input matInput type="number" name="paid"     (ngModelChange)="togglePaidPlaceholder()" placeholder="Insert a amount paid" required formControlName="paidInput">
       </mat-form-field>
         <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.paid">
           <span class="text text-danger"> {{validationErrors.paid[0]}}</span>
@@ -163,23 +163,24 @@
         <table class="table table-striped">
           <thead>
           <tr>
-            <th scope="col">Lp</th>
+            <th scope="col">No.</th>
             <th scope="col">Product</th>
+            <th scope="col">Unit</th>
             <th scope="col">Amount</th>
             <th scope="col">Net Worth</th>
             <th scope="col">Vat Rate</th>
             <th scope="col">Gross Value</th>
           </tr>
-          <th scope="col">Sum Total</th>
           </thead>
           <tbody>
              <ng-container formArrayName="items">
             <tr *ngFor="let item of  myFormModel.get('items')['controls']; let i = index;" formGroupName="{{ i }}">
 
-              <th>{{ i + 1 }}</th>
+              <th class="numberInput">
+                <input matInput class="number" [disabled]="true"  required formControlName="numberInput">{{ i + 1 }}
+              </th>
+
               <td>
-
-
                 <mat-form-field appearance="fill">
 
                   <input matInput type="text" [matAutocomplete]="auto"  (ngModelChange)="toggleProductPlaceholder()" placeholder="Insert a product" required formControlName="productInput">
@@ -195,17 +196,29 @@
               </td>
 
               <td>
-                <mat-form-field appearance="fill">
-                  <input  matInput type="number" placeholder="Insert a amount"  (change)="sumNetValue()" required formControlName="amountInput">
+                <select class="select"  required  formControlName="unitInput">
+                  <option #selectElement2  value="pc" ngModel = "selected" [selected]='selectElement'>pc.</option>
+                  <option value="kg">kg</option>
+                  <option value="t">t</option>
+                  <option value="m">m</option>
+                  <option value="m2">m2</option>
+                  <option value="m3">m3</option>
+                  <option value="service">service</option>
+                  <option value="page">page</option>
+                </select>
+              </td>
 
-                </mat-form-field>
+              <td id="td-amount">
+
+                  <input class="amount" matInput  placeholder="Insert a amount"  (change)="sumNetValue()" required formControlName="amountInput">
+
 
                 <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].amount'] !== undefined">
                   {{validationErrors['items[' + i + '].amount'][0]}}
                 </div>
               </td>
 
-              <td>
+              <td class="td">
                 <mat-form-field appearance="fill">
                   <input matInput type="number"  placeholder="Insert a net worth"   (change)="roundNetWorth()"  (change)="setGrossValue(selectElement)" (change)="sumNetValue()"  required formControlName="netWorthInput">
                 </mat-form-field>
@@ -216,7 +229,6 @@
               </td>
 
               <td>
-
                 <select #selectElement class="select" placeholder="Insert a vat rate"  (change)="setGrossValue(selectElement)" required formControlName="vatRateInput">
                   <option #option value="23" [selected]="23">23%</option>
                   <option value="8">8%</option>
@@ -227,7 +239,7 @@
 
               <td>
                 <mat-form-field appearance="fill">
-                  <input #inputElement  matInput  type="number"    placeholder="Insert a gross value"   (change)="sumGrossValue()"  required formControlName="grossValueInput">
+                  <input #inputElement  matInput  placeholder="Insert a gross value"   (change)="sumGrossValue()"  required formControlName="grossValueInput">
                 </mat-form-field>
 
                 <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].grossValue'] !== undefined">
@@ -249,6 +261,8 @@
           <tr>
             <td></td>
             <td></td>
+            <td></td>
+
             <td>Sum total</td>
             <td>
               <mat-form-field appearance="fill">
@@ -282,7 +296,7 @@
   </div>
 
 <app-contractors-catalog #childContractorCatalogRef  (addContratorFromTheCatalog)="addContratorFromTheCatalog()" ></app-contractors-catalog>
-<app-gus-contractor #childContractorFromGus [gusFormIsHidden]="(gusFormIsHidden)" ></app-gus-contractor>
+<app-gus-contractor #childContractorFromGus (addContractorFromTheGus)="addContractorFromTheGus($event)"></app-gus-contractor>
 </section>
 
 

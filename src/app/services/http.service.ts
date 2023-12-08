@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
 import {Invoice} from '../models-interface/invoice';
 import {Observable} from 'rxjs';
 import {ListInvoices} from '../models-interface/listInvoices';
@@ -22,6 +22,7 @@ export class HttpService {
   private URL_DB_CONTRACTOR = 'http://localhost:8080/v1/contractor/';
   private URL_DB_SELLER = 'http://localhost:8080/v1/seller/';
   private URL_DB_GUS = 'http://localhost:8080/v1/gus/';
+  private URL_DB_PRINT = 'http://localhost:8080/v1/invoice/printer/';
   private httpHeader = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
   private httpHeader2 = {headers2: new HttpHeaders({'Access-Control-Allow-Origin': '*'})};
 
@@ -279,4 +280,13 @@ export class HttpService {
   }
 
 
+  generateInvoice(idInvoice: number) {
+    const param = new HttpParams()
+      .set('invoiceId', idInvoice + '');
+    return this.http.get<HttpResponse<any>>(this.URL_DB_PRINT + 'generateInvoice', {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      params: param,
+      observe: 'body',
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ContractorValidationError} from '../../../../models-interface/contractorValidationError';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Contractor} from '../../../../models-interface/contractor';
@@ -12,10 +12,13 @@ import {AddContractorComponent} from '../../add-contractor.component';
   styleUrls: ['./gus-contractor.component.scss']
 })
 export class GusContractorComponent implements OnInit {
-  @ViewChild('childContractor')
-  contractorComponent: AddContractorComponent;
-  @Input()
-  gusFormIsHidden;
+  @Output()
+  addContractorFromTheGus: EventEmitter<string> = new EventEmitter<string>();
+// <app-add-contractor #childContractor > </app-add-contractor>
+  // @ViewChild('childContractor')
+  // contractorComponent: AddContractorComponent;
+
+  gusFormIsHidden = true;
   validationErrors: ContractorValidationError;
   myFormModel: FormGroup;
   constructor(private fb: FormBuilder) { }
@@ -25,8 +28,17 @@ export class GusContractorComponent implements OnInit {
       vatIdentificationNumberInput: '',
     });
   }
+
+  showContractorForm() {
+    if (this.gusFormIsHidden) {
+      this.gusFormIsHidden = !this.gusFormIsHidden;
+    } else {
+      this.gusFormIsHidden = true;
+    }
+  }
   download(nip: string) {
-    this.contractorComponent.getContractorFromGus(nip);
+    // this.contractorComponent.getContractorFromGus(nip);
+    this.addContractorFromTheGus.emit(nip);
   }
   cancel() {
     this.clearForm();
@@ -42,4 +54,9 @@ export class GusContractorComponent implements OnInit {
     this.validationErrors = undefined;
   }
 
+
+  // tslint:disable-next-line:typedef
+  hide() {
+    this.gusFormIsHidden = true;
+  }
 }

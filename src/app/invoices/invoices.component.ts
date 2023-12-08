@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {CheckboxService} from '../services/checkbox.service';
 import {DeleteInvoiceComponent} from './delete-invoice/delete-invoice.component';
 import {Invoice} from '../models-interface/invoice';
+import {PrintInvoiceComponent} from './print-invoice/print-invoice.component';
 
 const FILTER_PAG_REGEX = /[^0-9]/g;
 @Component({
@@ -21,6 +22,9 @@ export class InvoicesComponent implements OnInit {
 
   @ViewChild('childDeleteRef')
   deleteComponent: DeleteInvoiceComponent;
+
+  @ViewChild('childPrintInvoice')
+  printComponent: PrintInvoiceComponent;
 
   isDisabled: false;
 
@@ -99,6 +103,23 @@ export class InvoicesComponent implements OnInit {
     }
   }
 
+  deleteInvoice() {
+    // if (this.token !== null && this.token !== undefined) {
+    // if (this.userRole.toString() === 'ROLE_ADMIN') {
+    this.deleteComponent.deleteInvoice();
+  }
+  // else {
+  // alert('Function available only for the administrator');
+  //  }
+  // }else {
+  // alert('Function available only for the administrator');
+  // }
+
+
+  printInvoice() {
+    this.printComponent.printInvoice();
+  }
+
 
  /* toggleNamePlaceholder() {
     this.showNamePlaceholder = (this.myFormModel.get('nameInput').value === '');
@@ -117,23 +138,6 @@ export class InvoicesComponent implements OnInit {
       });
     }
   }*/
-
-  deleteInvoice() {
-    // if (this.token !== null && this.token !== undefined) {
-      // if (this.userRole.toString() === 'ROLE_ADMIN') {
-      this.deleteComponent.deleteInvoice();
-  }
-      // else {
-       // alert('Function available only for the administrator');
-    //  }
-    // }else {
-     // alert('Function available only for the administrator');
-    // }
-
-
-
-
-
 
 
 }
