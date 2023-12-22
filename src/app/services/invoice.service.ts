@@ -3,6 +3,7 @@ import {Invoice} from '../models-interface/invoice';
 import {HttpService} from './http.service';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {Contractor} from '../models-interface/contractor';
+import {Seller} from '../models-interface/seller';
 
 @Injectable({
   providedIn: 'root'
@@ -59,7 +60,7 @@ export class InvoiceService {
     return this.httpService.saveInvoiceWithoutContractor(invoice);
   }
 
-  generateInvoice(idInvoice: number) {
-    return this.httpService.generateInvoice(idInvoice);
+  generateInvoice(idInvoice: number, IdCurrentSeller: number) {
+    return this.httpService.generateInvoice(idInvoice, IdCurrentSeller);
   }
 }

@@ -7,6 +7,7 @@ import {ContractorsCatalogComponent} from './contractors/contractors-catalog/con
 import {LoginComponent} from './login-registration/login.component';
 import {RegistrationComponent} from './login-registration/registration/registration.component';
 import {SettingsComponent} from './settings/settings.component';
+import {PrintInvoiceComponent} from './invoices/print-invoice/print-invoice.component';
 
 
 
@@ -15,6 +16,7 @@ const routes: Routes = [
   {path: 'strona', component: InvoicesComponent},
   {path: 'settings', component: SettingsComponent},
   {path: 'invoices', component: InvoicesComponent},
+  {path: 'invoices/print', component: PrintInvoiceComponent},
   {path: 'contractors', component: ContractorsComponent},
   {path: 'contractorsCatalog', component: ContractorsCatalogComponent},
   {path: 'login', component: LoginComponent },

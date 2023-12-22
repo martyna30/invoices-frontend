@@ -83,7 +83,6 @@ export class LoginComponent implements OnInit {
   }
   registerNewUser() {
     this.loginFormIsHidden = true;
-    //this.registerFormIsHidden = false;
     this.registrationComponent.showRegisterForm();
   }
 

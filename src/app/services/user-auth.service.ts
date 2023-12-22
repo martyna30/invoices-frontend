@@ -9,6 +9,7 @@ import {map} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {AuthTokenInterceptor} from '../interceptors/auth-token-interceptor';
 import {UserProfile} from '../models-interface/user-profile';
+import {SellerService} from './seller.service';
 
 
 @Injectable({
@@ -26,12 +27,13 @@ export class UserAuthService {
   userPassword$ = new BehaviorSubject<string>(null);
   jwtHelper = new JwtHelperService();
 
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService, private sellerService: SellerService) {}
 
   getTokenFromService(): Observable<string> {
     const accesstoken = localStorage.getItem('access_token');
     const refreshtoken = localStorage.getItem('refresh_token');
     const newtoken = localStorage.getItem('new_token');
+    const currentSeller = localStorage.getItem('currentSeller');
     // const username = localStorage.getItem('username');
     if (accesstoken !== null && accesstoken !== undefined) {
 
@@ -54,6 +56,8 @@ export class UserAuthService {
       const username = userdata.sub;
       this.token$.next(refreshtoken);
       this.userName$.next(username);
+      //this.sellerService.currentSeller$.next(currentSeller);
+      // this.sellerService.getSellerByAppUser(username);
       // AuthTokenInterceptor.accessToken = refreshtoken;
       AuthTokenInterceptor.refreshToken = refreshtoken;
       this.isloggedin$.next(true);
@@ -65,6 +69,8 @@ export class UserAuthService {
       const username = userdata.sub;
       this.userProfile$.next(userrole);
       this.userName$.next(username);
+      //this.sellerService.currentSeller$.next(currentSeller);
+      // this.sellerService.getSellerByAppUser(username);
       this.token$.next(newtoken);
       AuthTokenInterceptor.accessToken = newtoken;
       AuthTokenInterceptor.refresh = true;
@@ -113,6 +119,7 @@ export class UserAuthService {
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('access_token');
         localStorage.removeItem('username');
+        localStorage.removeItem('currentSeller');
         localStorage.removeItem('borrowedBooks');
     });
   }

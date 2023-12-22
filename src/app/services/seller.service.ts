@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {Contractor} from '../models-interface/contractor';
 import {Seller} from '../models-interface/seller';
 import {HttpService} from './http.service';
@@ -8,7 +8,7 @@ import {HttpService} from './http.service';
   providedIn: 'root'
 })
 export class SellerService {
-
+  currentSeller$ = new BehaviorSubject<Seller>(null);
   constructor(private httpService: HttpService) { }
 
   getSellerWithSpecifiedName(name) {
@@ -38,12 +38,21 @@ export class SellerService {
     return this.httpService.getSellerByVatIdentificationNumber(vatIdentificationNumber);
   }
 
-  getSellerFromGus(nip:string) {
+  getSellerFromGus(nip: string) {
     return this.httpService.getSellerByNip(nip);
   }
 
   getSellerByAppUser(loggedInUsername: string) {
-    return this.httpService.getSellerByAppUser(loggedInUsername);
+    this.httpService.getSellerByAppUser(loggedInUsername).subscribe((seller: Seller) => {
+      this.currentSeller$.next(seller);
+      localStorage.setItem('currentSeller', seller.name);
+    });
+
+   // return  this.currentSeller$.asObservable();
+  }
+
+  getSellerByAppUserFromService() {
+  return this.currentSeller$.asObservable();
   }
 
 

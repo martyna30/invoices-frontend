@@ -4,6 +4,8 @@ import {AddInvoiceComponent} from './invoices/add-invoice/add-invoice.component'
 import {DeleteInvoiceComponent} from './invoices/delete-invoice/delete-invoice.component';
 import {Router} from '@angular/router';
 import {UserAuthService} from './services/user-auth.service';
+import {SellerService} from './services/seller.service';
+import {Seller} from './models-interface/seller';
 
 @Component({
   selector: 'app-root',
@@ -14,11 +16,13 @@ export class AppComponent implements OnInit {
 // <app-login [loginFormIsHidden]="loginFormIsHidden" ></app-login>
   private tokenFromService: string;
   username: string;
+  currentSellerId;
   isloggedin: boolean;
   loginFormIsHidden = true;
   registerFormIsHidden = true;
   settingsIsHidden = false;
-  constructor(private userAuthService: UserAuthService, private router: Router) {}
+  constructor(private userAuthService: UserAuthService,
+              private sellerService: SellerService, private router: Router) {}
 
   ngOnInit(): void {
     this.userAuthService.userName$.subscribe((username) => {

@@ -60,14 +60,14 @@ export class SellerComponent implements OnInit {
         countryInput: 'Poland'
       }),
     });
-    this.userService.userName$.subscribe((username) => {
-      this.username = username;
-    });
-    if (this.userService.isloggedin$.getValue() === true) {
-      this.userService.getUserByUsername(this.username).subscribe(((appUser) => {
-        this.loggedinUser = appUser;
-      }));
-    }
+   // this.userService.userName$.subscribe((username) => {
+    //  this.username = username;
+   // });
+    //if (this.userService.isloggedin$.getValue() === true) {
+     // this.userService.getUserByUsername(this.username).subscribe(((appUser) => {
+     //   this.loggedinUser = appUser;
+     // }));
+   // }
   }
 
   showSellerData() {

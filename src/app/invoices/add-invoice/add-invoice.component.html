@@ -209,9 +209,10 @@
               </td>
 
               <td id="td-amount">
+                <mat-form-field appearance="fill">
 
                   <input class="amount" matInput  placeholder="Insert a amount"  (change)="sumNetValue()" required formControlName="amountInput">
-
+                </mat-form-field>
 
                 <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].amount'] !== undefined">
                   {{validationErrors['items[' + i + '].amount'][0]}}

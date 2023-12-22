@@ -12,6 +12,7 @@ import {Seller} from '../models-interface/seller';
 import {AppUser} from '../models-interface/appUser';
 import {ContractorFromGusDto} from '../models-interface/contractorFromGusDto';
 import {ContractorDto} from '../models-interface/contractorDto';
+import {map, max} from 'rxjs/operators';
 
 
 @Injectable({
@@ -280,13 +281,29 @@ export class HttpService {
   }
 
 
-  generateInvoice(idInvoice: number) {
+  /*generateInvoice(idInvoice: number) {
     const param = new HttpParams()
       .set('invoiceId', idInvoice + '');
     return this.http.get<HttpResponse<any>>(this.URL_DB_PRINT + 'generateInvoice', {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
       params: param,
       observe: 'body',
+    });*/
+  generateInvoice(idInvoice: number, currentSellerId: number): Observable<any>{
+    const param = new HttpParams()
+      .set('invoiceId', idInvoice + '')
+      .set('currentSellerId', String(currentSellerId));
+    return this.http.get<any>(this.URL_DB_PRINT + 'generateInvoice', {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      observe: 'response',
+      params: param,
+      responseType: 'blob' as 'json'
     });
+    //}).pipe(map(res => new Blob([res], {type: 'application/pdf'})));
   }
-}
+}/*return this.http.get<any>(url, { responseType: 'blob', observe: 'response' }).pipe(
+  map((result:HttpResponse<Blob>) => {
+    console.log(result);
+    saveAs(result, "Quotation.pdf");
+    return result;
+  }));*/
