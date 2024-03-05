@@ -44,6 +44,7 @@ mat-form-field {
 
 
 .input-fieldset {
+  margin-right:$gutter;
   margin-bottom: $gutter*3;
 
 }
@@ -93,9 +94,7 @@ table #td-amount {
 }
 
 .button-group {
-  text-align: center;
-  margin: 0 auto;
-  justify-content: space-between;
+
 }
 
 table {
@@ -106,9 +105,7 @@ table {
 }
 
 
-table mat-form-field {
-  //max-width: 200px;
-}
+
 
 .numberInput {
   width: 50px;
@@ -135,8 +132,8 @@ table input.number {
 
 #dates {
   display: flex;
-  justify-content: flex-start;
   margin-top: 40px;
+  justify-content: space-between;
 }
 #payments {
   margin-right: $grid-base*5;
@@ -159,29 +156,12 @@ table input.number {
   margin-bottom: 5px;
 }
 
-.custom-modalbox {
-  font-size: $font-size-5;
-  border: 1px solid #000;
-  color: black;
-  height: auto;
-  width: auto;
+.modalbox {
   min-width: 800px;
   max-width: 1000px;
   min-height: 400px;
   max-height: 800px;
-  background-color: #fff;
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: $grid-base*4 $grid-base*3 $grid-base*3 $grid-base*3;
-  //overflow: scroll;
   overflow-y: visible;
-
-
-
-
-
 }
 
 

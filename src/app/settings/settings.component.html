@@ -17,33 +17,35 @@
 
     <div class="t-side-header_divider">
     </div>
-    <div class="o-row--center-y"  *ngIf="currentSeller | async">
-         <form class="company-form" [formGroup]="formModel">
+    <div class="o-row--center-y" >
+    <form class="company-form" [formGroup]="formModel">
 
         <fieldset class="input-fieldset">
           <label class="input-label">Company name</label>
 
-          <mat-form-field  appearance="fill">{{(currentSeller | async).name}}
-              <input      id="nameInput"  matInput type="text"   required  formControlName="nameInput">
+          <mat-form-field  appearance="fill" >
+              <input  id=" nameInput"  matInput type="text" placeholder="Insert a name"   required  formControlName="nameInput">{{(currentSeller | async)?.name}}
 
           </mat-form-field>
+
         </fieldset>
 
          <fieldset class="input-fieldset">
            <label class="input-label">Address</label>
-           <mat-form-field appearance="fill" >{{(addressSeller | async)}}
-             <input  matInput type="text" placeholder="Insert a address" required disabled formControlName="addressInput">
+           <mat-form-field appearance="fill">
+             <input  matInput type="text" placeholder="Insert a address" required disabled formControlName="addressInput">{{addressSeller | async}}
            </mat-form-field>
          </fieldset>
 
            <fieldset class="input-fieldset">
           <label class="input-label">VATIN</label>
-          <mat-form-field appearance="fill">{{(currentSeller | async).vatIdentificationNumber}}
-            <input matInput type="text"   required disabled formControlName="vatIdentificationNumberInput">
+          <mat-form-field appearance="fill">
+            <input  matInput type="text"  placeholder="Insert a VATIN number"  required disabled formControlName="vatIdentificationNumberInput">{{(currentSeller | async)?.vatIdentificationNumber}}
           </mat-form-field>
         </fieldset>
+
          </form>
-      </div>
+    </div>
     </div>
 
 

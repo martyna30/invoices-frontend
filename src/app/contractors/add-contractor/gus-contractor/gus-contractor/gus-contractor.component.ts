@@ -39,6 +39,7 @@ export class GusContractorComponent implements OnInit {
   download(nip: string) {
     // this.contractorComponent.getContractorFromGus(nip);
     this.addContractorFromTheGus.emit(nip);
+    this.clearForm();
   }
   cancel() {
     this.clearForm();

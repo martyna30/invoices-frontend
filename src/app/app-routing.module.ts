@@ -8,6 +8,8 @@ import {LoginComponent} from './login-registration/login.component';
 import {RegistrationComponent} from './login-registration/registration/registration.component';
 import {SettingsComponent} from './settings/settings.component';
 import {PrintInvoiceComponent} from './invoices/print-invoice/print-invoice.component';
+import {PaymentComponent} from './payment/payment.component';
+import {PaymentDetailsComponent} from './payment/payment-details/payment-details/payment-details.component';
 
 
 
@@ -15,6 +17,8 @@ const routes: Routes = [
   {path: '', redirectTo: '/strona', pathMatch: 'full', },
   {path: 'strona', component: InvoicesComponent},
   {path: 'settings', component: SettingsComponent},
+  {path: 'payment', component: PaymentComponent},
+  {path: 'details', component: PaymentDetailsComponent},
   {path: 'invoices', component: InvoicesComponent},
   {path: 'invoices/print', component: PrintInvoiceComponent},
   {path: 'contractors', component: ContractorsComponent},

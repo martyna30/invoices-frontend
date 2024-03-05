@@ -17,21 +17,24 @@
       <li class="nav-item">
         <a class="nav-link text-white sk-header-item-link">Produkty</a>
       </li>
+          <li class="nav-item">
+            <a class="nav-link text-white sk-header-item-link" routerLinkActive="active" routerLink="/payment"  >Płatności</a>
+          </li>
         </ul>
     </div>
     <div class="o-col--lg50">
       <ul class="nav flex-md-row text-uppercase justify-content-md-end">
     <li class="nav-item">
-          <a  routerLink="/login" routerLinkActive="active" class="nav-link text-white sk-header-item-link text-uppercase" *ngIf="!isloggedin" >Sign in</a>
+          <a  routerLink="/login" routerLinkActive="active" class="nav-link text-white sk-header-item-link text-uppercase" *ngIf="!(isloggedin$ | async)" >Sign in</a>
         </li>
         <li class="nav-item">
-          <a routerLink="/registration" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase" >Register</a>
+          <a routerLink="/registration" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"   *ngIf="!(isloggedin$ | async)"  >Register</a>
         </li>
         <li class="nav-item">
-          <a routerLink="/login" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"  *ngIf="isloggedin" (click)="logout()">Log out</a>
+          <a routerLink="/login" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"  *ngIf="isloggedin$" (click)="logout()">Log out</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white sk-header-item-link text-uppercase font-weight-bold" routerLinkActive="active" *ngIf="isloggedin" >{{username}}</a>
+          <a class="nav-link text-white sk-header-item-link text-uppercase font-weight-bold" routerLinkActive="active" *ngIf="isloggedin$ | async" >{{username$ | async}}</a>
         </li>
       </ul>
     </div>
@@ -50,10 +53,9 @@
 <div class="sk-result-list">
   <div class="sk-result-list-content">
     <div class="container">
-
-        <router-outlet class="settings"></router-outlet>
-
+      <router-outlet class="settings"></router-outlet>
     </div>
   </div>
 </div>
+
 

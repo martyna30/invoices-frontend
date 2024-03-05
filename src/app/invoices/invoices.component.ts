@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {AddInvoiceComponent} from './add-invoice/add-invoice.component';
 import {FormGroup} from '@angular/forms';
@@ -8,6 +8,8 @@ import {CheckboxService} from '../services/checkbox.service';
 import {DeleteInvoiceComponent} from './delete-invoice/delete-invoice.component';
 import {Invoice} from '../models-interface/invoice';
 import {PrintInvoiceComponent} from './print-invoice/print-invoice.component';
+import {UserAuthService} from '../services/user-auth.service';
+import {SettleInvoiceComponent} from './settle-invoice/settle-invoice/settle-invoice.component';
 
 const FILTER_PAG_REGEX = /[^0-9]/g;
 @Component({
@@ -16,33 +18,39 @@ const FILTER_PAG_REGEX = /[^0-9]/g;
   styleUrls: ['./invoices.component.scss']
 })
 export class InvoicesComponent implements OnInit {
-
   @ViewChild('childAddRef')
   addInvoiceComponent: AddInvoiceComponent;
-
   @ViewChild('childDeleteRef')
   deleteComponent: DeleteInvoiceComponent;
-
   @ViewChild('childPrintInvoice')
   printComponent: PrintInvoiceComponent;
-
+  @ViewChild('childSettleComponentRef')
+  settleComponent: SettleInvoiceComponent;
   isDisabled: false;
-
   page = 1;
   size = 10;
   total: Observable<number>;
-
   invoicesList$: Observable<Array<Invoice>>;
-
   checkboxOfInvoice: number;
-  private isHidden: boolean;
+  isHidden = true;
+  settleInvoiceComponentIsHidden = true;
+  paymentIsHidden = true;
+  isloggedin: boolean;
 
   constructor(private dialog: MatDialog, private invoiceService: InvoiceService,
-              private checkboxService: CheckboxService) {
+              private checkboxService: CheckboxService, private userService: UserAuthService) {
   }
 
   ngOnInit(): void {
     this.loadData();
+    this.checkStatus();
+  }
+
+  checkStatus() {
+    if (this.userService.isloggedin$.getValue() === true) {
+      this.isloggedin = true;
+      this.isHidden = false;
+    }
   }
 
   getColor(): string {
@@ -55,11 +63,18 @@ export class InvoicesComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.data = mode;
     dialogConfig.panelClass = 'custom-modalbox';
-    this.dialog.open(AddInvoiceComponent, dialogConfig);
-    if (mode === 'edit') {
+    if (mode === 'edit' || mode === 'add') {
+      this.dialog.open(AddInvoiceComponent, dialogConfig);
+    }
+    if (mode === 'add') {
+      this.addInvoiceComponent.showAddInvoiceForm();
+    } else if (mode === 'edit') {
       this.addInvoiceComponent.showEditInvoiceForm();
     } else {
-      this.addInvoiceComponent.showAddInvoiceForm();
+      dialogConfig.panelClass = 'settle-modalbox';
+      this.dialog.open(SettleInvoiceComponent, dialogConfig);
+      this.settleComponent.addPaymentForInvoice();
+      //[settleIsHidden]="settleInvoiceComponentIsHidden"
     }
   }
 
@@ -68,10 +83,12 @@ export class InvoicesComponent implements OnInit {
     console.log(this.page);
     this.loadData();
   }
+
   // tslint:disable-next-line:typedef
   formatInput(input: HTMLInputElement) {
     input.value = input.value.replace(FILTER_PAG_REGEX, '');
   }
+
   loadPage(page: any) {
     console.log(page);
     if (page !== 1) {
@@ -83,7 +100,7 @@ export class InvoicesComponent implements OnInit {
 
   // tslint:disable-next-line:typedef
   loadData() {
-    const page = this.page - 1 ;
+    const page = this.page - 1;
     this.invoiceService.getInvoicesListObservable(page, this.size);
     this.invoicesList$ = this.invoiceService.getInvoicesFromService();
     // @ts-ignore
@@ -92,6 +109,7 @@ export class InvoicesComponent implements OnInit {
       this.checkboxService.removeFromInvoicesMap(this.checkboxOfInvoice);
     }
   }
+
   // tslint:disable-next-line:typedef
   changeCheckboxList(checkboxOfInvoice: HTMLInputElement) {
     if (checkboxOfInvoice.checked) {
@@ -108,40 +126,41 @@ export class InvoicesComponent implements OnInit {
     // if (this.userRole.toString() === 'ROLE_ADMIN') {
     this.deleteComponent.deleteInvoice();
   }
+
   // else {
   // alert('Function available only for the administrator');
   //  }
   // }else {
   // alert('Function available only for the administrator');
   // }
+  settleInvoice() {
 
+  }
 
   printInvoice() {
     this.printComponent.printInvoice();
   }
 
 
- /* toggleNamePlaceholder() {
-    this.showNamePlaceholder = (this.myFormModel.get('nameInput').value === '');
-  }
+  /* toggleNamePlaceholder() {
+     this.showNamePlaceholder = (this.myFormModel.get('nameInput').value === '');
+   }
 
-  checkTheChangeName() {
-    this.myFormModel.get('nameInput').valueChanges.subscribe(
-      response => this.searchObjectsWithSpecifiedTitleOrAuthor(response)
-    );
+   checkTheChangeName() {
+     this.myFormModel.get('nameInput').valueChanges.subscribe(
+       response => this.searchObjectsWithSpecifiedTitleOrAuthor(response)
+     );
 
-  searchObjectsWithSpecifiedTitleOrAuthor(objectToSearch) {
-    if (objectToSearch !== undefined && objectToSearch !== '') {
-      this.objectService.getObjectsWithSpecifiedTitleOrAuthor(objectToSearch).subscribe(objectName => {
-        // tslint:disable-next-line:no-shadowed-variable
-        this.searchedObjectsName = objectName.map(objectName => objectName.name);
-      });
-    }
-  }*/
-
+   searchObjectsWithSpecifiedTitleOrAuthor(objectToSearch) {
+     if (objectToSearch !== undefined && objectToSearch !== '') {
+       this.objectService.getObjectsWithSpecifiedTitleOrAuthor(objectToSearch).subscribe(objectName => {
+         // tslint:disable-next-line:no-shadowed-variable
+         this.searchedObjectsName = objectName.map(objectName => objectName.name);
+       });
+     }
+ */
 
 }
-
 
 
 

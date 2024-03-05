@@ -13,6 +13,7 @@ import {AppUser} from '../models-interface/appUser';
 import {ContractorFromGusDto} from '../models-interface/contractorFromGusDto';
 import {ContractorDto} from '../models-interface/contractorDto';
 import {map, max} from 'rxjs/operators';
+import {Payment} from '../models-interface/payment';
 
 
 @Injectable({
@@ -24,8 +25,9 @@ export class HttpService {
   private URL_DB_SELLER = 'http://localhost:8080/v1/seller/';
   private URL_DB_GUS = 'http://localhost:8080/v1/gus/';
   private URL_DB_PRINT = 'http://localhost:8080/v1/invoice/printer/';
-  private httpHeader = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
-  private httpHeader2 = {headers2: new HttpHeaders({'Access-Control-Allow-Origin': '*'})};
+  private URL_DB_PAYMENT = 'http://localhost:8080/v1/payment/';
+  private httpHeader = {headers: new HttpHeaders({'Content-Type': 'application/json'}), headers2: new HttpHeaders({'Access-Control-Allow-Origin': '*'})};
+
 
   constructor(private http: HttpClient) { }
 
@@ -55,6 +57,12 @@ export class HttpService {
   updateInvoice(invoice: Invoice): Observable<Invoice> {
     return this.http.put<Invoice>(this.URL_DB + 'updateInvoice', invoice, {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+    });
+  }
+
+  settleInvoice(invoiceToSettle: Invoice): Observable<Invoice> {
+    return this.http.put<Invoice>(this.URL_DB + 'settleInvoice', invoiceToSettle, {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'}
     });
   }
 
@@ -170,17 +178,6 @@ export class HttpService {
     return this.http.post(this.URL_DB + 'logout', {}, {});
   }
 
-  /*getSellerWithSpecifiedName(name) {
-    const param = new HttpParams()
-      .set('name', name );
-    const Headers = this.httpHeader;
-    return this.http.get<Seller>(this.URL_DB_SELLER + 'getSellerWithSpecifiedName', {
-      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
-      params: param,
-      observe: 'body',
-    });
-  }*/
-
   getSellerByName(name) {
     const param = new HttpParams()
       .set('name', name );
@@ -280,15 +277,6 @@ export class HttpService {
     });
   }
 
-
-  /*generateInvoice(idInvoice: number) {
-    const param = new HttpParams()
-      .set('invoiceId', idInvoice + '');
-    return this.http.get<HttpResponse<any>>(this.URL_DB_PRINT + 'generateInvoice', {
-      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
-      params: param,
-      observe: 'body',
-    });*/
   generateInvoice(idInvoice: number, currentSellerId: number): Observable<any>{
     const param = new HttpParams()
       .set('invoiceId', idInvoice + '')
@@ -299,11 +287,29 @@ export class HttpService {
       params: param,
       responseType: 'blob' as 'json'
     });
-    //}).pipe(map(res => new Blob([res], {type: 'application/pdf'})));
+    // }).pipe(map(res => new Blob([res], {type: 'application/pdf'})));
   }
-}/*return this.http.get<any>(url, { responseType: 'blob', observe: 'response' }).pipe(
-  map((result:HttpResponse<Blob>) => {
-    console.log(result);
-    saveAs(result, "Quotation.pdf");
-    return result;
-  }));*/
+
+
+  savePayment(payment: Payment, idInvoice: number): Observable<Payment> {
+    const param = new HttpParams()
+      .set('invoiceId', idInvoice + '');
+    return this.http.post<Payment>(this.URL_DB_PAYMENT + 'createPayment', payment, {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      params: param
+    });
+  }
+
+  getPaymentsByInvoiceId(invoiceId: number): Observable<Array<Payment>> {
+    const param = new HttpParams()
+      .set('invoiceId', invoiceId + '');
+    return this.http.get<Array<Payment>>(this.URL_DB_PAYMENT + 'getPaymentsByInvoiceId', {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      params: param,
+      observe: 'body',
+    });
+  }
+
+
+}
+

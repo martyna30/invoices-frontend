@@ -1,0 +1,96 @@
+
+<section id="payment" [hidden]="paymentIsHidden">
+<div class="sk-sidebar">
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link sk-header-item-link"  (click)="showPayment()"></a>
+    </li>
+    <li class="nav-item-settings">
+      <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
+    </li>
+  </ul>
+</div>
+
+
+  <div class ="table-container">
+    <ng-container *ngIf="invoicesList$ !== null; else noInvoices">
+      <table class="table table-striped">
+        <thead>
+        <tr input class="form-check-input me-1" type="checkbox" value="" aria-label="..."  class="table-primary">
+          <th scope="row">Lp</th>
+          <th scope="row">Number of invoice</th>
+
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr *ngFor="let invoice of invoicesList$ | async;let i = index;">
+
+          <th scope="row">{{(page-1) * size + i+1}}</th>
+          <td id="invoiceIdInput"   routerLink="/details" routerLinkActive="active"  (click)="openDialog(invoice.id)">{{invoice.number}}</td>
+
+        </tr>
+        </tbody>
+
+      </table>
+    </ng-container>
+
+    <ng-template #noInvoices>
+      <p>No invoices</p>
+    </ng-template>
+
+    <div class=pagination>
+      <ngb-pagination [collectionSize]="total | async" [pageSize]="size" [(page)]="page" [boundaryLinks]="true"  [disabled]='isDisabled'  (pageChange)="loadPage($event)" >
+
+        <ng-template ngbPaginationPages let-page let-pages="pages">
+          <li class="ngb-custom-pages-item" *ngIf="pages.length > 0">
+            <div class="mb-3 d-flex flex-nowrap px-2">
+              <label
+                id="paginationInputLabel"
+                for="paginationInput"
+                class="col-form-label me-2 ms-1"
+              >Page</label>
+              <input #i
+                     type="text"
+                     inputmode="numeric"
+                     pattern="[0-9]*"
+                     class="form-control custom-pages-input"
+                     id="paginationInput"
+                     [value]="page"
+                     (keyup.enter)="selectPage(i.value)"
+                     (blur)="selectPage(i.value)"
+                     (input)="formatInput($any($event).target)"
+                     aria-labelledby="paginationInputLabel paginationDescription"
+                     style="width: 2.5rem"
+              />
+              <span id="paginationDescription" class="col-form-label text-nowrap px-2">
+                  of {{pages.length}}</span>
+            </div>
+          </li>
+        </ng-template>
+      </ngb-pagination>
+      <hr/>
+
+      <pre>Current page: {{page}}</pre>
+    </div>
+
+  </div>
+<app-payment-details #paymentChild [detailsIsHidden]="detailsIsHidden" [invoiceId]="invoiceId"></app-payment-details>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

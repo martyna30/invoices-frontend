@@ -1,5 +1,5 @@
 
-<section id="contractors">
+<section id="contractors"[hidden]="isHidden">
 
   <div class="sk-sidebar">
     <ul class="nav flex-column">
@@ -12,11 +12,9 @@
       <li class="nav-item">
         <a class="nav-link sk-header-item-link" (click)="deleteContractor()">Delete a Contractor</a>
       </li>
-
-      <li class="nav-item-settings" >
+      <li class="nav-item-settings">
         <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
       </li>
-
     </ul>
   </div>
 
@@ -41,7 +39,9 @@
 
         <tr *ngFor="let contractor of contractorsList$ | async;let i = index;">
 
-          <input #self class="form-check-input" type="checkbox"  [value]="contractor.id" id="contractorIdInput" (change)="changeCheckboxList(self)">
+          <input #self class="form-check-input" type="checkbox"
+                 [value]="contractor.id" id="contractorIdInput"
+                 (change)="changeCheckboxList(self)">
 
           <th scope="row">{{(page-1) * size + i+1}}</th>
           <td>{{contractor.name}}</td>

@@ -1,4 +1,4 @@
-<section id="invoices">
+<section id="invoices"[hidden]="isHidden">
 
   <div class="sk-sidebar">
     <ul class="nav flex-column">
@@ -11,15 +11,16 @@
       <li class="nav-item">
         <a class="nav-link sk-header-item-link" (click)="deleteInvoice()">Delete an Invoice</a>
       </li>
+
+      <li class="nav-item">
+        <a class="nav-link sk-header-item-link" target="_blank" (click)="openDialog('')">Settle an Invoice</a>
+      </li>
       <li class="nav-item">
         <a class="nav-link sk-header-item-link" target="_blank" (click)="printInvoice()">Print an Invoice</a>
       </li>
-
       <li class="nav-item-settings">
-          <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
-        </li>
-
-
+        <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
+      </li>
     </ul>
   </div>
 <div class ="table-container">
@@ -54,7 +55,7 @@
         <td>{{invoice.contractor.name}}</td>
         <td>{{invoice.dateOfInvoice}}</td>
         <td>{{invoice.dateOfPayment}}</td>
-        <td>{{invoice.paid}}</td>
+        <td>{{invoice.amountPaid}}</td>
         <td>{{invoice.leftToPay}}</td>
         <td>{{invoice.sumTotal}}</td>
         <td>{{invoice.netAmount}}</td>
@@ -110,9 +111,14 @@
 
 </div>
 
-<app-add-invoice #childAddRef (loadData)="loadData()" [invoicesList$]="invoicesList$" [checkboxOfInvoice]="checkboxOfInvoice"></app-add-invoice>
+<app-add-invoice #childAddRef (loadData)="loadData()" [invoicesList$]="invoicesList$" [checkboxOfInvoice]="checkboxOfInvoice"   ></app-add-invoice>
 
+
+  <app-settle-invoice #childSettleComponentRef  ></app-settle-invoice>
+
+  <app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
+  <app-print-invoice #childPrintInvoice ></app-print-invoice>
 </section>
 
-<app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
-<app-print-invoice #childPrintInvoice ></app-print-invoice>
+
+

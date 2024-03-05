@@ -27,20 +27,11 @@ mat-form-field {
   height: 50px;
 }
 .card-container.card {
-  max-width: 350px;
-  //margin: 0 auto;
   padding: 0px;
-  color: $blue-text;
-
 }
 
 .btn {
-  font-weight: 700;
-  height: 36px;
   width: 100px;
-  user-select: none;
-  cursor: default;
-  color: #392a20;
 }
 .register-button {
   display: flex;
@@ -52,29 +43,10 @@ mat-form-field {
 }
 
 
-.card {
-  background-color: #F7F7F7;
-  padding: 20px 25px 30px;
-  margin: 50px auto 25px;
-  border-radius: 2px;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
-}
 
-.profile-img-card {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto 10px;
-  display: block;
-  border-radius: 50%;
-}
 
-.profile-name-card {
-  font-size: 16px;
-  font-weight: bold;
-  text-align: center;
-  margin: 10px 0 0;
-  min-height: 1em;
-}
+
+
 
 .form-signin #inputUsername,
 .form-signin #inputPassword,
@@ -90,7 +62,6 @@ mat-form-field {
 .form-signin input[type=text],
 .form-signin input[type=nip],
 .form-signin button {
-  //width: 100%;
   display: block;
   margin-bottom: 10px;
   margin-top: 20px;
@@ -124,13 +95,6 @@ mat-form-field {
   background-color: rgb(30, 57, 97);
 }
 
-.forgot-password {
-  color: rgb(104, 145, 162);
-}
 
-.forgot-password:hover,
-.forgot-password:active,
-.forgot-password:focus{
-  color: rgb(12, 97, 33);
-}
+
 

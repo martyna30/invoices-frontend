@@ -43,6 +43,9 @@ import { SettingsComponent } from './settings/settings.component';
 import { SellerComponent } from './settings/seller/seller.component';
 import { GusContractorComponent } from './contractors/add-contractor/gus-contractor/gus-contractor/gus-contractor.component';
 import { PrintInvoiceComponent } from './invoices/print-invoice/print-invoice.component';
+import { PaymentComponent } from './payment/payment.component';
+import { SettleInvoiceComponent } from './invoices/settle-invoice/settle-invoice/settle-invoice.component';
+import { PaymentDetailsComponent } from './payment/payment-details/payment-details/payment-details.component';
 
 
 
@@ -75,6 +78,9 @@ export function jwtOptionsFactory(userAuthService: UserAuthService) {
     SellerComponent,
     GusContractorComponent,
     PrintInvoiceComponent,
+    PaymentComponent,
+    SettleInvoiceComponent,
+    PaymentDetailsComponent,
 
   ],
   imports: [

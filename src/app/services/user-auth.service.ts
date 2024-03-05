@@ -16,8 +16,6 @@ import {SellerService} from './seller.service';
   providedIn: 'root'
 })
 export class UserAuthService {
-
-
   token$ = new BehaviorSubject<string>(null);
 
   refreshtoken$ = new BehaviorSubject<string>(null);

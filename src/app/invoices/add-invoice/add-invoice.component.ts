@@ -32,6 +32,7 @@ import {ContractorsCatalogComponent} from '../../contractors/contractors-catalog
 import {Contractor} from '../../models-interface/contractor';
 import {ContractorsComponent} from '../../contractors/contractors.component';
 import {GusContractorComponent} from '../../contractors/add-contractor/gus-contractor/gus-contractor/gus-contractor.component';
+import {Payment} from '../../models-interface/payment';
 
 
 
@@ -47,10 +48,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   contractors: Array<Contractor>;
   contractorWithName: Contractor;
   private subscriptions = new Subscription();
-
   @ViewChild('childContractorCatalogRef')
   contractorCatalog: ContractorsCatalogComponent;
-
   @ViewChild('childContractorFromGus')
   contractorFromGus: GusContractorComponent;
   @Input()
@@ -66,7 +65,9 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   private mode: string;
   private contractorMode: string;
   myFormModel: FormGroup;
+  payments: FormArray;
   items: FormArray;
+  number: number;
   items$: Observable<any>;
   contractor: FormGroup;
   address: FormGroup;
@@ -78,9 +79,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   private showSellerPlaceholder: boolean;
   private showContractorPlaceholder = [];
   private showProductPlaceholder = [];
-  private showDateOfIssuePlaceholder: boolean;
-  private showDateOfSalePlaceholder: boolean;
-  private showDateOfPaymentPlaceholder: boolean;
   validationErrors: InvoiceValidationError;
   contractorValidationErrors: ContractorValidationError;
   addressValidationErrors: AddressValidationError;
@@ -99,7 +97,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   private showMethodOfPaymentPlaceholder: boolean;
   private showPaidPlaceholder: boolean;
   private showVATPlaceholder: boolean;
-  value: 'Cash';
+  value: 'Transfer';
   methodsOfPayment: MethodOfPayment[] = [
     {value: 'cash', viewValue: 'Cash'},
     {value: 'transfer', viewValue: 'Transfer'},
@@ -114,13 +112,10 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     {value: '90', viewValue: 90},
   ];
 
-  vatRates = [
-    {value: '23', viewValue: '23%'},
-    {value: '8', viewValue: '8%'},
-    {value: '5', viewValue: '5%'},
-    {value: '0', viewValue: '0%'},
-  ];
+
   private dateOfInvoiceInput: any;
+  private showDateOfSalePlaceholder: boolean;
+  private showDateOfIssuePlaceholder: boolean;
 
 
   constructor(private fb: FormBuilder, private checkboxservice: CheckboxService,
@@ -129,8 +124,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
               private datePipe: DatePipe, private decimal: DecimalPipe, private dialog: MatDialog) {
 
   }
-
-
+  //[formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
+  //new Date().toISOString().slice(0, 10),
   ngOnInit(): void {
     this.myFormModel = this.fb.group({
       contractor: this.fb.group({
@@ -146,12 +141,12 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
         }),
       }),
-      dateOfInvoiceInput: new Date().toISOString().slice(0, 10),
-      dateOfSaleInput: new Date().toISOString().slice(0, 10),
+      dateOfInvoiceInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
+      dateOfSaleInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
       periodOfPaymentInput: '7',
       methodOfPaymentInput: 'Transfer',
       // tslint:disable-next-line:radix
-      paidInput: parseInt('0,00'),
+      paidInput:  parseInt('0,00'),
       items: this.fb.array([]),
       netAmountInput: '',
       sumTotalInput: ''
@@ -162,6 +157,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     this.sumGrossValue();
     this.sumNetValue();
   }
+
+
 
   addContratorFromTheCatalog() {
     this.checkedContractorList = this.checkboxservice.getContractorsFromTheCatalogMap();
@@ -202,6 +199,17 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       // tslint:disable-next-line:align
     });
     this.subscriptions.add(sub3);
+  }
+
+
+  setDateOfSale() {
+    this.datePipe = new DatePipe('en-US');
+    const sub4 = this.myFormModel.valueChanges.subscribe(form => {
+      const dateOfSaleInput = this.datePipe.transform(form.dateOfSaleInput, 'MM/dd/yyyy');
+      this.myFormModel.get('dateOfSaleInput').patchValue(dateOfSaleInput);
+      // tslint:disable-next-line:align
+    });
+    this.subscriptions.add(sub4);
   }
 
   showAddInvoiceForm() {
@@ -345,15 +353,24 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
         periodOfPayment: this.myFormModel.get('periodOfPaymentInput').value,
         methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
         paid: this.myFormModel.get('paidInput').value,
+        // isSettled: false,
+        // payments: [],
         items: [],
         netAmount: this.myFormModel.get('netAmountInput').value,
         sumTotal: this.myFormModel.get('sumTotalInput').value
       };
-
+      /*const payment: Payment = {
+        id: null,
+        methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
+        paid: this.myFormModel.get('paidInput').value,
+        dateOfPayment: this.myFormModel.get('dateOfInvoiceInput').value
+      };*/
+      // @ts-ignore
+      // this.payments.push(payment);
       this.items.controls.forEach((productControl, index) => {
         const item: Item = {
           id: null,
-          number: productControl.get('numberInput').value,
+          number:  productControl.get('numberInput').value,
           product: productControl.get('productInput').value,
           unit: productControl.get('unitInput').value,
           amount: productControl.get('amountInput').value,
@@ -365,6 +382,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       });
       this.invoiceService.saveInvoice(invoice).subscribe(saveInvoice => {
         if (saveInvoice !== undefined) {
+          console.log(saveInvoice);
           this.isCreated = true;
           this.invoiceExist = false;
         }
@@ -376,6 +394,9 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
         this.validationErrors = response.error;
         this.isCreated = false;
         console.log(response.error['contractorDto.name'][0]);
+        console.log(response.error['contractorDto.vatIdentificationNumber'][0]);
+        console.log(response.error['invoice.dateOfInvoice'][0]);
+        console.log(response.error['invoice.dateOfSale'][0]);
         console.log(this.validationErrors);
       });
 
@@ -408,11 +429,20 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       periodOfPayment: this.myFormModel.get('periodOfPaymentInput').value,
       methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
       paid: this.myFormModel.get('paidInput').value,
+      //isSettled: false,
+      //payments: [],
       items: [],
       netAmount: this.myFormModel.get('netAmountInput').value,
       sumTotal: this.myFormModel.get('sumTotalInput').value
     };
-
+   /* const payment: Payment = {
+        id: null,
+        methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
+        paid: this.myFormModel.get('paidInput').value,
+        dateOfPayment: this.myFormModel.get('dateOfInvoiceInput').value
+      };*/
+    // @ts-ignore
+    //this.payments.push(payment);
     this.items.controls.forEach(productControl => {
       const item: Item = {
         id: null,
@@ -466,10 +496,20 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       periodOfPayment: this.myFormModel.get('periodOfPaymentInput').value,
       methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
       paid: this.myFormModel.get('paidInput').value,
+      //isSettled: this.myFormModel.get('isSettledInput').value,
+      //payments: [],
       items: [],
       netAmount: this.myFormModel.get('netAmountInput').value,
       sumTotal: this.myFormModel.get('sumTotalInput').value
     };
+    /*const payment: Payment = {
+      id: null,
+      methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
+      paid: this.myFormModel.get('paidInput').value,
+      dateOfPayment: this.myFormModel.get('dateOfInvoiceInput').value
+    };*/
+    // @ts-ignore
+    //this.payments.push(payment);
     this.items.controls.forEach(productControl => {
       const item: Item = {
         id: null,
@@ -516,6 +556,10 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       vatRateInput: '23',
       grossValueInput: '',
     });
+  }
+
+  saveNumber(number) {
+   this.number = number;
   }
 
   addNextItem() {
@@ -596,6 +640,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 // Contractor
 
 
+
   toggleNamePlaceholder() {
     this.showNamePlaceholder = (this.myFormModel.get('contractor').get('nameInput').value === '');
   }
@@ -637,13 +682,15 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
   private clearInvoiceForm() {
     this.clearContractorForm();
-    //this.myFormModel.get('paidInput').setValue(''),
+    this.myFormModel.get('paidInput').setValue( parseInt('0,00')),
       this.myFormModel.get('netAmountInput').setValue(''),
       this.myFormModel.get('sumTotalInput').setValue(''),
       this.items.controls.forEach(productControl => {
         productControl.get('productInput').setValue(''),
+          //productControl.get('unitInput').setValue('pc'),
           productControl.get('netWorthInput').setValue(''),
           productControl.get('grossValueInput').setValue('');
+
       });
   }
 

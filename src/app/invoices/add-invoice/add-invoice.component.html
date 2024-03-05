@@ -1,4 +1,4 @@
-<section class="custom-modalbox" [hidden]="isHidden"
+<section class="modalbox" [hidden]="isHidden"
          xmlns="http://www.w3.org/1999/html">
   <h2 mat-dialog-title></h2>
   <mat-dialog-content [formGroup]="myFormModel" class="mat-dialog" method="post">
@@ -111,7 +111,7 @@
     <fieldset class="input-fieldset">
       <label class="input-label">Date of issue</label>
       <mat-form-field appearance="fill">
-        <input matInput type="date" name="dateOfIssue" (ngModelChange)="toggleDateOfIssuePlaceholder()" (change)="setDate()" placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
+        <input matInput type="date" name="dateOfIssue" (ngModelChange)="toggleDateOfIssuePlaceholder()"  placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
       </mat-form-field>
 
 
@@ -177,7 +177,7 @@
             <tr *ngFor="let item of  myFormModel.get('items')['controls']; let i = index;" formGroupName="{{ i }}">
 
               <th class="numberInput">
-                <input matInput class="number" [disabled]="true"  required formControlName="numberInput">{{ i + 1 }}
+                <input #number matInput class="number" [disabled]="true" (input)="saveNumber(number)" required formControlName="numberInput"> {{i+1}}
               </th>
 
               <td>
@@ -197,7 +197,7 @@
 
               <td>
                 <select class="select"  required  formControlName="unitInput">
-                  <option #selectElement2  value="pc" ngModel = "selected" [selected]='selectElement'>pc.</option>
+                  <option #selectElement2  value="pc" >pc.</option>
                   <option value="kg">kg</option>
                   <option value="t">t</option>
                   <option value="m">m</option>
@@ -211,13 +211,14 @@
               <td id="td-amount">
                 <mat-form-field appearance="fill">
 
-                  <input class="amount" matInput  placeholder="Insert a amount"  (change)="sumNetValue()" required formControlName="amountInput">
+                  <input matInput  class="amount"  placeholder="Insert a amount"  (change)="sumNetValue()" required formControlName="amountInput">
                 </mat-form-field>
 
                 <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].amount'] !== undefined">
                   {{validationErrors['items[' + i + '].amount'][0]}}
                 </div>
               </td>
+
 
               <td class="td">
                 <mat-form-field appearance="fill">

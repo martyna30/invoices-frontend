@@ -14,7 +14,7 @@ export class InvoiceService {
   private totalCountInvoices$ = new BehaviorSubject<number>(0);
 
   constructor(private httpService: HttpService) {
-    this.getInvoicesFromService();
+    //this.getInvoicesFromService();
   }
 
   // tslint:disable-next-line:typedef
@@ -62,5 +62,9 @@ export class InvoiceService {
 
   generateInvoice(idInvoice: number, IdCurrentSeller: number) {
     return this.httpService.generateInvoice(idInvoice, IdCurrentSeller);
+  }
+
+  settleInvoice(invoiceToSettle: Invoice) {
+    return this.httpService.settleInvoice(invoiceToSettle);
   }
 }

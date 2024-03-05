@@ -1,8 +1,7 @@
 import {Address} from './address';
 
 export interface ContractorDto {
-
-id: number;
+  id: number;
 name?: string;
 vatIdentificationNumber?: string;
 address?: Address;

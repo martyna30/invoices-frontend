@@ -1,0 +1,59 @@
+
+<section class="modalbox" [hidden]="detailsIsHidden" xmlns="http://www.w3.org/1999/html">
+  <h2 mat-dialog-title></h2>
+  <mat-dialog-content  class="mat-dialog" method="post">
+
+      <div class ="table-container">
+        <ng-container *ngIf="paymentsList$ !== null; else NoPayments">
+          <table class="table table-striped">
+            <thead>
+            <tr input class="form-check-input me-1" type="checkbox" value="" aria-label="..."  class="table-primary">
+              <th scope="row"> # </th>
+              <th scope="col">Method of payment</th>
+              <th scope="col">Amount paid</th>
+              <th scope="col">Date of payment</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr *ngFor="let payment of paymentsList$ | async; let i = index;">
+
+
+              <input #self class="form-check-input" type="checkbox"
+                     [value]="payment.id" id="paymentIdInput"
+                     (change)="changeCheckboxList(self)">
+
+              <th scope="row">{{i+1}}</th>
+              <td>{{payment?.methodOfPayment}}</td>
+              <td>{{payment?.paid}}</td>
+              <td>{{payment?.dateOfPayment}}</td>
+
+            </tr>
+            </tbody>
+
+          </table>
+        </ng-container>
+
+        <ng-template #NoPayments>
+          <p>No Payments</p>
+        </ng-template>
+
+
+      </div>
+
+
+
+
+
+    <div mat-dialog-actions  class="button-group">
+
+
+
+      <button mat-raised-button (click)="closeDialog()">Close </button>
+    </div>
+  </mat-dialog-content>
+
+
+
+
+</section>

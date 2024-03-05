@@ -10,6 +10,7 @@ import {Invoice} from '../models-interface/invoice';
 import {AddContractorComponent} from './add-contractor/add-contractor.component';
 import {DeleteContractorComponent} from './delete-contractor/delete-contractor.component';
 import {Contractor} from '../models-interface/contractor';
+import {UserAuthService} from '../services/user-auth.service';
 
 const FILTER_PAG_REGEX = /[^0-9]/g;
 @Component({
@@ -20,26 +21,37 @@ const FILTER_PAG_REGEX = /[^0-9]/g;
 export class ContractorsComponent implements OnInit {
   @ViewChild('childAddRef')
   addContractorComponent: AddContractorComponent;
-
   @ViewChild('childDeleteRef')
   deleteComponent: DeleteContractorComponent;
-
+  isHidden = true;
   isDisabled: false;
-
+  isloggedin: boolean;
   page = 1;
   size = 10;
   total: Observable<number>;
-
   contractorsList$: Observable<Array<Contractor>>;
-
   checkboxOfContractor: number;
-  private isHidden: boolean;
 
   constructor(private dialog: MatDialog, private contractorService: ContractorService,
-              private checkboxService: CheckboxService) { }
+              private checkboxService: CheckboxService, private userService: UserAuthService) { }
 
   ngOnInit(): void {
     this.loadData();
+    this.checkStatus();
+  }
+
+  private showContractorsComponent() {
+    if (this.isHidden) {
+      this.isHidden = !this.isHidden;
+    } else {
+      this.isHidden = true;
+    }
+  }
+  checkStatus() {
+    if (this.userService.isloggedin$.getValue() === true) {
+      this.isloggedin = true;
+      this.isHidden = false;
+    }
   }
 
   getColor() {
@@ -105,6 +117,7 @@ export class ContractorsComponent implements OnInit {
     // if (this.userRole.toString() === 'ROLE_ADMIN') {
     this.deleteComponent.deleteContractor();
   }
+
 
 
 }

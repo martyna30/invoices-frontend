@@ -112,24 +112,12 @@ table {
 }
 
 
-
-
-.custom-modalbox {
-  font-size: $font-size-5;
-  border: 1px solid #000;
-  color: black;
-  height: auto;
-  width: auto;
+.modalbox {
   min-width: 800px;
   max-width: 1000px;
   min-height: 400px;
   max-height: 800px;
-  background-color: #fff;
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: $grid-base*4 $grid-base*3 $grid-base*3 $grid-base*3;
-  //overflow: scroll;
   overflow-y: visible;
 }
+
+

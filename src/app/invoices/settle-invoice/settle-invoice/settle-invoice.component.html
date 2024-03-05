@@ -1,0 +1,51 @@
+<section class="modalbox" [hidden]="settleIsHidden"
+         xmlns="http://www.w3.org/1999/html">
+  <h2 mat-dialog-title></h2>
+
+  <mat-dialog-content [formGroup]="formModel" class="mat-dialog" method="post">
+    <form [formGroup]="formModel">
+      <div id="payments">
+        <fieldset class="input-fieldset">
+          <label class="input-label">Method of payment</label>
+
+          <select class="select"  [value]="value" formControlName="methodOfPaymentInput">
+            <option *ngFor="let methodOfPayment of methodsOfPayment">
+              {{methodOfPayment.viewValue}}
+            </option>
+          </select>
+        </fieldset>
+
+
+        <fieldset class="input-fieldset">
+          <label class="input-label">Amount paid</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="number" name="paid"  placeholder="Insert a amount paid" required formControlName="paidInput">
+          </mat-form-field>
+          <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.paid">
+            <span class="text text-danger"> {{validationErrors.paid[0]}}</span>
+          </div>
+
+        </fieldset>
+
+
+      </div>
+      <fieldset class="input-fieldset">
+          <label class="input-label">Date of payment</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="date" name="dateOfPayment"  required formControlName="dateOfPaymentInput">
+          </mat-form-field>
+
+        </fieldset>
+
+    </form>
+
+  </mat-dialog-content>
+
+  <div mat-dialog-actions [align]="'end'" class="button-group">
+    <button mat-raised-button  class="mat-raised-button btn-lg" type="submit" (click)="savePayment()">Submit</button>
+    <button mat-raised-button (click)="closeDialog()">Close </button>
+  </div>
+
+</section>
+
+

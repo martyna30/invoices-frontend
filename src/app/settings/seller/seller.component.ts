@@ -25,7 +25,7 @@ import {Router} from '@angular/router';
 })
 export class SellerComponent implements OnInit {
   @Input()
-  isHidden = true;
+  isHidden;
   private mode: string;
   myFormModel: FormGroup;
   private isCreated: boolean;
@@ -60,6 +60,7 @@ export class SellerComponent implements OnInit {
         countryInput: 'Poland'
       }),
     });
+    this.isHidden = true;
    // this.userService.userName$.subscribe((username) => {
     //  this.username = username;
    // });
