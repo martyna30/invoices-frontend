@@ -4,6 +4,7 @@ import {HttpService} from './http.service';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {Contractor} from '../models-interface/contractor';
 import {Seller} from '../models-interface/seller';
+import {Payment} from '../models-interface/payment';
 
 @Injectable({
   providedIn: 'root'
@@ -64,7 +65,4 @@ export class InvoiceService {
     return this.httpService.generateInvoice(idInvoice, IdCurrentSeller);
   }
 
-  settleInvoice(invoiceToSettle: Invoice) {
-    return this.httpService.settleInvoice(invoiceToSettle);
-  }
 }

@@ -1,12 +1,16 @@
-import {Component, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {UserAuthService} from '../services/user-auth.service';
 import {InvoiceService} from '../services/invoice.service';
 import {Observable} from 'rxjs';
 import {Invoice} from '../models-interface/invoice';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {SellerComponent} from '../settings/seller/seller.component';
 import {PaymentDetailsComponent} from './payment-details/payment-details/payment-details.component';
 import {PaymentService} from '../services/payment.service';
+import {CheckboxService} from '../services/checkbox.service';
+import {InvoicesMapComponent} from '../checkbox-component/invoices-map/invoices-map/invoices-map.component';
+import {InvoicesComponent} from '../invoices/invoices.component';
+
 
 const FILTER_PAG_REGEX = /[^0-9]/g;
 @Component({
@@ -15,7 +19,6 @@ const FILTER_PAG_REGEX = /[^0-9]/g;
   styleUrls: ['./payment.component.scss']
 })
 export class PaymentComponent implements OnInit {
-  paymentIsHidden = true;
   detailsIsHidden = true;
   isloggedin: boolean;
   page = 1;
@@ -24,20 +27,30 @@ export class PaymentComponent implements OnInit {
   invoicesList$: Observable<Array<Invoice>>;
   @ViewChild('paymentChild')
   paymentDetailsComponent: PaymentDetailsComponent;
+  @ViewChild('childInvoicesMap')
+  invoiceMap: InvoicesMapComponent;
   invoiceId: number;
   isDisabled: false;
   private token: string;
+  paymentIsHidden = true;
 
   constructor(private userAuthService: UserAuthService,
               private invoiceService: InvoiceService,
-              private dialog: MatDialog){}
+              private checkboxService: CheckboxService,
+              private dialog: MatDialog,
+              public dialogRef: MatDialogRef<PaymentDetailsComponent>,
+              ){}
 
-  ngOnInit(): void {
+
+
+
+   ngOnInit() {
     this.checkToken();
-    this.checkStatus();
-    this.loadData();
-
+    if (this.token !== null && this.token !== undefined) {
+      this.checkStatus();
+    }
   }
+
 
   checkToken(): string {
     this.userAuthService.token$.subscribe((token) => {
@@ -50,9 +63,12 @@ export class PaymentComponent implements OnInit {
     if (this.userAuthService.isloggedin$.getValue() === true) {
       this.isloggedin = true;
       this.paymentIsHidden = false;
+      if (this.isloggedin) {
+        this.loadInvoices();
+        //this.invoicesComponent.loadData();
+      }
     }
   }
-
 
 
   showPayment() {
@@ -62,7 +78,7 @@ export class PaymentComponent implements OnInit {
   selectPage(page: string) {
     this.page = parseInt(page, 10) || 1;
     console.log(this.page);
-    this.loadData();
+    this.loadInvoices();
   }
 
   formatInput(input: HTMLInputElement) {
@@ -74,22 +90,36 @@ export class PaymentComponent implements OnInit {
     if (page !== 1) {
       this.page = page;
       console.log(page);
-      this.loadData();
+      this.loadInvoices();
     }
   }
 
 
-  loadData() {
+  loadInvoices() {
     const page = this.page - 1;
     this.invoiceService.getInvoicesListObservable(page, this.size);
     this.invoicesList$ = this.invoiceService.getInvoicesFromService();
     // @ts-ignore
     this.total = this.invoiceService.getTotalCountInvoices();
+   // if (this.checkboxService.lengthInvoicesMap() > 0) {
+      //const invoiceid = this.invoiceMap.getInvoiceIdFromMap();
+      //this.checkboxService.removeFromInvoicesMap(this.invoiceid);
+      //this.changeInvoiceMap(this)
+  }
+
+
+  changeInvoiceMap(currentInvoiceid: number) {
+    this.invoiceId = currentInvoiceid;
+    if (this.checkboxService.getInvoicesMap().size > 0) {
+      const invoiceId = this.invoiceMap.getInvoiceIdFromMap();
+      this.checkboxService.removeFromInvoicesMap(invoiceId);
+    }
+    this.checkboxService.addToInvoicesMap(currentInvoiceid);
   }
 
 
 
-     async openDialog(invoiceId) {
+  async openDialog(invoiceId) {
     this.invoiceId = invoiceId;
     // this.myFormModel.enable();
     const dialogConfig = new MatDialogConfig();
@@ -105,11 +135,24 @@ export class PaymentComponent implements OnInit {
     },*/
     dialogConfig.panelClass = 'details-modalbox';
     if (this.token !== null && this.token !== undefined) {
-    await this.paymentDetailsComponent.getPaymentsListForInvoice(invoiceId);
+      await this.paymentDetailsComponent.getPaymentsListForInvoice(invoiceId);
+      const dialogRef = this.dialog.open(PaymentDetailsComponent, dialogConfig);
+      //dialogRef.afterClosed().subscribe(result => {
+       // console.log(result);
+       // this.checkboxService.removeFromInvoicesMap(this.invoiceId);
+     // });
     } else {
       alert('Function available only for the logged-in user');
     }
   }
+  getColor(): string {
+    return 'blue';
+  }
+
+
+
+
+
 }
 
 

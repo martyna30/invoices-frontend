@@ -14,6 +14,7 @@
 
   <div class ="table-container">
     <ng-container *ngIf="invoicesList$ !== null; else noInvoices">
+      <p [ngStyle]="{color: getColor()}"></p>
       <table class="table table-striped">
         <thead>
         <tr input class="form-check-input me-1" type="checkbox" value="" aria-label="..."  class="table-primary">
@@ -25,9 +26,10 @@
         <tbody>
 
         <tr *ngFor="let invoice of invoicesList$ | async;let i = index;">
-
+          <input #self class="form-check-input" type="checkbox"  [value]="invoice.id" id="checkboxIdInput">
           <th scope="row">{{(page-1) * size + i+1}}</th>
-          <td id="invoiceIdInput"   routerLink="/details" routerLinkActive="active"  (click)="openDialog(invoice.id)">{{invoice.number}}</td>
+          <td id="invoiceIdInput"   routerLink="/details" routerLinkActive="active" (click)="changeInvoiceMap(invoice.id)" (click)="openDialog(invoice.id)">
+            {{invoice.number}}</td>
 
         </tr>
         </tbody>
@@ -75,7 +77,9 @@
     </div>
 
   </div>
-<app-payment-details #paymentChild [detailsIsHidden]="detailsIsHidden" [invoiceId]="invoiceId"></app-payment-details>
+  <app-invoices-map #childInvoicesMap>    </app-invoices-map>
+  <app-payment-details #paymentChild [detailsIsHidden]="detailsIsHidden"  [invoiceId]="invoiceId"  ></app-payment-details>
+
 </section>
 
 

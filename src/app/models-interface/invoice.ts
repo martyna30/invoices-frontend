@@ -3,12 +3,14 @@ import {Contractor} from './contractor';
 import {ContractorDto} from './contractorDto';
 import {Payment} from './payment';
 import {InvoiceStatus} from './invoiceStatus';
+import {Seller} from './seller';
 
 // tslint:disable-next-line:class-name
 export interface Invoice {
   id: number;
   number?: number;
   contractor: ContractorDto;
+  seller: Seller;
   dateOfInvoice: Date;
   dateOfSale: Date;
   dateOfPayment?: Date;
@@ -17,7 +19,6 @@ export interface Invoice {
   paid: number; //faktura
   amountPaid?: number; // co to?
   leftToPay?: number;//tabela
-  //payments?: Array<Payment>;
   isSettled?: InvoiceStatus;
   items: Array<Item>;
   sumTotal: number;

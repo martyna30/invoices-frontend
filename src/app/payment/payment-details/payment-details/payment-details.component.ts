@@ -1,4 +1,15 @@
-import {AfterViewChecked, AfterViewInit, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges, OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {SellerValidationError} from '../../../models-interface/sellerValidationError';
 import {AppUser} from '../../../models-interface/appUser';
@@ -8,48 +19,73 @@ import {formatDate} from '@angular/common';
 import {Observable} from 'rxjs';
 import {Payment} from '../../../models-interface/payment';
 import {PaymentService} from '../../../services/payment.service';
-import * as console from 'console';
-import {timeout} from 'rxjs/operators';
+import {SettleInvoiceComponent} from '../../../invoices/settle-invoice/settle-invoice/settle-invoice.component';
+import {CheckboxService} from '../../../services/checkbox.service';
+import {InvoicesMapComponent} from '../../../checkbox-component/invoices-map/invoices-map/invoices-map.component';
+import {PaymentsMapComponent} from '../../../checkbox-component/payments-map/payments-map/payments-map.component';
+import {DeletePaymentComponent} from '../../delete-payment/delete-payment/delete-payment.component';
 const FILTER_PAG_REGEX = /[^0-9]/g;
+
+
 @Component({
   selector: 'app-payment-details',
   templateUrl: './payment-details.component.html',
   styleUrls: ['./payment-details.component.scss']
 })
 
+
 export class PaymentDetailsComponent implements OnInit {
   page = 1;
   size = 10;
   total: Observable<number>;
   paymentsList$: Observable<Array<Payment>>;
-  payments: Array<Payment>;
   validationErrors: PaymentValidationErrors;
   username: string;
   isDisabled: false;
+  @ViewChild('childSettleInvoice')
+  settleInvoice: SettleInvoiceComponent;
+  @ViewChild('childPaymentsMap')
+  paymentsMap: PaymentsMapComponent;
+  @ViewChild('childInvoicesMap')
+  invoiceMap: InvoicesMapComponent;
+  @ViewChild('childDeleteRef')
+  deleteComponent: DeletePaymentComponent;
   @Input()
-  invoiceId: number;
+  private invoiceId: number;
+  idPayment: number;
+  checkboxOfPayment: number;
+  paymentIsPrime$: Observable<Payment>;
   @Input()
-  detailsIsHidden;
+  detailsIsHidden: boolean;
   value: 'Cash';
   private timeoutId1;
   private timeoutId2;
-  constructor(private fb: FormBuilder, private paymentService: PaymentService) { }
+  private checkedList: Map<number, number>;
 
 
-//<app-settle-invoice (addPaymentToInvoice)="getPaymentsForInvoice($event)"> </app-settle-invoice>
-    ngOnInit() {
-      /*this.myFormModel = this.fb.group({
-        payments: this.fb.array([]),
-      });*/
-      this.getPaymentsListFromService();
+  constructor(private fb: FormBuilder, private paymentService: PaymentService, private checkboxService: CheckboxService) {
   }
 
+
+  ngOnInit() {
+    this.getPaymentsListFromService();
+  }
+
+  /*private checkOrPaymentIsPrime() {
+    this.paymentIsPrime$ = this.paymentService.getPrimePaymentFromService();
+    this.paymentService.findPrimePayment();
+  }*/
+
+
   getPaymentsListForInvoice(invoiceId: number) {
+    // this.paymentService.currentInvoiceId$.next(this.invoiceId);
     this.invoiceId = invoiceId;
     return new Promise(() => {
-      this.paymentService.getPaymentsListObservableByInvoice(this.invoiceId);
-      this.timeoutId2 = setTimeout(() => {
-      }, 1000);
+    this.paymentService.getPaymentsListObservableByInvoice(this.invoiceId);
+    // this.showInvoiceDetails();to
+    this.timeoutId2 = setTimeout(() => {
+      // tslint:disable-n
+     }, 200);
     });
   }
 
@@ -57,8 +93,28 @@ export class PaymentDetailsComponent implements OnInit {
     this.paymentsList$ = this.paymentService.getPaymentsListFromService();
   }
 
+
+  addNextPayment() {
+    this.settleInvoice.addPaymentForInvoice();
+  }
+
+
+  deletePayment() {
+    this.deleteComponent.deletePayment();
+  }
+
+
+
+  async loadData() {
+    this.invoiceId = this.invoiceMap.getInvoiceIdFromMap();
+    await this.getPaymentsListForInvoice(this.invoiceId);
+    // this.paymentsMap.refresh();
+  }
+
+
+
   showInvoiceDetails() {
-   // this.invoiceId = invoiceId;
+    // this.invoiceId = invoiceId;
     if (this.detailsIsHidden) {
       this.detailsIsHidden = !this.detailsIsHidden;
     } else {
@@ -66,48 +122,26 @@ export class PaymentDetailsComponent implements OnInit {
     }
   }
 
-
-
-  /*addPaymentToInvoice(currentPayment: number){
-   this.payments = this.myFormModel.get('payments') as FormArray;
-   this.payments.push(this.createPayment(currentPayment));
-  }*/
-
-
   closeDialog() {
     this.detailsIsHidden = true;
+    //this.checkboxService.removeFromInvoicesMap(this.invoiceId);
+    //console.log(this.invoiceId);
+    this.settleInvoice.clearPaymentForm();
   }
-
-
-  /*get paymentsArray() {
-    return this.myFormModel.get('payments') as FormArray;
-  }*/
-
-  private createPayment(): FormGroup {
-    return this.fb.group({
-      methodOfPaymentInput: 'Transfer',
-      // tslint:disable-next-line:radix
-      paidInput: parseInt('0,00'),
-      dateOfPaymentInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
-    });
-  }
-
-
   /*public addNextPayment() {
     this.payments.push(this.createPayment());
     ///  <button type="button" class="c-btn c-btn--accent" (click)="addNextPayment()">Add</button>
   }*/
 
 
-
-
-  changeCheckboxList(self: HTMLInputElement) {
-
+  changeCheckboxList(checkbox: HTMLInputElement) {
+    if (checkbox.checked) {
+      this.checkboxOfPayment = Number(checkbox.value);
+      this.checkboxService.addToPaymentsMap(this.checkboxOfPayment);
+    } else {
+      this.checkboxService.removeFromPaymentsMap(this.checkboxOfPayment);
+    }
   }
 
 
-
-
-
 }
-

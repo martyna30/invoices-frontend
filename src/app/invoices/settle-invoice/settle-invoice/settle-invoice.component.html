@@ -8,7 +8,7 @@
         <fieldset class="input-fieldset">
           <label class="input-label">Method of payment</label>
 
-          <select class="select"  [value]="value" formControlName="methodOfPaymentInput">
+          <select class="select"  [value]="value"  formControlName="methodOfPaymentInput">
             <option *ngFor="let methodOfPayment of methodsOfPayment">
               {{methodOfPayment.viewValue}}
             </option>
@@ -22,7 +22,7 @@
             <input matInput type="number" name="paid"  placeholder="Insert a amount paid" required formControlName="paidInput">
           </mat-form-field>
           <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.paid">
-            <span class="text text-danger"> {{validationErrors.paid[0]}}</span>
+            {{validationErrors.paid}}
           </div>
 
         </fieldset>
@@ -45,7 +45,8 @@
     <button mat-raised-button  class="mat-raised-button btn-lg" type="submit" (click)="savePayment()">Submit</button>
     <button mat-raised-button (click)="closeDialog()">Close </button>
   </div>
-
+  <app-invoices-map #childInvoicesMap >  </app-invoices-map>
+  <app-payments-map #childPaymentsMap >  </app-payments-map>
 </section>
 
 

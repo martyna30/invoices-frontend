@@ -10,7 +10,8 @@
         <label class="input-label">Buyer's name</label>
         <div id="contractorInput">
         <mat-form-field  appearance="fill">
-        <input id="nameInput"  matInput type="text" [matAutocomplete]="auto"  (ngModelChange)="toggleNamePlaceholder()" placeholder="Insert a buyer's name" required formControlName="nameInput">
+        <input id="nameInput"  matInput type="text" [matAutocomplete]="auto"  (ngModelChange)="toggleNamePlaceholder()"
+               placeholder="Insert a buyer's name" required formControlName="nameInput">
 
           <mat-autocomplete #auto="matAutocomplete">
             <mat-option *ngFor="let name of filteredName" [value]="name">{{name}}</mat-option>
@@ -111,7 +112,7 @@
     <fieldset class="input-fieldset">
       <label class="input-label">Date of issue</label>
       <mat-form-field appearance="fill">
-        <input matInput type="date" name="dateOfIssue" (ngModelChange)="toggleDateOfIssuePlaceholder()"  placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
+        <input matInput type="date" name="dateOfIssue"   placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
       </mat-form-field>
 
 
@@ -120,7 +121,7 @@
     <fieldset class="input-fieldset">
       <label class="input-label">Date of sale</label>
       <mat-form-field appearance="fill">
-        <input matInput  type="date" name="dateOfSale" (ngModelChange)="toggleDateOfSalePlaceholder()" placeholder="Insert a date of sale" required formControlName="dateOfSaleInput" >
+        <input matInput  type="date" name="dateOfSale"  placeholder="Insert a date of sale" required formControlName="dateOfSaleInput" >
       </mat-form-field>
 
     </fieldset>
@@ -140,7 +141,7 @@
 
        <select class="select"  [value]="value" formControlName="methodOfPaymentInput">
        <option *ngFor="let methodOfPayment of methodsOfPayment" >
-        {{methodOfPayment.viewValue}}
+         {{methodOfPayment.viewValue}}
        </option>
       </select>
 
@@ -150,7 +151,7 @@
       <fieldset class="input-fieldset">
       <label class="input-label">Amount paid</label>
       <mat-form-field appearance="fill">
-        <input matInput type="number" name="paid"     (ngModelChange)="togglePaidPlaceholder()" placeholder="Insert a amount paid" required formControlName="paidInput">
+        <input matInput type="number" name="paid"     (change)="togglePaidPlaceholder()" placeholder="Insert a amount paid" required formControlName="paidInput">
       </mat-form-field>
         <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.paid">
           <span class="text text-danger"> {{validationErrors.paid[0]}}</span>
@@ -246,6 +247,7 @@
 
                 <div class="invalid-feedback d-block" *ngIf="validationErrors !== undefined && validationErrors['items[' + i + '].grossValue'] !== undefined">
                   {{validationErrors['items[' + i + '].grossValue'][0]}}
+
                 </div>
               </td>
 
@@ -299,6 +301,9 @@
 
 <app-contractors-catalog #childContractorCatalogRef  (addContratorFromTheCatalog)="addContratorFromTheCatalog()" ></app-contractors-catalog>
 <app-gus-contractor #childContractorFromGus (addContractorFromTheGus)="addContractorFromTheGus($event)"></app-gus-contractor>
+  <app-invoices-map #childInvoicesMap >  </app-invoices-map>
+
+
 </section>
 
 

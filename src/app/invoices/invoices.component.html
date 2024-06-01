@@ -28,7 +28,8 @@
     <p [ngStyle]="{color: getColor()}"></p>
     <table class="table table-striped">
       <thead>
-      <tr input class="form-check-input me-1" type="checkbox" value="" aria-label="..."  class="table-primary">
+      <tr input class="form-check-input me-1" type="checkbox"
+          value="" aria-label="..."  class="table-primary">
         <th scope="row"> # </th>
         <th scope="row">Lp</th>
         <th scope="row">Number of document</th>
@@ -48,7 +49,9 @@
 
       <tr *ngFor="let invoice of invoicesList$ | async;let i = index;">
 
-        <input #self class="form-check-input" type="checkbox"  [value]="invoice.id" id="invoiceIdInput" (change)="changeCheckboxList(self)">
+        <input #self class="form-check-input" type="checkbox"
+               [value]="invoice.id" id="checkboxIdInput"
+               (change)="changeCheckboxList(self)">
 
         <th scope="row">{{(page-1) * size + i+1}}</th>
         <td>{{invoice.number}}</td>
@@ -118,6 +121,7 @@
 
   <app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
   <app-print-invoice #childPrintInvoice ></app-print-invoice>
+  <app-invoices-map #childInvoicesMap >    </app-invoices-map>
 </section>
 
 

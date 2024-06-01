@@ -8,6 +8,34 @@
 @import 'src/scss/07-templates/_templates.scss';
 @import 'src/scss/08-utilities/_utilities.scss';
 
+.fa-splotch_wrap {
+  position: relative;
+  height: 50px;
+  width: 257px;
+}
+
+
+.fa-splotch_wrap :hover .fa-splotch_description {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+.fa-splotch_description {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(29, 106, 154, 0.72);
+  color: #fff;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .2s, visibility .2s;
+}
+
+
 td {
   width: 150px;
   min-width: 30px;
@@ -32,3 +60,9 @@ table {
   left: 50%;
 
 }
+
+
+button {
+  margin-left: $gutter;
+}
+

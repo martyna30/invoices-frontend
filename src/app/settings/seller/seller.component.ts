@@ -25,7 +25,7 @@ import {Router} from '@angular/router';
 })
 export class SellerComponent implements OnInit {
   @Input()
-  isHidden;
+  isHidden: boolean;
   private mode: string;
   myFormModel: FormGroup;
   private isCreated: boolean;
@@ -36,9 +36,9 @@ export class SellerComponent implements OnInit {
   addSellerToTheSettings: EventEmitter<string> = new EventEmitter<string>();
   private sellerId: number;
   private sellerExist: boolean;
-  loggedInPassword: string;
   @Output()
   settingsIsHidden: EventEmitter<boolean> = new EventEmitter<boolean>();
+
 
 
 
@@ -61,15 +61,14 @@ export class SellerComponent implements OnInit {
       }),
     });
     this.isHidden = true;
-   // this.userService.userName$.subscribe((username) => {
-    //  this.username = username;
-   // });
-    //if (this.userService.isloggedin$.getValue() === true) {
-     // this.userService.getUserByUsername(this.username).subscribe(((appUser) => {
-     //   this.loggedinUser = appUser;
-     // }));
-   // }
+    /*if (this.userService.isloggedin$.getValue() === true) {
+      this.userService.userName$.subscribe((username) => {
+        this.username = username;
+      });*/
+    this.username = this.userService.getUsernameForLoggedInUser();
   }
+
+
 
   showSellerData() {
     this.mode = 'add';
@@ -79,15 +78,6 @@ export class SellerComponent implements OnInit {
       this.isHidden = true;
     }
   }
-
-  /*showSellerFromGusData() {
-    this.mode = 'gus';
-    if (this.isHidden) {
-      this.isHidden = !this.isHidden;
-    } else {
-      this.isHidden = true;
-    }
-  }*/
 
   showEditSellerData(name: string) {
     this.mode = 'edit';
@@ -142,27 +132,12 @@ export class SellerComponent implements OnInit {
           country: this.myFormModel.get('address').get('countryInput').value
         },
         appUser: {
-          id: this.loggedinUser.id,
-          username: this.loggedinUser.username,
+          id: null,
+          username: this.username,
           password: null
         }
       };
-      this.sellerService.saveSeller(seller).subscribe(saveSeller => {
-        if (saveSeller !== undefined) {
-          this.isCreated = true;
-          this.sellerExist = false;
-        }
-        if (this.isCreated) {
-          this.addSellerToTheSettings.emit(seller.vatIdentificationNumber);
-          this.closeDialog();
-        }
-      }, (response: HttpErrorResponse) => {
-        this.validationErrors = response.error;
-        console.log(response.error.name[0]);
-        console.log(this.validationErrors.addressDto.postcode[0]);
-        console.log(this.validationErrors);
-      });
-      this.isCreated = false;
+      this.saveSellerToDatabase(seller);
       // if (response.status === 403 || response.status === 401) {
       // alert('Function available only for the administrator');
 
@@ -188,6 +163,10 @@ export class SellerComponent implements OnInit {
         password: null
       }
     };
+    this.saveSellerToDatabase(seller);
+  }
+
+  saveSellerToDatabase(seller) {
     this.sellerService.saveSeller(seller).subscribe(saveSeller => {
       if (saveSeller !== undefined) {
         this.isCreated = true;
@@ -220,7 +199,7 @@ export class SellerComponent implements OnInit {
         country: this.myFormModel.get('address').get('countryInput').value
       },
       appUser: {
-        id: this.loggedinUser.id,
+        id: null,
         username: this.loggedinUser.username,
         password: null
       }

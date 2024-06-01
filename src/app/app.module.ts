@@ -46,6 +46,9 @@ import { PrintInvoiceComponent } from './invoices/print-invoice/print-invoice.co
 import { PaymentComponent } from './payment/payment.component';
 import { SettleInvoiceComponent } from './invoices/settle-invoice/settle-invoice/settle-invoice.component';
 import { PaymentDetailsComponent } from './payment/payment-details/payment-details/payment-details.component';
+import { InvoicesMapComponent } from './checkbox-component/invoices-map/invoices-map/invoices-map.component';
+import { PaymentsMapComponent } from './checkbox-component/payments-map/payments-map/payments-map.component';
+import { DeletePaymentComponent } from './payment/delete-payment/delete-payment/delete-payment.component';
 
 
 
@@ -81,6 +84,9 @@ export function jwtOptionsFactory(userAuthService: UserAuthService) {
     PaymentComponent,
     SettleInvoiceComponent,
     PaymentDetailsComponent,
+    InvoicesMapComponent,
+    PaymentsMapComponent,
+    DeletePaymentComponent,
 
   ],
   imports: [

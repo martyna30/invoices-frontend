@@ -10,6 +10,7 @@ import {Invoice} from '../models-interface/invoice';
 import {PrintInvoiceComponent} from './print-invoice/print-invoice.component';
 import {UserAuthService} from '../services/user-auth.service';
 import {SettleInvoiceComponent} from './settle-invoice/settle-invoice/settle-invoice.component';
+import {InvoicesMapComponent} from '../checkbox-component/invoices-map/invoices-map/invoices-map.component';
 
 const FILTER_PAG_REGEX = /[^0-9]/g;
 @Component({
@@ -26,6 +27,8 @@ export class InvoicesComponent implements OnInit {
   printComponent: PrintInvoiceComponent;
   @ViewChild('childSettleComponentRef')
   settleComponent: SettleInvoiceComponent;
+  @ViewChild('childInvoicesMap')
+  invoiceMap: InvoicesMapComponent;
   isDisabled: false;
   page = 1;
   size = 10;
@@ -36,14 +39,15 @@ export class InvoicesComponent implements OnInit {
   settleInvoiceComponentIsHidden = true;
   paymentIsHidden = true;
   isloggedin: boolean;
+  private invoiceIdFromMap: number;
 
   constructor(private dialog: MatDialog, private invoiceService: InvoiceService,
               private checkboxService: CheckboxService, private userService: UserAuthService) {
   }
 
   ngOnInit(): void {
-    this.loadData();
     this.checkStatus();
+    this.loadData();
   }
 
   checkStatus() {
@@ -73,7 +77,7 @@ export class InvoicesComponent implements OnInit {
     } else {
       dialogConfig.panelClass = 'settle-modalbox';
       this.dialog.open(SettleInvoiceComponent, dialogConfig);
-      this.settleComponent.addPaymentForInvoice();
+      this.settleComponent.settlePayment();
       //[settleIsHidden]="settleInvoiceComponentIsHidden"
     }
   }
@@ -106,7 +110,8 @@ export class InvoicesComponent implements OnInit {
     // @ts-ignore
     this.total = this.invoiceService.getTotalCountInvoices();
     if (this.checkboxService.lengthInvoicesMap() > 0) {
-      this.checkboxService.removeFromInvoicesMap(this.checkboxOfInvoice);
+      this.invoiceIdFromMap = this.checkboxService.getInvoicesMap().keys().next().value;
+      this.checkboxService.removeFromInvoicesMap(this.invoiceIdFromMap);
     }
   }
 

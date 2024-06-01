@@ -8,5 +8,5 @@ export interface Seller {
   name: string;
   vatIdentificationNumber: string;
   address?: Address;
-  appUser: AppUser;
+  appUser?: AppUser;
 }

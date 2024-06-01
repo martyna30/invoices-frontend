@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {SellerComponent} from './seller/seller.component';
@@ -6,11 +6,8 @@ import {SellerService} from '../services/seller.service';
 import {UserAuthService} from '../services/user-auth.service';
 import {Router} from '@angular/router';
 import {Seller} from '../models-interface/seller';
-import {HttpErrorResponse} from '@angular/common/http';
-import {async, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {Address} from '../models-interface/address';
-import {error} from 'protractor';
+import {async, Observable, of} from 'rxjs';
+import {catchError, map} from 'rxjs/operators';
 import {PaymentComponent} from '../payment/payment.component';
 
 
@@ -26,8 +23,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   sellerComponent: SellerComponent;
   @ViewChild('childRecordComponentRef')
   recordComponent: PaymentComponent;
-  //@Input()
   settingsComponentIsHidden = true;
+  //@Input()
+  settingsIsHidden: boolean;
   currentSeller: Observable<Seller>;
   addressSeller: Observable<void>;
   isloggedin: boolean;
@@ -37,6 +35,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private mode: string;
   private timeoutId;
   private token: string;
+  private showVatINPlaceholder: boolean;
+
   /*checkTheChangeAddressName() {
     this.myFormModel.get('addressInput').valueChanges.subscribe(
       response => this.showAddressForm(response)
@@ -47,6 +47,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.addressFormIsHidden) {
       this.addressFormIsHidden = !this.addressFormIsHidden;
     }
+     // {(currentSeller | async)?.vatIdentificationNumber}}
   }*/
 
   constructor(private fb: FormBuilder, private dialog: MatDialog,
@@ -67,12 +68,23 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.isloggedin = this.checkStatus();
     if (this.token !== undefined && this.token !== null) {
       if (this.isloggedin) {
+        this.settingsComponentIsHidden = false;
         const username = this.getUsername();
-        await this.getSeller(username, 200);
+        const currentSeller = localStorage.getItem('currentSeller');
+        this.userAuthService.getSellerData(currentSeller, username);
         this.getSellerFromService();
+        /*if (currentSeller !== undefined && currentSeller !== null) {
+          this.getSellerFromService();
+        }else {
+          await this.getSeller(username, 200);
+          this.getSellerFromService();
+        }*/
       }
     }
+
   }
+
+
   checkToken(): string {
     this.userAuthService.token$.subscribe((token) => {
       this.token = token;
@@ -97,19 +109,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
     console.log('Timeout has been removed');
   }
 
-  getSeller(username, timeout) {
+    getSeller(username, timeout) {
     return new Promise((resolve, reject) => {
-      this.sellerService.getSellerByAppUser(username);
-      this.timeoutId = setTimeout(() => {
-        resolve('Hello, world!');
-        reject(alert('Complete data of the seller'));
-      }, timeout);
-      if (this.timeoutId) {
-        clearTimeout(this.timeoutId);
-      }
-    });
-  }
-  //if (response.status === 403 || response.status === 401) {
+     this.sellerService.getSellerByAppUser(username);
+     this.timeoutId = setTimeout( resolve, timeout);
+     });
+    }
+
+   // if (response.status === 403 || response.status === 401) {
   //alert('Complete data of the seller');
   //}
   // });// if (timeoutId) {// clearTimeout(timeoutId);
@@ -118,25 +125,25 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
 
   getSellerFromService() {
-    this.currentSeller = this.sellerService.getSellerByAppUserFromService();
-    this.addressSeller = this.currentSeller.pipe(map(seller => {
-      if (seller !== null) {
+    this.sellerService.getSellerByAppUserFromService().subscribe( seller => {
+    // this.currentSeller.pipe(map(seller => {
+      if (seller !== undefined && seller !== null) {
         const street = seller.address.street;
         const streetNumber = seller.address.streetNumber;
         const postcode = seller.address.postcode;
         const city = seller.address.city;
-        // tslint:disable-next-line:no-unused-expression
         const address = street + ' ' + streetNumber + ', ' + '\n'
           + postcode + '' + city;
         this.formModel.get('addressInput').setValue(address);
-      }
-    }, (response: HttpErrorResponse) => {
-      if (response.status === 403 || response.status === 401) {
+        this.formModel.get('nameInput').setValue(seller.name);
+        this.formModel.get('vatIdentificationNumberInput').setValue(seller.vatIdentificationNumber);
+      } else  {
         alert('Complete data of the seller');
+        //throw new Error('Complete data of the seller');
       }
-    }
-    ));
+    });
   }
+
 
   openDialog(mode: string) {
     // this.myFormModel.enable();
@@ -210,6 +217,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     });*/
 
 
+
   save() {
     this.formModel.disable();
     if (!this.addressFormIsHidden) {
@@ -218,13 +226,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
 
-
-
-  /*getSellerFromGus(nip) {
-    this.settingsComponentIsHidden = false;
-    this.openDialog('gus');
-    this.sellerComponent.getSellerFromGus(nip);
-  }*/
+  toggleVatIdentificationNumberPlaceholder() {
+    this.showVatINPlaceholder = (this.formModel.get('vatIdentificationNumberInput').value === '');
+   // this.showVatINPlaceholder = (this.formModel.get('vatIdentificationNumberInput').disabled === false) &&
+      //(this.formModel.get('vatIdentificationNumberInput').value === '');
+  }
 
 
 }

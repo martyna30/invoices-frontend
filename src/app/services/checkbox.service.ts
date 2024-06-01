@@ -10,6 +10,8 @@ export class CheckboxService {
   private invoicesMap = new Map<number, number>();
   private contractorsMap = new Map<number, number>();
   private contractorsFromTheCatalogMap = new Map<number, number>();
+  private paymentsMap = new Map<number, number>();
+
   getInvoicesMap(): Map<number, number> {
     return this.invoicesMap;
   }
@@ -56,6 +58,23 @@ export class CheckboxService {
 
   lengthContractorsFromTheCatalogMap() {
     return this.contractorsFromTheCatalogMap.size;
+  }
+
+
+  getPaymentsMap(): Map<number, number> {
+    return this.paymentsMap;
+  }
+
+  addToPaymentsMap(id: number): void {
+    this.paymentsMap.set(id, 1);
+  }
+
+  removeFromPaymentsMap(id: number): void {
+    this.paymentsMap.delete(id);
+  }
+
+  lengthPaymentsMap(): number {
+    return this.paymentsMap.size;
   }
 }
 

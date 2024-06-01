@@ -1,14 +1,24 @@
 
 <section class="modalbox" [hidden]="detailsIsHidden" xmlns="http://www.w3.org/1999/html">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <h2 mat-dialog-title></h2>
   <mat-dialog-content  class="mat-dialog" method="post">
 
       <div class ="table-container">
+
+        <button type="button" class="c-btn c-btn--standard" (click)="addNextPayment()">Add</button>
+
+        <button type="button" class="c-btn c-btn--standard" (click)="deletePayment()">Delete</button>
+
+
         <ng-container *ngIf="paymentsList$ !== null; else NoPayments">
           <table class="table table-striped">
             <thead>
-            <tr input class="form-check-input me-1" type="checkbox" value="" aria-label="..."  class="table-primary">
+            <tr input class="form-check-input me-1" type="checkbox"
+                value="" aria-label="..."  class="table-primary">
               <th scope="row"> # </th>
+              <th scope="row"> Lp. </th>
+              <th scope="row">  </th>
               <th scope="col">Method of payment</th>
               <th scope="col">Amount paid</th>
               <th scope="col">Date of payment</th>
@@ -20,13 +30,24 @@
 
 
               <input #self class="form-check-input" type="checkbox"
-                     [value]="payment.id" id="paymentIdInput"
+                     [value]="payment.id" id="checkboxIdInput"
                      (change)="changeCheckboxList(self)">
 
-              <th scope="row">{{i+1}}</th>
-              <td>{{payment?.methodOfPayment}}</td>
-              <td>{{payment?.paid}}</td>
-              <td>{{payment?.dateOfPayment}}</td>
+              <th  scope="row"  >{{i+1}}</th>
+
+
+              <td>
+                <div class="fa-splotch_wrap">
+                <i *ngIf="payment.isPrime.toString() === 'TRUE'"  class="fas fa-splotch" >
+                  <p class="fa-splotch_description">Prime payment is visible on printout</p>
+                </i>
+                </div>
+              </td>
+
+
+              <td>{{payment.methodOfPayment}}</td>
+              <td>{{payment.paid}}</td>
+              <td>{{payment.dateOfPayment}}</td>
 
             </tr>
             </tbody>
@@ -42,18 +63,16 @@
       </div>
 
 
-
-
-
     <div mat-dialog-actions  class="button-group">
 
-
-
-      <button mat-raised-button (click)="closeDialog()">Close </button>
+      <button mat-raised-button   routerLink="/payment" routerLinkActive="active" mat-dialog-close="result" (click)="closeDialog()">Close </button>
     </div>
   </mat-dialog-content>
 
+  <app-settle-invoice #childSettleInvoice (addPaymentToInvoice)="loadData()"> </app-settle-invoice>
+  <app-invoices-map #childInvoicesMap >    </app-invoices-map>
+  <app-payments-map #childPaymentsMap >  </app-payments-map>
 
-
-
+  <app-delete-payment #childDeleteRef (loadPaymentData)="loadData()" ></app-delete-payment>
 </section>
+

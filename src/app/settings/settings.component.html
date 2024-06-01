@@ -24,7 +24,7 @@
           <label class="input-label">Company name</label>
 
           <mat-form-field  appearance="fill" >
-              <input  id=" nameInput"  matInput type="text" placeholder="Insert a name"   required  formControlName="nameInput">{{(currentSeller | async)?.name}}
+              <input  id=" nameInput"  matInput type="text" placeholder="Insert a name"  required  formControlName="nameInput">
 
           </mat-form-field>
 
@@ -33,14 +33,14 @@
          <fieldset class="input-fieldset">
            <label class="input-label">Address</label>
            <mat-form-field appearance="fill">
-             <input  matInput type="text" placeholder="Insert a address" required disabled formControlName="addressInput">{{addressSeller | async}}
+             <input  matInput type="text" placeholder="Insert a address" required disabled formControlName="addressInput">
            </mat-form-field>
          </fieldset>
 
            <fieldset class="input-fieldset">
           <label class="input-label">VATIN</label>
           <mat-form-field appearance="fill">
-            <input  matInput type="text"  placeholder="Insert a VATIN number"  required disabled formControlName="vatIdentificationNumberInput">{{(currentSeller | async)?.vatIdentificationNumber}}
+            <input matInput type="text"  placeholder="Insert a VATIN number" (input)="toggleVatIdentificationNumberPlaceholder()"  required disabled formControlName="vatIdentificationNumberInput">
           </mat-form-field>
         </fieldset>
 
@@ -60,7 +60,7 @@
 
 
 
-  <app-seller #childSellerDataRef  (addSellerToTheSettings)="addSellerToTheSettings($event)" (settingsIsHidden)="settingsComponentIsHidden" > </app-seller>
+  <app-seller #childSellerDataRef  (addSellerToTheSettings)="addSellerToTheSettings($event)"  > </app-seller>
 
 </section>
 

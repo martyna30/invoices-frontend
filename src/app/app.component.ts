@@ -25,7 +25,9 @@ export class AppComponent implements OnInit, AfterViewChecked {
   isloggedin: boolean;
   timeoutId;
   isloggedin$: Observable<boolean>;
+  token$: Observable<string>;
   private token: string;
+  private timeoutId2;
 
   constructor(private userAuthService: UserAuthService,
               private sellerService: SellerService, private router: Router,
@@ -34,25 +36,23 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     this.changeDetectorRef.detectChanges();
+    this.checkToken();
   }
 
-     ngOnInit() {
-      this.checkToken();
-      if (this.token !== undefined && this.token !== null) {
-        this.checkStatus();
-        if (this.isloggedin$) {
-          console.log(this.isloggedin$);
-          this.getUsername();
-        }
-        //if (this.isloggedin$) {
-         // this.getUsername();
-       // }
-      }
-    }
+  ngOnInit() {
+    this.checkToken();
+  }
+
+
 
 
   checkStatus() {
-    this.isloggedin$ = this.userAuthService.isloggedin$;
+   // return new Promise(() => {
+      this.isloggedin$ = this.userAuthService.isloggedin$;
+
+      //this.timeoutId = setTimeout(() => {
+       // }, 1000);
+      //});
   }
 
 
@@ -60,11 +60,17 @@ export class AppComponent implements OnInit, AfterViewChecked {
     this.username$ = this.userAuthService.userName$;
   }
 
-  checkToken(): void {
-    this.userAuthService.getTokenFromService().subscribe(token => {
-      this.token = token;
-    });
+  checkToken() {
+    this.userAuthService.getTokenFromService().subscribe(
+      token => {
+        this.token = token;
+        if (this.token !== undefined && this.token !== null) {
+          this.checkStatus();
+          this.getUsername();
+        }
+      });
   }
+
 
 
   logout() {

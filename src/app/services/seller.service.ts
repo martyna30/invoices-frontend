@@ -3,6 +3,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {Contractor} from '../models-interface/contractor';
 import {Seller} from '../models-interface/seller';
 import {HttpService} from './http.service';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -42,10 +43,11 @@ export class SellerService {
     return this.httpService.getSellerByNip(nip);
   }
 
-  getSellerByAppUser(loggedInUsername: string) {
-    this.httpService.getSellerByAppUser(loggedInUsername).subscribe((seller: Seller) => {
+  getSellerByAppUser(loggedInUsername: string)  {
+    this.httpService.getSellerByAppUser(loggedInUsername).subscribe(seller => {
       this.currentSeller$.next(seller);
       localStorage.setItem('currentSeller', seller.name);
+      return;
     });
 
    // return  this.currentSeller$.asObservable();

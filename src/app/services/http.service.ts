@@ -60,11 +60,7 @@ export class HttpService {
     });
   }
 
-  settleInvoice(invoiceToSettle: Invoice): Observable<Invoice> {
-    return this.http.put<Invoice>(this.URL_DB + 'settleInvoice', invoiceToSettle, {
-      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'}
-    });
-  }
+
 
   getInvoices(page: number, size: number): Observable<ListInvoices> {
     const param = new HttpParams()
@@ -287,7 +283,6 @@ export class HttpService {
       params: param,
       responseType: 'blob' as 'json'
     });
-    // }).pipe(map(res => new Blob([res], {type: 'application/pdf'})));
   }
 
 
@@ -296,9 +291,12 @@ export class HttpService {
       .set('invoiceId', idInvoice + '');
     return this.http.post<Payment>(this.URL_DB_PAYMENT + 'createPayment', payment, {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
-      params: param
+      params: param,
     });
   }
+
+
+
 
   getPaymentsByInvoiceId(invoiceId: number): Observable<Array<Payment>> {
     const param = new HttpParams()
@@ -307,6 +305,28 @@ export class HttpService {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
       params: param,
       observe: 'body',
+    });
+  }
+
+
+  deletePayment(paymentId: number): Observable<Payment> {
+    const param = new HttpParams()
+      .set('paymentId' , paymentId.toString());
+    return this.http.delete<Payment>(this.URL_DB_PAYMENT + 'deletePayment', {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      observe: 'body',
+      params: param,
+      responseType: 'json',
+    });
+  }
+
+
+  settlePayment(payment: Payment, idInvoice: number) {
+   const param = new HttpParams()
+      .set('invoiceId', idInvoice + '');
+   return this.http.post<Payment>(this.URL_DB_PAYMENT + 'settlePayment', payment, {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      params: param,
     });
   }
 

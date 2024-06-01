@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {PaymentValidationErrors} from '../../../models-interface/paymentValidationErrors';
 import {MethodOfPayment} from '../../../models-interface/methodOfPayment';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
@@ -12,6 +12,8 @@ import {PaymentService} from '../../../services/payment.service';
 import {formatDate} from '@angular/common';
 import {$E} from 'codelyzer/angular/styles/chars';
 import {Observable} from 'rxjs';
+import {InvoicesMapComponent} from '../../../checkbox-component/invoices-map/invoices-map/invoices-map.component';
+import {PaymentsMapComponent} from '../../../checkbox-component/payments-map/payments-map/payments-map.component';
 
 @Component({
   selector: 'app-settle-invoice',
@@ -19,9 +21,12 @@ import {Observable} from 'rxjs';
   styleUrls: ['./settle-invoice.component.scss']
 })
 export class SettleInvoiceComponent implements OnInit {
-  myFormModel: FormGroup;
   @Output()
-  addPaymentToInvoice = new EventEmitter<string>();
+  addPaymentToInvoice = new EventEmitter<number>();
+  @ViewChild('childInvoicesMap')
+  invoicesMap: InvoicesMapComponent;
+  @ViewChild('childPaymentsMap')
+  paymentsMap: PaymentsMapComponent;
   settleIsHidden = true;
   private checkedList: Map<number, number>;
   validationErrors: PaymentValidationErrors;
@@ -33,8 +38,9 @@ export class SettleInvoiceComponent implements OnInit {
   formModel: FormGroup;
   isloggedin: boolean;
   private idInvoice: number;
-  private invoiceToSettle: Invoice;
   private isCreated: boolean;
+  private mode: string;
+  private idPayment: number;
 
 
   constructor(private fb: FormBuilder, private userService: UserAuthService,
@@ -45,9 +51,10 @@ export class SettleInvoiceComponent implements OnInit {
 
   ngOnInit(): void {
     this.formModel = this.fb.group({
-      methodOfPaymentInput: '',
-      paidInput: '',
-      dateOfPaymentInput: ''
+      methodOfPaymentInput: 'Transfer',
+      // tslint:disable-next-line:radix
+      paidInput: parseInt('0,00'),
+      dateOfPaymentInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
     });
     this.checkStatus();
   }
@@ -60,95 +67,102 @@ export class SettleInvoiceComponent implements OnInit {
 
 
   addPaymentForInvoice() {
+    this.mode = 'add';
     this.settleIsHidden = false;
-    this.checkedList = this.checkboxService.getInvoicesMap();
-    if (this.checkboxService.lengthInvoicesMap() === 1) {
-      this.idInvoice = this.checkedList.keys().next().value;
+    this.ngOnInit();
+  }
+
+
+  settlePayment() {
+    this.mode = 'settle';
+    this.settleIsHidden = false;
+    const isSelectedOne = this.invoicesMap.checkOrInvoicesMapEqualsOne();
+    if (isSelectedOne) {
+      this.idInvoice = this.invoicesMap.getInvoiceIdFromMap();
+      this.invoiceService.getInvoiceById(this.idInvoice).subscribe((invoiceFromDb) => {
+        const leftToPay = invoiceFromDb.leftToPay;
+        this.formModel.get('methodOfPaymentInput').setValue('Transfer');
+        this.formModel.get('paidInput').setValue(leftToPay);
+        this.formModel.get('dateOfPaymentInput')
+          .setValue([formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')].pop());
+      });
+    } else {
+      this.invoicesMap.checkOrInvoicesMapEqualsZero();
+      this.invoicesMap.checkOrInvoicesMapIsMoreThanOne();
     }
   }
 
   savePayment() {
-    const currentPayment: Payment = {
-      id: null,
-      methodOfPayment: this.formModel.get('methodOfPaymentInput').value,
-      paid: this.formModel.get('paidInput').value,
-      dateOfPayment: this.formModel.get('dateOfPaymentInput').value,
-    };
-    this.paymentService.savePayment(currentPayment, this.idInvoice).subscribe((paymentToSave) => {
-      if (paymentToSave !== undefined && paymentToSave !== null) {
-        this.isCreated = true;
+    const isSelectedOne = this.invoicesMap.checkOrInvoicesMapEqualsOne();
+    if (isSelectedOne) {
+      this.idInvoice = this.invoicesMap.getInvoiceIdFromMap();
+      const currentPayment: Payment = {
+        id: null,
+        methodOfPayment: this.formModel.get('methodOfPaymentInput').value,
+        paid: this.formModel.get('paidInput').value,
+        dateOfPayment: this.formModel.get('dateOfPaymentInput').value,
+      };
+      if (this.mode === 'add') {
+        this.paymentService.savePayment(currentPayment, this.idInvoice)
+          .subscribe((paymentToSave) => {
+            if (paymentToSave !== undefined) {
+              this.isCreated = true;
+            }
+            if (this.isCreated) {
+              this.closeDialog();
+              this.addPaymentToInvoice.emit(this.idInvoice);
+            }
+          }, (response: HttpErrorResponse) => {
+            this.validationErrors = response.error;
+            this.isCreated = false;
+            console.log(response.error['payment.paid']);
+          });
       }
-      if (this.isCreated) {
-        this.addPaymentToInvoice.emit(this.idInvoice.toString());
-        this.closeDialog();
-      }
-    }, (response: HttpErrorResponse) => {
-      this.validationErrors = response.error;
-      this.isCreated = false;
-    });
-  }
-
-  /*this.invoiceService.settleInvoice(this.invoiceToSettle).subscribe(updateInvoice => {
-    if (updateInvoice !== undefined) {
-      console.log(updateInvoice);
-      this.isCreated = true;
-      if (this.isCreated) {
-        this.addPayment.emit(this.currentPayment);
-        this.closeDialog();
+      if (this.mode === 'settle') {
+        this.paymentService.settlePayment(currentPayment, this.idInvoice)
+          .subscribe(paymentToSettle => {
+            if (paymentToSettle !== undefined) {
+              this.isCreated = true;
+            }
+            if (this.isCreated) {
+              this.closeDialog();
+              this.addPaymentToInvoice.emit(this.idInvoice);
+            }
+          }, (response: HttpErrorResponse) => {
+            this.validationErrors = response.error;
+            this.isCreated = false;
+            console.log(response.error['payment.paid']);
+          });
+      } else {
+        this.invoicesMap.checkOrInvoicesMapEqualsZero();
+        this.invoicesMap.checkOrInvoicesMapIsMoreThanOne();
+        this.settleIsHidden = true;
       }
     }
-  }, (response: HttpErrorResponse) => {
-    this.validationErrors = response.error;
-    this.isCreated = false;
   }
-);
-}
 
-  /*if (response.status === 403 || response.status === 401) {
-alert('Function available only for the administrator');
-}*/
-  //this.paymentService.savePayment(payment).subscribe((paymentToSave) => {
-  /*if (paymentToSave !== undefined && paymentToSave !== null) {
-    this.currentPayment = paymentToSave;
-    this.isCreated = true;
-  }
-  if (this.isCreated) {
-    this.addPaymentToInvoice.emit(this.currentPayment);
-    //this.closeDialog();
-  }
-}, (response: HttpErrorResponse) => {
-  this.validationErrors = response.error;
-  this.isCreated = false;
-  });*/
 
-  /*this.invoiceService.settleInvoice(this.invoiceToSettle).subscribe(updateInvoice => {
-    if (updateInvoice !== undefined) {
-     this.isCreated = true;
-    }
-    if (this.isCreated) {
-    this.addPaymentToInvoice.emit(this.currentPayment);
-    this.closeDialog();
-    }
-  }, (response: HttpErrorResponse) => {
- this.validationErrors = response.error;
- this.isCreated = false;
- /* if (response.status === 403 || response.status === 401) {
-    alert('Function available only for the administrator');
-  }*/
 
-  closeDialog(): void {
+  closeDialog()  {
     this.settleIsHidden = true;
-    this.clearPaymentForm();
     this.clearValidationErrors();
-    // this.checkboxservice.removeFromInvoicesMap(this.checkboxOfInvoice);
+    this.clearPaymentForm();
+    this.checkboxService.removeFromInvoicesMap(this.idInvoice);
+    this.paymentsMap.refresh();
+  }
+
+  public clearPaymentForm() {
+    this.formModel.get('methodOfPaymentInput').setValue('Transfer'),
+     // console.log(this.myFormModel.get('methodOfPaymentInput').value);
+    this.formModel.get('paidInput').setValue( parseInt('0,00'));
+    this.formModel.get('dateOfPaymentInput').setValue('');
+    //  [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')]);
   }
 
   private clearValidationErrors() {
     this.validationErrors = undefined;
   }
 
-  private clearPaymentForm() {
-  }
 
-  // tslint:disable-next-line:typedef
+
 }

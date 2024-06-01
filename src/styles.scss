@@ -26,6 +26,13 @@
 @import 'scss/08-utilities/_utilities.scss';
 
 
+
+#checkboxIdInput {
+  color: black;
+  background-color: #d3dfd3;
+
+}
+
 table {
   color: $dark-blue;
   max-height: 100%;
@@ -53,6 +60,17 @@ table {
   cursor: pointer;
 }
 
+.invalid-feedback {
+  width: 100%;
+  margin-top: .25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+.text text-danger {
+  //width: 100%;
+  width: auto;
+}
 
 .form-check-input {
   margin-left: auto;
@@ -98,6 +116,8 @@ th {
   background-color: #fff;
   position: absolute;
   transform: translateX(-50%);
+  bottom: 20%;
+  left: 50%;
   padding: $grid-base*4 $grid-base*3 $grid-base*3 $grid-base*3;
   overflow: scroll;
 
