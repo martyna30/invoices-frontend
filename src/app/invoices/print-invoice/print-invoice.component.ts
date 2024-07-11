@@ -32,7 +32,7 @@ export class PrintInvoiceComponent implements OnInit {
 
   printInvoice() {
     this.checkedList = this.checkboxService.getInvoicesMap();
-    this.sellerService.getSellerByAppUserFromService().subscribe(sellerFrom => {
+    this.sellerService.getSellerFromService().subscribe(sellerFrom => {
       this.currentSellerId = sellerFrom.id;
     });
     if (this.checkboxService.lengthInvoicesMap() === 1) {

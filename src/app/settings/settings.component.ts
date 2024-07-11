@@ -69,16 +69,19 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.token !== undefined && this.token !== null) {
       if (this.isloggedin) {
         this.settingsComponentIsHidden = false;
-        const username = this.getUsername();
-        const currentSeller = localStorage.getItem('currentSeller');
-        this.userAuthService.getSellerData(currentSeller, username);
-        this.getSellerFromService();
-        /*if (currentSeller !== undefined && currentSeller !== null) {
+        const seller = this.sellerService.currentSeller$.getValue();
+        console.log(seller);
+        this.sellerService.currentSeller$.subscribe(selle => {
+          const currentSelle = selle;
+          console.log(currentSelle);
+        });
+        if ( seller !== undefined && seller !== null) {
           this.getSellerFromService();
         }else {
-          await this.getSeller(username, 200);
+          const username = this.getUsername();
+          //await this.sellerService.getSeller(username, 200);
           this.getSellerFromService();
-        }*/
+        }
       }
     }
 
@@ -109,12 +112,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
     console.log('Timeout has been removed');
   }
 
-    getSeller(username, timeout) {
+  getSeller(username, timeout) {
     return new Promise((resolve, reject) => {
      this.sellerService.getSellerByAppUser(username);
      this.timeoutId = setTimeout( resolve, timeout);
-     });
-    }
+    });
+  }
 
    // if (response.status === 403 || response.status === 401) {
   //alert('Complete data of the seller');
@@ -125,7 +128,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
 
   getSellerFromService() {
-    this.sellerService.getSellerByAppUserFromService().subscribe( seller => {
+    this.sellerService.getSellerFromService().subscribe( seller => {
     // this.currentSeller.pipe(map(seller => {
       if (seller !== undefined && seller !== null) {
         const street = seller.address.street;
@@ -139,7 +142,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.formModel.get('vatIdentificationNumberInput').setValue(seller.vatIdentificationNumber);
       } else  {
         alert('Complete data of the seller');
-        //throw new Error('Complete data of the seller');
       }
     });
   }

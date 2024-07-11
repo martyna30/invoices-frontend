@@ -14,6 +14,8 @@ import {ContractorFromGusDto} from '../models-interface/contractorFromGusDto';
 import {ContractorDto} from '../models-interface/contractorDto';
 import {map, max} from 'rxjs/operators';
 import {Payment} from '../models-interface/payment';
+import {Rate} from '../models-interface/rate';
+import {FormControl} from '@angular/forms';
 
 
 @Injectable({
@@ -21,6 +23,7 @@ import {Payment} from '../models-interface/payment';
 })
 export class HttpService {
   private URL_DB = 'http://localhost:8080/v1/invoice/';
+  private URL_DB_NBP = 'http://localhost:8080/v1/nbp/';
   private URL_DB_CONTRACTOR = 'http://localhost:8080/v1/contractor/';
   private URL_DB_SELLER = 'http://localhost:8080/v1/seller/';
   private URL_DB_GUS = 'http://localhost:8080/v1/gus/';
@@ -329,6 +332,23 @@ export class HttpService {
       params: param,
     });
   }
+
+
+  getRateByCurrency(currency: string, date: Date): Observable<Rate> {
+    const param = new HttpParams()
+      .set('currency', currency)
+      .set('effectiveDate', date + '');
+    return this.http.get<Rate>(this.URL_DB_NBP + 'getRateByCurrency', {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      observe: 'body',
+      responseType: 'json',
+      params: param
+    });
+  }
+
+
+
+
 
 
 }

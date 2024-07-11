@@ -138,9 +138,7 @@ export class InvoicesComponent implements OnInit {
   // }else {
   // alert('Function available only for the administrator');
   // }
-  settleInvoice() {
 
-  }
 
   printInvoice() {
     this.printComponent.printInvoice();

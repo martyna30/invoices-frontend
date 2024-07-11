@@ -11,6 +11,7 @@ import {Component, Injectable, OnInit, Output, EventEmitter, Input, ViewChild} f
 import {SellerService} from '../services/seller.service';
 import {AddInvoiceComponent} from '../invoices/add-invoice/add-invoice.component';
 import {RegistrationComponent} from './registration/registration.component';
+import {SellerComponent} from '../settings/seller/seller.component';
 
 
 
@@ -20,20 +21,29 @@ import {RegistrationComponent} from './registration/registration.component';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  //@Input()
+  //loginFormIsHidden: boolean;
+  @Input()
+  nip!: string;
+  @Output()
+  registrationFormIsHidden: EventEmitter<boolean> = new EventEmitter<boolean>();
+  sellerComponentIsHidden = true;
   login: string;
   password: string;
   private isComming: boolean;
-  @ViewChild('childRegistrationRef')
-  registrationComponent: RegistrationComponent;
-  registerFormIsHidden = true;
+  //@ViewChild('childRegistrationRef')
+  //registrationComponent: RegistrationComponent;
+  @ViewChild('childSellerRef')
+  sellerComponent: SellerComponent;
   @Output()
   addSellerToSettings: EventEmitter<any> = new EventEmitter<any>();
   myFormModel: FormGroup;
   loggingValidationError: LoggingValidationError;
   isloggedin: boolean;
   isRegister: boolean;
-
+  private mode: string;
   loginFormIsHidden = true;
+
 
 
   constructor(private fb: FormBuilder, private userAuthService: UserAuthService,
@@ -49,14 +59,10 @@ export class LoginComponent implements OnInit {
       nipInput: '',
     });
     this.loginFormIsHidden = !this.loginFormIsHidden;
-    this.registerFormIsHidden = true;
-
   }
-  // tslint:disable-next-line:typedef
 
-
-  public signIn(login: string){
-    this.loginFormIsHidden = false;
+  public signIn(login: string) {
+    this.loginFormIsHidden = !this.loginFormIsHidden;
 
     this.login = login;
     const userDto: UserDto = {
@@ -70,7 +76,9 @@ export class LoginComponent implements OnInit {
         if (this.isComming) {
           this.loginFormIsHidden = true;
           this.isloggedin = true;
-          this.router.navigate(['/']);
+          if (this.mode === 'first') {
+            this.openSellerComponent();
+          }
         }
       }, (response: HttpErrorResponse) => {
         console.log(response.error);
@@ -81,12 +89,22 @@ export class LoginComponent implements OnInit {
     // console.log(this.token);
     // if (this.token !== null) {
   }
+
   registerNewUser() {
     this.loginFormIsHidden = true;
-    this.registrationComponent.showRegisterForm();
+    //this.registrationComponent.showRegisterForm();
   }
 
 
+  showLoginFormForFirstLogin(nip: string) {
+      console.log(nip);
+      this.mode = 'first';
+      this.loginFormIsHidden = !this.loginFormIsHidden;
+  }
 
+  openSellerComponent() {
+    this.registrationFormIsHidden.emit(true);
+    this.sellerComponent.getSellerFromGus(this.nip);
+  }
 
 }

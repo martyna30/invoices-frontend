@@ -20,11 +20,12 @@ export class AppComponent implements OnInit, AfterViewChecked {
   @ViewChild('childSettingsDataRef')
   settingsComponent: SettingsComponent;
   username$: Observable<string>;
+  private username: string;
   currentSellerId;
   settingsIsHidden = true;
-  isloggedin: boolean;
   timeoutId;
   isloggedin$: Observable<boolean>;
+  isloggedin: boolean;
   token$: Observable<string>;
   private token: string;
   private timeoutId2;
@@ -41,22 +42,27 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.checkToken();
+    //if (this.token !== undefined && this.token !== null) {
+      //this.getUsername();
+     // this.checkStatus();
+
   }
 
 
 
 
   checkStatus() {
-   // return new Promise(() => {
-      this.isloggedin$ = this.userAuthService.isloggedin$;
-
-      //this.timeoutId = setTimeout(() => {
-       // }, 1000);
-      //});
+    /*this.userAuthService.isloggedin$.subscribe(( isLoggedin) => {
+      this.isloggedin = isLoggedin;
+    });*/
+    this.isloggedin$ = this.userAuthService.isloggedin$;
   }
 
 
   getUsername() {
+    /*this.userAuthService.userName$.subscribe(username => {
+      this.username = username;
+    });*/
     this.username$ = this.userAuthService.userName$;
   }
 
@@ -69,6 +75,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
           this.getUsername();
         }
       });
+
   }
 
 

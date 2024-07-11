@@ -130,12 +130,12 @@ table input.number {
   justify-content: flex-start;
 }
 
-#dates {
+#datesId{
   display: flex;
   margin-top: 40px;
   justify-content: space-between;
 }
-#payments {
+#paymentsId {
   margin-right: $grid-base*5;
   display: flex;
   justify-content: flex-start;
@@ -144,6 +144,11 @@ table input.number {
 #addressId {
   display: flex;
   justify-content: space-between;
+}
+
+#currencyId {
+  display: flex;
+  justify-content: start;
 }
 
 .form-control1 {

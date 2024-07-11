@@ -4,17 +4,25 @@ import {Contractor} from '../models-interface/contractor';
 import {Seller} from '../models-interface/seller';
 import {HttpService} from './http.service';
 import {map} from 'rxjs/operators';
+import {UserAuthService} from './user-auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SellerService {
   currentSeller$ = new BehaviorSubject<Seller>(null);
-  constructor(private httpService: HttpService) { }
 
-  getSellerWithSpecifiedName(name) {
-   // return this.httpService.getSellerWithSpecifiedName(name);
-  }
+  constructor(private httpService: HttpService ) {}
+
+
+
+  /*getSeller(username) {//usun
+    //return new Promise((resolve, reject) => {
+      return this.getSellerByAppUser(username);
+      //this.timeoutId = setTimeout( resolve, timeout);
+      //const timeoutId = setTimeout( resolve, timeout);
+    //});
+  }*/
 
   getSellerByName(name) {
     return this.httpService.getSellerByName(name);
@@ -23,6 +31,7 @@ export class SellerService {
   getSellerById(idSeller: number): Observable<Seller> {
     return this.httpService.getSellerById(idSeller);
   }
+
 
   saveSeller(seller: Seller): Observable<Seller> {
     return this.httpService.saveSeller(seller);
@@ -46,14 +55,12 @@ export class SellerService {
   getSellerByAppUser(loggedInUsername: string)  {
     this.httpService.getSellerByAppUser(loggedInUsername).subscribe(seller => {
       this.currentSeller$.next(seller);
+      console.log(seller);
       localStorage.setItem('currentSeller', seller.name);
-      return;
     });
-
-   // return  this.currentSeller$.asObservable();
   }
 
-  getSellerByAppUserFromService() {
+  getSellerFromService() {
   return this.currentSeller$.asObservable();
   }
 

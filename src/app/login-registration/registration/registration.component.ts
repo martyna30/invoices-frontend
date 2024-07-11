@@ -12,6 +12,7 @@ import {SettingsComponent} from '../../settings/settings.component';
 import {SellerComponent} from '../../settings/seller/seller.component';
 import {ContractorService} from '../../services/contractor.service';
 import {error} from 'protractor';
+import {LoginComponent} from '../login.component';
 
 @Component({
   selector: 'app-registration',
@@ -21,17 +22,18 @@ import {error} from 'protractor';
 export class RegistrationComponent implements OnInit {
   @Input()
   registerFormIsHidden: boolean;
-  sellerComponentIsHidden = true;
-  @ViewChild('childSellerRef')
-  sellerComponent: SellerComponent;
-  @Output()
-  loginFormIsHidden: EventEmitter<boolean> = new EventEmitter<boolean>();
+  //loginFormIsHidden = true;
+  //@Output()
+  //showLoginFormForFirstLogin: EventEmitter<string> = new EventEmitter<string>();
+  @ViewChild('childLoginRef')
+  loginComponent: LoginComponent;
   myFormModel: FormGroup;
   loggingValidationError: LoggingValidationError;
   isRegister: boolean;
   login: string;
   password: string;
   settingsComponentIsHidden = true;
+  private nip: string;
 
   constructor(private fb: FormBuilder, private userAuthService: UserAuthService, private contractorService: ContractorService,
               private http: HttpService, private router: Router) {}
@@ -43,11 +45,15 @@ export class RegistrationComponent implements OnInit {
       emailInput: '',
       nipInput: '',
     });
-    this.sellerComponentIsHidden = true;
+    //this.sellerComponentIsHidden = true;
   }
 
   showRegisterForm() {
-    this.registerFormIsHidden = false;
+    if (this.registerFormIsHidden) {
+      this.registerFormIsHidden = !this.registerFormIsHidden;
+    } else {
+      this.registerFormIsHidden = true;
+    }
   }
 
   register() {
@@ -57,7 +63,7 @@ export class RegistrationComponent implements OnInit {
       email: this.myFormModel.get('emailInput').value,
       nip: this.myFormModel.get('nipInput').value
     };
-    const nip = this.myFormModel.get('nipInput').value;
+    this.nip = this.myFormModel.get('nipInput').value;
     this.userAuthService.register(newuser).subscribe(responseFromDB => {
       const response = responseFromDB;
       console.log(response);
@@ -79,20 +85,18 @@ export class RegistrationComponent implements OnInit {
           'After the registration, you can sign in');
         this.registerFormIsHidden = true;
         console.log(this.isRegister);
-        if (nip !== null && nip !== undefined) {
-          this.openSellerComponent(nip);
-        }
+        this.loginComponent.showLoginFormForFirstLogin(this.nip);
+        // this.showLoginFormForFirstLogin.emit(nip);
+        //if (nip !== null && nip !== undefined) {
+          // this.nip = nip;
+          // this.openSellerComponent();
       }
     });
   }
 
 
 
- openSellerComponent(nip) {
-    this.registerFormIsHidden = true;
-    this.loginFormIsHidden.emit(false);
-    this.sellerComponent.getSellerFromGus(nip);
-  }
+
 
 }
 

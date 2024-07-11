@@ -28,7 +28,7 @@
           <a  routerLink="/login" routerLinkActive="active" class="nav-link text-white sk-header-item-link text-uppercase" *ngIf="!(isloggedin$ | async)" >Sign in</a>
         </li>
         <li class="nav-item">
-          <a routerLink="/registration" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"   *ngIf="!(isloggedin$ | async)"  >Register</a>
+          <a routerLink="/registration" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"   *ngIf="!(isloggedin$| async)"  >Register</a>
         </li>
         <li class="nav-item">
           <a routerLink="/login" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"  *ngIf="isloggedin$ | async" (click)="logout()">Log out</a>

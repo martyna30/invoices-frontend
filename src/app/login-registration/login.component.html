@@ -19,6 +19,6 @@
 
     </div>
   </section>
-
+  <app-seller #childSellerRef [isHidden]="sellerComponentIsHidden" ></app-seller>
 </ng-container>
-<app-registration #childRegistrationRef  [registerFormIsHidden]="registerFormIsHidden" (loginFormIsHidden)="loginFormIsHidden" ></app-registration>
+

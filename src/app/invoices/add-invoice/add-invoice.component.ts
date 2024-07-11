@@ -10,7 +10,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {InvoiceValidationError} from '../../models-interface/invoiceValidationError';
 import {CheckboxService} from '../../services/checkbox.service';
 import {InvoiceService} from '../../services/invoice.service';
@@ -38,7 +38,9 @@ import {Seller} from '../../models-interface/seller';
 import {InvoicesComponent} from '../invoices.component';
 import {SettingsComponent} from '../../settings/settings.component';
 import {SellerComponent} from '../../settings/seller/seller.component';
-
+import {UserAuthService} from '../../services/user-auth.service';
+import {RateService} from '../../services/rate.service';
+import {Rate} from '../../models-interface/rate';
 
 
 @Component({
@@ -48,24 +50,29 @@ import {SellerComponent} from '../../settings/seller/seller.component';
 
 })
 export class AddInvoiceComponent implements OnInit, OnDestroy {
+  //[value]="(rate$ | async)?.rateOfExchange"
+  //[hidden]="rateOfExchangeInputIsHidden"
+  //[formGroup]="myFormModel"
+  rate$: Observable<Rate>;
+  //nameCurrency: FormControl;
+  contractorFromGusIsHidden = true;
+  contractorCatalogIsHidden = true;
   private positionRelativeToElement: ElementRef;
   contractorError: ContractorDto;
   contractors: Array<Contractor>;
   contractorWithName: Contractor;
   private subscriptions = new Subscription();
+  //effectiveDate: FormControl;
   @ViewChild('childInvoicesMap')
   invoicesMap: InvoicesMapComponent;
   @ViewChild('childContractorCatalogRef')
   contractorCatalog: ContractorsCatalogComponent;
   @ViewChild('childContractorFromGus')
   contractorFromGus: GusContractorComponent;
-  @ViewChild('settingsComponent')
-  settingsComponent: SettingsComponent;
   @Input()
   invoicesList$: Observable<Array<Invoice>>;
   @Input()
   private checkboxOfInvoice: number;
-  settingsIsHiddenForAddInvoice = true;
   @Output()
   loadData: EventEmitter<any> = new EventEmitter<any>();
   @Output()
@@ -74,17 +81,18 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   settingsIsHidden = true;
   contractorFormIsHidden = true;
   isHiddenContractor = true;
+  items$: Observable<any>;
   isCloseButtonHidden = false;
   private mode: string;
   private contractorMode: string;
-  myFormModel: FormGroup;
-  payments: FormArray;
-  items: FormArray;
   number: number;
-  items$: Observable<any>;
-  contractor: FormGroup;
-  address: FormGroup;
-  methods: FormGroup;
+  myFormModel: FormGroup;
+  //contractor: FormGroup;
+  items: FormArray;
+  //address: FormGroup;
+  //datesGroup: FormGroup;
+  //payments: FormGroup;
+  //rateGroup: FormGroup;
   filteredSellers: string[] = [];
   filteredName: string[] = [];
   filteredProductsList: string[] = [];
@@ -111,7 +119,9 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   private showMethodOfPaymentPlaceholder: boolean;
   private showPaidPlaceholder: boolean;
   private showVATPlaceholder: boolean;
-  value: 'Transfer';
+  rateOfExchangeInputIsHidden = true;
+  currency = 'złoty';
+  value = 'Transfer';
   methodsOfPayment: MethodOfPayment[] = [
     {value: 'transfer', viewValue: 'Transfer'},
     {value: 'cash', viewValue: 'Cash'},
@@ -128,10 +138,13 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
 
 
+
   constructor(private fb: FormBuilder, private checkboxservice: CheckboxService,
               private invoiceService: InvoiceService, private sellerService: SellerService,
               private contractorService: ContractorService, private productService: ProductService,
-              private datePipe: DatePipe, private decimal: DecimalPipe, private dialog: MatDialog) {
+              private rateService: RateService, private datePipe: DatePipe,
+              private decimal: DecimalPipe, private dialog: MatDialog,
+              private userAuthService: UserAuthService ) {
 
   }
    ngOnInit(): void {
@@ -145,16 +158,23 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
           streetNumberInput: '',
           postcodeInput: '',
           cityInput: '',
-          countryInput: 'Poland',
+          countryInput: 'Poland'
 
-        }),
+        })
       }),
-      dateOfInvoiceInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
-      dateOfSaleInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
-      periodOfPaymentInput: '7',
-      methodOfPaymentInput: '',
-      // tslint:disable-next-line:radix
-      paidInput:  parseInt('0,00'),
+      dates: this.fb.group({
+        dateOfInvoiceInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')],
+        dateOfSaleInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')]
+      }),
+      payments: this.fb.group({
+        periodOfPaymentInput : '7',
+        methodOfPaymentInput: 'Transfer',
+        paidInput: parseInt('0,00')
+      }),
+      rate: this.fb.group({
+        currencyInput: 'złoty',
+        rateOfExchangeInput: ''
+      }),
       items: this.fb.array([]),
       netAmountInput: '',
       sumTotalInput: ''
@@ -163,21 +183,23 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     this.checkTheChangeContractorName();
     this.sumGrossValue();
     this.sumNetValue();
-    const name =  localStorage.getItem('');
-    console.log(name);
-    this.sellerService.getSellerByName(name);
-    this.sellerService.currentSeller$.subscribe((currentSeller) => {
-       this.sellerFromService = currentSeller;
-     });
-    //then(this.getCurrentSellerFromService);
-  }
-
-  /*getCurrentSellerFromService() {
-   this.sellerService.currentSeller$.subscribe((currentSeller) => {
-     this.sellerFromService = currentSeller;
-   });
-  }*/
-//<app-settings #settingsComponent   [settingsIsHiddenForAddInvoice]="settingsIsHiddenForAddInvoice" ></app-settings>
+    this.sellerService.currentSeller$.subscribe( async currentSeller => {
+      if (currentSeller !== undefined && currentSeller !== null) {
+        this.sellerFromService = currentSeller;
+      } else {
+        const sellerName = localStorage.getItem('currentSeller');
+        if (sellerName !== undefined && sellerName !== null) {
+          this.sellerService.getSellerByName(sellerName)
+            .subscribe(current => {
+              this.sellerFromService = current;
+            });
+        } else {
+          const username = this.userAuthService.getUsernameForLoggedInUser();
+          this.sellerService.getSellerByAppUser(username);
+        }
+      }
+    });
+   }
 
   addContratorFromTheCatalog() {
     this.checkedContractorList = this.checkboxservice.getContractorsFromTheCatalogMap();
@@ -384,7 +406,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
   // tslint:disable-next-line:typedef
   private saveInvoiceWithoutContractor() {
-    const invoice = this.setInvoiceWithContractor();
+    const invoice = this.setInvoiceWithoutContractor();
     this.setItems(invoice);
     this.invoiceService.saveInvoiceWithoutContractor(invoice).subscribe(saveInvoice => {
       if (saveInvoice !== undefined) {
@@ -427,7 +449,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   }
   public setInvoiceWithContractor(): Invoice {
     const invoice: Invoice = {
-      id: this.idInvoice,
+      id: this.mode === 'edit' ? this.idInvoice : null,
       contractor: {
         id: null,
         name: this.myFormModel.get('contractor').get('nameInput').value,
@@ -446,11 +468,41 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
         name: this.sellerFromService.name ,
         vatIdentificationNumber: this.sellerFromService.vatIdentificationNumber,
       },
-      dateOfInvoice: this.myFormModel.get('dateOfInvoiceInput').value,
-      dateOfSale: this.myFormModel.get('dateOfSaleInput').value,
-      periodOfPayment: this.myFormModel.get('periodOfPaymentInput').value,
-      methodOfPayment: this.myFormModel.get('methodOfPaymentInput').value,
-      paid: this.myFormModel.get('paidInput').value,
+      dateOfInvoice: this.myFormModel.get('dates').get('dateOfInvoiceInput').value,
+      dateOfSale: this.myFormModel.get('dates').get('dateOfSaleInput').value,
+      periodOfPayment: this.myFormModel.get('payments').get('periodOfPaymentInput').value,
+      methodOfPayment: this.myFormModel.get('payments').get('methodOfPaymentInput').value,
+      paid: this.myFormModel.get('payments').get('paidInput').value,
+      rate: {
+        id: null,
+        currency: this.myFormModel.get('rate').get('currencyInput').value,
+        rateOfExchange: this.myFormModel.get('rate').get('rateOfExchangeInput').value,
+      },
+      items: [],
+      netAmount: this.myFormModel.get('netAmountInput').value,
+      sumTotal: this.myFormModel.get('sumTotalInput').value
+    };
+    return invoice;
+  }
+
+  private setInvoiceWithoutContractor() {
+    const invoice: Invoice = {
+      id: null,
+      seller: {
+        id: null,
+        name: this.sellerFromService.name ,
+        vatIdentificationNumber: this.sellerFromService.vatIdentificationNumber,
+      },
+      dateOfInvoice: this.myFormModel.get('dates').get('dateOfInvoiceInput').value,
+      dateOfSale: this.myFormModel.get('dates').get('dateOfSaleInput').value,
+      periodOfPayment: this.myFormModel.get('payments').get('periodOfPaymentInput').value,
+      methodOfPayment: this.myFormModel.get('payments').get('methodOfPaymentInput').value,
+      paid: this.myFormModel.get('payments').get('paidInput').value,
+      rate: {
+        id: null,
+        currency: this.myFormModel.get('rate').get('currencyInput').value,
+        rateOfExchange: this.myFormModel.get('rate').get('rateOfExchangeInput').value,
+      },
       items: [],
       netAmount: this.myFormModel.get('netAmountInput').value,
       sumTotal: this.myFormModel.get('sumTotalInput').value
@@ -588,6 +640,12 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
 
 
+
+
+
+
+
+
   toggleMethodOfPaymentPlaceholder() {
     this.showMethodOfPaymentPlaceholder = (this.myFormModel.get('methodOfPaymentInput').value === '');
   }
@@ -618,7 +676,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       this.myFormModel.get('sumTotalInput').setValue(''),
       this.items.controls.forEach(productControl => {
         productControl.get('productInput').setValue(''),
-          // productControl.get('unitInput').setValue('pc'),
           productControl.get('netWorthInput').setValue(''),
           productControl.get('grossValueInput').setValue('');
 
@@ -678,17 +735,27 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   }
 
 
-savingChanges(contractorInput: HTMLInputElement) {
-if (contractorInput.checked) {
- this.saveInvoiceWithContractor = true;
-}
-else {
- this.saveInvoiceWithContractor = false;
-}
-}
+  savingChanges(contractorInput: HTMLInputElement) {
+    if (contractorInput.checked) {
+     this.saveInvoiceWithContractor = true;
+    }
+    else {
+     this.saveInvoiceWithContractor = false;
+    }
+ }
 
 
+  toggleCurrency() {
+    const currency = this.myFormModel.get('rate').get('currencyInput').value;
+    const effectiveDate = this.myFormModel.get('dates').get('dateOfInvoiceInput').value;
+    if (currency !== this.currency) {
+      this.rateOfExchangeInputIsHidden = !this.rateOfExchangeInputIsHidden;
+      this.rateService.getRateByCurrencyAndEffectiveDate(currency, effectiveDate);
+      this.rate$ = this.rateService.getRateFromService();
 
+     // });
+    }
+  }
 }
 
 

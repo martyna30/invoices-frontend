@@ -14,11 +14,9 @@ import {AddContractorComponent} from '../../add-contractor.component';
 export class GusContractorComponent implements OnInit {
   @Output()
   addContractorFromTheGus: EventEmitter<string> = new EventEmitter<string>();
-// <app-add-contractor #childContractor > </app-add-contractor>
-  // @ViewChild('childContractor')
-  // contractorComponent: AddContractorComponent;
-
-  gusFormIsHidden = true;
+  //gusFormIsHidde = true;
+  @Input()
+  gusFormIsHidden!: boolean;
   validationErrors: ContractorValidationError;
   myFormModel: FormGroup;
   constructor(private fb: FormBuilder) { }
@@ -27,6 +25,7 @@ export class GusContractorComponent implements OnInit {
     this.myFormModel = this.fb.group({
       vatIdentificationNumberInput: '',
     });
+    this.gusFormIsHidden = true;
   }
 
   showContractorForm() {
@@ -55,8 +54,6 @@ export class GusContractorComponent implements OnInit {
     this.validationErrors = undefined;
   }
 
-
-  // tslint:disable-next-line:typedef
   hide() {
     this.gusFormIsHidden = true;
   }

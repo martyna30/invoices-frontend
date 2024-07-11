@@ -40,8 +40,6 @@ export class SellerComponent implements OnInit {
   settingsIsHidden: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 
-
-
   constructor(private fb: FormBuilder, private sellerService: SellerService,
               private contractorService: ContractorService,
               private userService: UserAuthService,

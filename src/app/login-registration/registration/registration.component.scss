@@ -10,37 +10,51 @@
 @import 'src/scss/08-utilities/_utilities.scss';
 
 
+
 .input-label {
   width: 80px;
   text-align: end;
-
 }
 
 .form-signin {
   margin: 0 auto;
   justify-content: center;
-  padding: 20px;
+  //padding: 20px;
 }
 
 mat-form-field {
   width: 280px;
   height: 50px;
 }
+
+
+register-button {
+  display: flex;
+  justify-content: center;
+  width: 260px;
+}
+
+.card card-container {
+  justify-content: center;
+}
+
 .card-container.card {
-  padding: 0px;
+  max-width: 350px;
+  padding: 40px 40px;
+  color: $blue-text;
+
 }
 
 .btn {
-  width: 100px;
+  font-weight: 700;
+  height: 36px;
+  user-select: none;
+  cursor: default;
+  color: #392a20;
 }
-.register-button {
-  display: flex;
-  justify-content: center;
-}
-.c-btn {
-  width: 256px;
 
-}
+
+
 
 
 

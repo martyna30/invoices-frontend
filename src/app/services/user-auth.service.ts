@@ -5,11 +5,12 @@ import {NewUserDto} from '../models-interface/newUserDto';
 import {UserDto} from '../models-interface/userDto';
 import {Token} from '../models-interface/token';
 import {HttpService} from './http.service';
-import {map} from 'rxjs/operators';
+import {map, timeout} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {AuthTokenInterceptor} from '../interceptors/auth-token-interceptor';
 import {UserProfile} from '../models-interface/user-profile';
 import {SellerService} from './seller.service';
+import {Seller} from '../models-interface/seller';
 
 
 @Injectable({
@@ -26,8 +27,9 @@ export class UserAuthService {
   userName$ = new BehaviorSubject<string>(null);
   userPassword$ = new BehaviorSubject<string>(null);
   jwtHelper = new JwtHelperService();
+  private timeoutId;
 
-  public getTokenFromService(): Observable<string> {
+   public getTokenFromService(): Observable<string> {
     const accesstoken = localStorage.getItem('access_token');
     const refreshtoken = localStorage.getItem('refresh_token');
     const newtoken = localStorage.getItem('new_token');
@@ -35,10 +37,7 @@ export class UserAuthService {
     if (accesstoken !== null && accesstoken !== undefined) {
 
       const userdata = this.jwtHelper.decodeToken(accesstoken) as UserProfile;
-      this.getSellerData(currentSeller, userdata.sub);
       this.setTokenData(userdata);
-
-
       this.token$.next(accesstoken);
       AuthTokenInterceptor.refresh = false;
       AuthTokenInterceptor.accessToken = accesstoken;
@@ -48,7 +47,6 @@ export class UserAuthService {
 
     if (refreshtoken !== null && refreshtoken !== undefined) {
       const userdata = this.jwtHelper.decodeToken(refreshtoken) as UserProfile;
-      this.getSellerData(currentSeller, userdata.sub);
       this.setTokenData(userdata);
 
       this.token$.next(refreshtoken);
@@ -57,7 +55,6 @@ export class UserAuthService {
     }
     if (newtoken !== null && newtoken !== undefined) {
       const userdata = this.jwtHelper.decodeToken(newtoken) as UserProfile;
-      this.getSellerData(currentSeller, userdata.sub);
       this.setTokenData(userdata);
       this.token$.next(newtoken);
       AuthTokenInterceptor.accessToken = newtoken;
@@ -76,28 +73,14 @@ export class UserAuthService {
     this.userName$.next(username);
    // this.getCurrentSellerData(currentSeller, username);
     this.isloggedin$.next(true);
-   // return;
-  }
-
-  getSellerData(currentSeller: string, username: string) {
-    if (currentSeller !== null && currentSeller !== undefined) {
-      this.sellerService.getSellerByName(currentSeller).subscribe( seller => {
-        this.sellerService.currentSeller$.next(seller);
-      });
-    } else {
-      this.sellerService.getSellerByAppUser(username);
-    }
-  }
-
+   }
 
 
   login(userDto: UserDto): Observable<any> {
-    return this.httpService.generateToken(userDto)
+   return this.httpService.generateToken(userDto)
       .pipe(
-        map((response) => {
-          this.isloggedin$.next(true);
+        map( async (response) => {
           this.userName$.next(userDto.username);
-          this.sellerService.getSellerByAppUser(userDto.username);
           this.userPassword$.next(userDto.password);
           const tokens = response as unknown as Token;
           localStorage.setItem('username', userDto.username);
@@ -108,11 +91,24 @@ export class UserAuthService {
           AuthTokenInterceptor.isLogout = false;
           const userdata = this.jwtHelper.decodeToken(tokens.access_token) as UserProfile;
           const userrole = userdata.role;
-          this.token$.next(tokens.access_token);
           this.userProfile$.next(userrole);
+          this.token$.next(tokens.access_token);
+         /*if (tokens !== undefined && tokens && null) {
+            await this.getIsLoggedIn(200);
+            this.sellerService.getSellerByAppUser(userDto.username);
+          }*/
           return true;
         }));
-  }
+   }
+
+  /*getIsLoggedIn(timeout) {usun
+     return new Promise((resolve, reject) => {
+       this.isloggedin$.next(true);
+       this.timeoutId = setTimeout( resolve, timeout);
+       const timeoutId = setTimeout( resolve, timeout);
+     });
+   }*/
+
 
   getUsernameForLoggedInUser(): string {
     return this.userName$.value;
@@ -140,8 +136,5 @@ export class UserAuthService {
   }
 
 
-  getUserByUsername(loggedInUsername: string) {
-    return this.httpService.getUserByUsername(loggedInUsername);
-  }
 }
 

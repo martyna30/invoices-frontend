@@ -1,7 +1,7 @@
 <section class="modalbox" [hidden]="isHidden"
          xmlns="http://www.w3.org/1999/html">
   <h2 mat-dialog-title></h2>
-  <mat-dialog-content [formGroup]="myFormModel" class="mat-dialog" method="post">
+  <mat-dialog-content class="mat-dialog" method="post">
     <form [formGroup]="myFormModel">
     <div formGroupName="contractor">
 
@@ -108,30 +108,28 @@
       </div>
     </div>
 
-      <div id="dates">
+      <div id="datesId" formGroupName="dates">
     <fieldset class="input-fieldset">
       <label class="input-label">Date of issue</label>
       <mat-form-field appearance="fill">
-        <input matInput type="date" name="dateOfIssue"   placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
+        <input matInput  type="date" name="dateOfIssue"   placeholder="Insert a date of issue" required formControlName="dateOfInvoiceInput">
       </mat-form-field>
-
-
     </fieldset>
 
     <fieldset class="input-fieldset">
       <label class="input-label">Date of sale</label>
       <mat-form-field appearance="fill">
-        <input matInput  type="date" name="dateOfSale"  placeholder="Insert a date of sale" required formControlName="dateOfSaleInput" >
+        <input matInput  type="date" name="dateOfSale"  placeholder="Insert a date of sale" required formControlName="dateOfSaleInput">
       </mat-form-field>
-
     </fieldset>
+
   </div>
-  <div id=payments>
+  <div id="paymentsId"  formGroupName="payments">
     <fieldset class="input-fieldset">
       <label class="input-label">Period of payment</label>
-      <select  class="select"  required  formControlName="periodOfPaymentInput">
-        <option *ngFor="let periodOfPayment of periodsOfPayment" [value]="periodOfPayment.value">
-          {{periodOfPayment.viewValue}}
+      <select  class="select"  required formControlName="periodOfPaymentInput">
+        <option *ngFor="let period of periodsOfPayment" [value]="period.viewValue">
+          {{period.viewValue}}
         </option>
       </select>
     </fieldset>
@@ -140,15 +138,15 @@
        <label class="input-label">Method of payment</label>
 
        <select class="select"  [value]="value" formControlName="methodOfPaymentInput">
-       <option *ngFor="let methodOfPayment of methodsOfPayment" >
-         {{methodOfPayment.viewValue}}
+       <option *ngFor="let method of methodsOfPayment">
+         {{method.viewValue}}
        </option>
       </select>
 
      </fieldset>
-   </div>
 
-      <fieldset class="input-fieldset">
+
+    <fieldset class="input-fieldset">
       <label class="input-label">Amount paid</label>
       <mat-form-field appearance="fill">
         <input matInput type="number" name="paid"     (change)="togglePaidPlaceholder()" placeholder="Insert a amount paid" required formControlName="paidInput">
@@ -156,8 +154,30 @@
         <div class="invalid-feedback d-block" *ngIf="validationErrors !== null && validationErrors?.paid">
           <span class="text text-danger"> {{validationErrors.paid[0]}}</span>
         </div>
-
     </fieldset>
+
+  </div>
+      <div id="currencyId"  formGroupName="rate" >
+        <fieldset class="input-fieldset">
+          <label class="input-label">Currency</label>
+           <select  class="select" (change)="toggleCurrency()" required  formControlName="currencyInput">
+            <option #valueZloty value="zloty">złoty</option>
+            <option value="euro">euro</option>
+            </select>
+        </fieldset>
+
+
+
+        <fieldset class="input-fieldset" [hidden]="rateOfExchangeInputIsHidden">
+          <label class="input-label">Rate of exchange</label>
+          <mat-form-field appearance="fill">
+            <input matInput type="number"  [value]="(rate$ | async)?.rateOfExchange"  required formControlName="rateOfExchangeInput">
+          </mat-form-field>
+
+        </fieldset>
+
+      </div>
+
 
       <fieldset class="input-fieldset">
         <label class="input-label">Products</label>
@@ -173,9 +193,8 @@
             <th scope="col">Gross Value</th>
           </tr>
           </thead>
-          <tbody>
-             <ng-container formArrayName="items">
-            <tr *ngFor="let item of  myFormModel.get('items')['controls']; let i = index;" formGroupName="{{ i }}">
+          <tbody formArrayName="items">
+            <tr *ngFor="let item of  myFormModel.get('items')['controls']; let i = index" [formGroupName]="i">
 
               <th class="numberInput">
                 <input #number matInput class="number" [disabled]="true" (input)="saveNumber(number)" required formControlName="numberInput"> {{i+1}}
@@ -198,7 +217,7 @@
 
               <td>
                 <select class="select"  required  formControlName="unitInput">
-                  <option #selectElement2  value="pc" >pc.</option>
+                  <option value="pc">pc.</option>
                   <option value="kg">kg</option>
                   <option value="t">t</option>
                   <option value="m">m</option>
@@ -256,8 +275,6 @@
               </td>
 
             </tr>
-
-             </ng-container>
           </tbody>
 
 
@@ -300,7 +317,7 @@
   </div>
 
 <app-contractors-catalog #childContractorCatalogRef  (addContratorFromTheCatalog)="addContratorFromTheCatalog()" ></app-contractors-catalog>
-<app-gus-contractor #childContractorFromGus (addContractorFromTheGus)="addContractorFromTheGus($event)"></app-gus-contractor>
+<app-gus-contractor #childContractorFromGus (addContractorFromTheGus)="addContractorFromTheGus($event)"   [gusFormIsHidden]="contractorFromGusIsHidden" ></app-gus-contractor>
   <app-invoices-map #childInvoicesMap >  </app-invoices-map>
 
 
