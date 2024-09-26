@@ -114,14 +114,15 @@
 
 </div>
 
-<app-add-invoice #childAddRef (loadData)="loadData()" [invoicesList$]="invoicesList$" [checkboxOfInvoice]="checkboxOfInvoice"   ></app-add-invoice>
+<app-add-invoice #childAddRef (loadData)="loadData()" [invoicesList$]="invoicesList$" [checkboxOfInvoice]="checkboxOfInvoice"></app-add-invoice>
 
 
   <app-settle-invoice #childSettleComponentRef [hidden]="settleInvoiceComponentIsHidden" ></app-settle-invoice>
 
-  <app-delete-invoice #childDeleteRef  (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
+  <app-delete-invoice #childDeleteRef (loadInvoiceData)="loadData()" [page]="page" [size]="size"></app-delete-invoice>
   <app-print-invoice #childPrintInvoice ></app-print-invoice>
   <app-invoices-map #childInvoicesMap >    </app-invoices-map>
+  <app-check-status #checkStatusDataRef (loadData)="loadData()"  ></app-check-status>
 </section>
 
 

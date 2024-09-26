@@ -15,23 +15,20 @@ export class SellerService {
   constructor(private httpService: HttpService ) {}
 
 
-
-  /*getSeller(username) {//usun
-    //return new Promise((resolve, reject) => {
-      return this.getSellerByAppUser(username);
-      //this.timeoutId = setTimeout( resolve, timeout);
-      //const timeoutId = setTimeout( resolve, timeout);
-    //});
-  }*/
-
   getSellerByName(name) {
-    return this.httpService.getSellerByName(name);
+    return this.httpService.getSellerByName(name).subscribe((seller) => {
+      this.currentSeller$.next(seller);
+      localStorage.setItem('currentSeller', seller.name);
+    });
+  }
+
+  getSellerValue() {
+    return this.currentSeller$.getValue();
   }
 
   getSellerById(idSeller: number): Observable<Seller> {
     return this.httpService.getSellerById(idSeller);
   }
-
 
   saveSeller(seller: Seller): Observable<Seller> {
     return this.httpService.saveSeller(seller);
@@ -52,17 +49,16 @@ export class SellerService {
     return this.httpService.getSellerByNip(nip);
   }
 
-  getSellerByAppUser(loggedInUsername: string)  {
-    this.httpService.getSellerByAppUser(loggedInUsername).subscribe(seller => {
-      this.currentSeller$.next(seller);
-      console.log(seller);
-      localStorage.setItem('currentSeller', seller.name);
-    });
+  getSellerByAppUser(loggedInUsername: string): Observable<Seller>  {
+    return this.httpService.getSellerByAppUser(loggedInUsername);
   }
+
 
   getSellerFromService() {
   return this.currentSeller$.asObservable();
   }
+
+
 
 
 }

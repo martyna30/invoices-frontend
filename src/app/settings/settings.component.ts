@@ -19,14 +19,15 @@ import {PaymentComponent} from '../payment/payment.component';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit, OnDestroy {
+  @Input()
+  seller$!: Observable<Seller>;
   @ViewChild('childSellerDataRef')
   sellerComponent: SellerComponent;
   @ViewChild('childRecordComponentRef')
   recordComponent: PaymentComponent;
   settingsComponentIsHidden = true;
-  //@Input()
-  settingsIsHidden: boolean;
-  currentSeller: Observable<Seller>;
+  sellerComponentIsHidden = true;
+  currentSeller: Seller;
   addressSeller: Observable<void>;
   isloggedin: boolean;
   formModel: FormGroup;
@@ -37,55 +38,33 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private token: string;
   private showVatINPlaceholder: boolean;
 
-  /*checkTheChangeAddressName() {
-    this.myFormModel.get('addressInput').valueChanges.subscribe(
-      response => this.showAddressForm(response)
-    );
-  }
-
-  private showAddressForm(response) {
-    if (this.addressFormIsHidden) {
-      this.addressFormIsHidden = !this.addressFormIsHidden;
-    }
-     // {(currentSeller | async)?.vatIdentificationNumber}}
-  }*/
-
   constructor(private fb: FormBuilder, private dialog: MatDialog,
               private sellerService: SellerService,
               private userAuthService: UserAuthService,
               private router: Router) {
   }
 
+  // <app-add-invoice  (addSellerFromService)="addSellerFromService($event)"> </app-add-invoice>
 
-
-  async ngOnInit() {
+   ngOnInit() {
     this.formModel = this.fb.group({
       nameInput: ({value: '', disabled: this.disabled}),
       addressInput: ({value: '', disabled: true}),
       vatIdentificationNumberInput: ({value: '', disabled: true}),
     });
     this.checkToken();
+    this.sellerComponentIsHidden = true;
     this.isloggedin = this.checkStatus();
     if (this.token !== undefined && this.token !== null) {
       if (this.isloggedin) {
         this.settingsComponentIsHidden = false;
-        const seller = this.sellerService.currentSeller$.getValue();
-        console.log(seller);
-        this.sellerService.currentSeller$.subscribe(selle => {
-          const currentSelle = selle;
-          console.log(currentSelle);
-        });
-        if ( seller !== undefined && seller !== null) {
-          this.getSellerFromService();
-        }else {
-          const username = this.getUsername();
-          //await this.sellerService.getSeller(username, 200);
-          this.getSellerFromService();
+        const currentSeller = this.sellerService.getSellerFromService();
+        this.addSellerToForm(currentSeller);
         }
-      }
     }
-
   }
+
+
 
 
   checkToken(): string {
@@ -112,12 +91,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
     console.log('Timeout has been removed');
   }
 
-  getSeller(username, timeout) {
+  /*getSeller(username, timeout) {
     return new Promise((resolve, reject) => {
      this.sellerService.getSellerByAppUser(username);
      this.timeoutId = setTimeout( resolve, timeout);
     });
-  }
+  }*/
 
    // if (response.status === 403 || response.status === 401) {
   //alert('Complete data of the seller');
@@ -126,26 +105,34 @@ export class SettingsComponent implements OnInit, OnDestroy {
   //});
 
 
+  /*async addSellerFromService(currentSeller: Seller) {
+    console.log(currentSeller);
+    if (currentSeller !== undefined && currentSeller !== null) {
+      this.addSellerToForm(currentSeller);
+    } else if (currentSeller === undefined && currentSeller === null) {
+      const username = this.getUsername();
+      await this.getSeller(username, 200);
+      // tslint:disable-next-line:no-shadowed-variable
+      const seller = this.sellerService.getSellerFromService();
+      this.addSellerToForm(seller);
+    } else {
+      alert('Complete data of the seller');
+    }
+  }*/
 
-  getSellerFromService() {
-    this.sellerService.getSellerFromService().subscribe( seller => {
-    // this.currentSeller.pipe(map(seller => {
-      if (seller !== undefined && seller !== null) {
-        const street = seller.address.street;
-        const streetNumber = seller.address.streetNumber;
-        const postcode = seller.address.postcode;
-        const city = seller.address.city;
-        const address = street + ' ' + streetNumber + ', ' + '\n'
-          + postcode + '' + city;
-        this.formModel.get('addressInput').setValue(address);
-        this.formModel.get('nameInput').setValue(seller.name);
-        this.formModel.get('vatIdentificationNumberInput').setValue(seller.vatIdentificationNumber);
-      } else  {
-        alert('Complete data of the seller');
-      }
+  addSellerToForm(seller) {
+    this.currentSeller = seller.subscribe((currentSeller) => {
+      const street = currentSeller.address.street;
+      const streetNumber = currentSeller.address.streetNumber;
+      const postcode = currentSeller.address.postcode;
+      const city = currentSeller.address.city;
+      const address = street + ' ' + streetNumber + ', ' + '\n'
+        + postcode + '' + city;
+      this.formModel.get('addressInput').setValue(address);
+      this.formModel.get('nameInput').setValue(currentSeller.name);
+      this.formModel.get('vatIdentificationNumberInput').setValue(currentSeller.vatIdentificationNumber);
     });
   }
-
 
   openDialog(mode: string) {
     // this.myFormModel.enable();
@@ -175,24 +162,27 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   // tslint:disable-next-line:typedef variable-name
+
     addSellerToTheSettings(vatIdentificationNumber: string) {
       this.sellerService.getSellerByVatIdentificationNumber(vatIdentificationNumber).subscribe((sellerFromDb) => {
        if (sellerFromDb !== undefined) {
-        this.formModel.get('nameInput').setValue(sellerFromDb.name);
-        this.formModel.get('vatIdentificationNumberInput').setValue(sellerFromDb.vatIdentificationNumber);
-        const street = sellerFromDb.address.street;
-        const streetNumber = sellerFromDb.address.streetNumber;
-        const postcode = sellerFromDb.address.postcode;
-        const city = sellerFromDb.address.city;
-        const country = sellerFromDb.address.country;
-        const address = street + '' + streetNumber + ',' + postcode + '' + city;
-        this.formModel.get('addressInput').setValue(address);
+          this.formModel.get('nameInput').setValue(sellerFromDb.name);
+          this.formModel.get('vatIdentificationNumberInput').setValue(sellerFromDb.vatIdentificationNumber);
+          const street = sellerFromDb.address.street;
+          const streetNumber = sellerFromDb.address.streetNumber;
+          const postcode = sellerFromDb.address.postcode;
+          const city = sellerFromDb.address.city;
+          const country = sellerFromDb.address.country;
+          const address = street + '' + streetNumber + ',' + postcode + '' + city;
+          this.formModel.get('addressInput').setValue(address);
         }
         else {
-        alert('Complete data of the seller');
+          alert('Complete data of the seller');
         }
       });
     }
+
+
     addSellerFromGusToTheSettings(vatIdentificationNumber: string) {
     this.settingsComponentIsHidden = false;
     this.sellerService.getSellerFromGus(vatIdentificationNumber).subscribe((sellerFromGus) => {
@@ -212,14 +202,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // tslint:disable-next-line:typedef
-  /*addContractorFromGusToTheSettings(vatIdentificationNumber: string) {
-    this.sellerService.getContractorFromGusByNip(vatIdentificationNumber).subscribe((contractorFromGus) => {
-
-    });*/
-
-
-
   save() {
     this.formModel.disable();
     if (!this.addressFormIsHidden) {
@@ -233,6 +215,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
    // this.showVatINPlaceholder = (this.formModel.get('vatIdentificationNumberInput').disabled === false) &&
       //(this.formModel.get('vatIdentificationNumberInput').value === '');
   }
+
 
 
 }

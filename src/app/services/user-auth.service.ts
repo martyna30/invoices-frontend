@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, firstValueFrom, Observable} from 'rxjs';
 import {NewUserDto} from '../models-interface/newUserDto';
 import {UserDto} from '../models-interface/userDto';
 import {Token} from '../models-interface/token';
@@ -20,7 +20,7 @@ export class UserAuthService {
 
   constructor(private httpService: HttpService, private sellerService: SellerService) {}
   token$ = new BehaviorSubject<string>(null);
-
+  userdata: UserProfile;
   refreshtoken$ = new BehaviorSubject<string>(null);
   isloggedin$ = new BehaviorSubject<boolean>(false);
   userProfile$ = new BehaviorSubject<Array<string>>([]);
@@ -28,59 +28,187 @@ export class UserAuthService {
   userPassword$ = new BehaviorSubject<string>(null);
   jwtHelper = new JwtHelperService();
   private timeoutId;
+  private isLoading = false;
 
-   public getTokenFromService(): Observable<string> {
+
+  /*public async getTokenFromService(): Promise<Observable<string>> {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    const newToken = localStorage.getItem('new_token');
+
+    let tokenToUse: string | null;
+
+    if (accessToken) {
+      tokenToUse = accessToken;
+      AuthTokenInterceptor.refresh = false;
+    } else if (refreshToken) {
+      tokenToUse = refreshToken;
+    } else if (newToken) {
+      tokenToUse = newToken;
+      AuthTokenInterceptor.refresh = true;
+    }
+
+    if (tokenToUse) {
+      const userData = this.jwtHelper.decodeToken(tokenToUse) as UserProfile;
+      this.setTokenData(userData);
+      await this.setSellerData(userData.sub);
+      this.token$.next(tokenToUse);
+
+      AuthTokenInterceptor.accessToken = accessToken || newToken || '';
+      AuthTokenInterceptor.refreshToken = refreshToken || '';
+
+
+      console.log(tokenToUse);
+
+      return Promise.resolve(this.token$.asObservable());
+    } else {
+      console.log('Access denied, you have to log in');
+      return Promise.resolve(this.token$.asObservable());
+    }
+  }
+
+  public async getTokenFromService(): Promise<Observable<string>>  {
     const accesstoken = localStorage.getItem('access_token');
     const refreshtoken = localStorage.getItem('refresh_token');
     const newtoken = localStorage.getItem('new_token');
-    const currentSeller = localStorage.getItem('currentSeller');
+    const sellerName = localStorage.getItem('currentSeller');
     if (accesstoken !== null && accesstoken !== undefined) {
-
       const userdata = this.jwtHelper.decodeToken(accesstoken) as UserProfile;
       this.setTokenData(userdata);
-      this.token$.next(accesstoken);
+      await this.setSellerData(userdata.sub);
+      this. token$.next(accesstoken);
       AuthTokenInterceptor.refresh = false;
       AuthTokenInterceptor.accessToken = accesstoken;
       AuthTokenInterceptor.refreshToken = refreshtoken;
-      return this.token$.asObservable();
+      console.log(accesstoken);
+      return Promise.resolve(this.token$.asObservable());
     }
 
     if (refreshtoken !== null && refreshtoken !== undefined) {
+      // tslint:disable-next-line:no-shadowed-variable
       const userdata = this.jwtHelper.decodeToken(refreshtoken) as UserProfile;
       this.setTokenData(userdata);
-
+      await this.setSellerData(userdata.sub);
       this.token$.next(refreshtoken);
       AuthTokenInterceptor.refreshToken = refreshtoken;
-      return this.token$.asObservable();
+      console.log(refreshtoken);
+      return Promise.resolve(this.token$.asObservable());
     }
     if (newtoken !== null && newtoken !== undefined) {
       const userdata = this.jwtHelper.decodeToken(newtoken) as UserProfile;
       this.setTokenData(userdata);
+      await this.setSellerData(userdata.sub);
       this.token$.next(newtoken);
       AuthTokenInterceptor.accessToken = newtoken;
       AuthTokenInterceptor.refresh = true;
-      return this.token$.asObservable();
+      console.log(newtoken);
+      return Promise.resolve(this.token$.asObservable());
+    } else {
+      console.log('Access denied, you have to log in');
     }
-    else {
-     console.log('Access denied, you have to log in');
-    }
-  }
+  }*/
 
   setTokenData(userdata) {
     const userrole = userdata.role;
     this.userProfile$.next(userrole);
+
+    this.isloggedin$.next(true);
     const username = userdata.sub;
     this.userName$.next(username);
-   // this.getCurrentSellerData(currentSeller, username);
-    this.isloggedin$.next(true);
-   }
+  }
+
+
+  public async getTokenFromService(): Promise<Observable<string>> {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    const newToken = localStorage.getItem('new_token');
+
+    let tokenToUse: string | null = this.getValidToken(accessToken, refreshToken, newToken);
+
+    if (tokenToUse) {
+      const userData = this.jwtHelper.decodeToken(tokenToUse) as UserProfile;
+      this.setTokenData(userData);
+      await this.setSellerData(userData.sub);
+
+      this.token$.next(tokenToUse);
+      this.updateInterceptorTokens(accessToken, refreshToken, newToken);
+
+      console.log(tokenToUse);
+      return Promise.resolve(this.token$.asObservable());
+    } else {
+      this.isloggedin$.next(false);
+      console.log('Access denied, you have to log in');
+      return Promise.resolve(this.token$.asObservable());
+    }
+  }
+
+  private getValidToken(accessToken: string | null, refreshToken: string | null, newToken: string | null): string | null {
+    if (accessToken) { return accessToken; }
+    if (refreshToken) { return refreshToken; }
+    if (newToken) { return newToken; }
+    return null;
+  }
+
+  private updateInterceptorTokens(accessToken: string | null, refreshToken: string | null, newToken: string | null): void {
+    if (accessToken) {
+      AuthTokenInterceptor.refresh = false;
+      AuthTokenInterceptor.accessToken = accessToken;
+    }
+    if (refreshToken) {
+      AuthTokenInterceptor.refreshToken = refreshToken;
+    }
+    if (newToken) {
+      AuthTokenInterceptor.accessToken = newToken;
+      AuthTokenInterceptor.refresh = true;
+    }
+  }
+
+
+
+  public async setSellerData(username: string): Promise<void> {
+    const currentSeller = this.sellerService.getSellerValue();
+    const cachedSellerName = localStorage.getItem('currentSeller');
+
+    if (currentSeller !== undefined && currentSeller !== null) {
+      console.log(currentSeller);
+      return;
+    }
+
+    if (cachedSellerName !== null) {
+      this.sellerService.currentSeller$.next({ name: cachedSellerName } as Seller);
+      return;
+    }
+
+    if (this.isLoading) {
+     return;
+    }
+    this.isLoading = true;
+
+    try {
+      const sellerByAppUser: Seller = await firstValueFrom(this.sellerService.getSellerByAppUser(username));
+      if (sellerByAppUser) {
+        this.sellerService.currentSeller$.next(sellerByAppUser);
+        console.log(sellerByAppUser);
+        localStorage.setItem('currentSeller', sellerByAppUser.name);
+      }
+    } catch (error) {
+      console.error('Error fetching seller:', error);
+    } finally {
+      this.isLoading = false;
+    }
+}
+
+
+
+
+
 
 
   login(userDto: UserDto): Observable<any> {
    return this.httpService.generateToken(userDto)
       .pipe(
         map( async (response) => {
-          this.userName$.next(userDto.username);
+          //this.userName$.next(userDto.username);
           this.userPassword$.next(userDto.password);
           const tokens = response as unknown as Token;
           localStorage.setItem('username', userDto.username);
@@ -90,27 +218,18 @@ export class UserAuthService {
           AuthTokenInterceptor.refreshToken = tokens.refresh_token;
           AuthTokenInterceptor.isLogout = false;
           const userdata = this.jwtHelper.decodeToken(tokens.access_token) as UserProfile;
-          const userrole = userdata.role;
-          this.userProfile$.next(userrole);
+          this.setTokenData(userdata);
           this.token$.next(tokens.access_token);
-         /*if (tokens !== undefined && tokens && null) {
-            await this.getIsLoggedIn(200);
-            this.sellerService.getSellerByAppUser(userDto.username);
-          }*/
           return true;
         }));
    }
 
-  /*getIsLoggedIn(timeout) {usun
-     return new Promise((resolve, reject) => {
-       this.isloggedin$.next(true);
-       this.timeoutId = setTimeout( resolve, timeout);
-       const timeoutId = setTimeout( resolve, timeout);
-     });
-   }*/
 
+   getUsernameAsObervable() {
+     return this.userName$.asObservable();
+   }
 
-  getUsernameForLoggedInUser(): string {
+   getUsernameForLoggedInUser(): string {
     return this.userName$.value;
   }
 
@@ -134,6 +253,9 @@ export class UserAuthService {
         localStorage.removeItem('borrowedBooks');
     });
   }
+
+
+
 
 
 }

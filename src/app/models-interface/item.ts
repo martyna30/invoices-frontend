@@ -1,7 +1,9 @@
+import {Product} from './product';
+
 export interface Item {
   id: number;
   number: number;
-  product: string;
+  nameOfProduct: string;
   unit: string;
   amount: number;
   netWorth: number;

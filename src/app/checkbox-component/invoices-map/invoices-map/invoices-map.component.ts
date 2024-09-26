@@ -9,7 +9,7 @@ import {CheckboxService} from '../../../services/checkbox.service';
 export class InvoicesMapComponent implements OnInit {
   private checkedList: Map<number, number>;
   private idInvoice: number;
-  private isHidden: boolean;
+
   private checkboxOfInvoice: number;
   constructor(private checkboxService: CheckboxService) { }
 
@@ -33,7 +33,6 @@ export class InvoicesMapComponent implements OnInit {
   checkOrInvoicesMapEqualsZero(): boolean {
     if (this.checkboxService.lengthInvoicesMap() === 0) {
       alert('Check the box');
-      this.isHidden = true;
       return false;
     }
   }
@@ -41,7 +40,6 @@ export class InvoicesMapComponent implements OnInit {
   checkOrInvoicesMapIsMoreThanOne() {
     if (this.checkboxService.lengthInvoicesMap() > 1) {
       alert('More than one checkbox is selected, choose one');
-      this.isHidden = true;
       return false;
     }
   }

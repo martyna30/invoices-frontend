@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {AddInvoiceComponent} from './add-invoice/add-invoice.component';
 import {FormGroup} from '@angular/forms';
@@ -11,6 +11,7 @@ import {PrintInvoiceComponent} from './print-invoice/print-invoice.component';
 import {UserAuthService} from '../services/user-auth.service';
 import {SettleInvoiceComponent} from './settle-invoice/settle-invoice/settle-invoice.component';
 import {InvoicesMapComponent} from '../checkbox-component/invoices-map/invoices-map/invoices-map.component';
+import {CheckStatusComponent} from '../checkStatusComponent/check-status/check-status.component';
 
 const FILTER_PAG_REGEX = /[^0-9]/g;
 @Component({
@@ -18,7 +19,9 @@ const FILTER_PAG_REGEX = /[^0-9]/g;
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.scss']
 })
-export class InvoicesComponent implements OnInit {
+export class InvoicesComponent implements OnInit , AfterViewInit {
+  @ViewChild('checkStatusDataRef')
+  checkStatusComponent: CheckStatusComponent;
   @ViewChild('childAddRef')
   addInvoiceComponent: AddInvoiceComponent;
   @ViewChild('childDeleteRef')
@@ -41,21 +44,17 @@ export class InvoicesComponent implements OnInit {
   isloggedin: boolean;
   private invoiceIdFromMap: number;
 
+
   constructor(private dialog: MatDialog, private invoiceService: InvoiceService,
               private checkboxService: CheckboxService, private userService: UserAuthService) {
   }
 
-  ngOnInit(): void {
-    this.checkStatus();
-    this.loadData();
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
+   this.checkStatusComponent.checkStatus();
   }
 
-  checkStatus() {
-    if (this.userService.isloggedin$.getValue() === true) {
-      this.isloggedin = true;
-      this.isHidden = false;
-    }
-  }
 
   getColor(): string {
     return 'blue';
@@ -78,7 +77,6 @@ export class InvoicesComponent implements OnInit {
       dialogConfig.panelClass = 'settle-modalbox';
       this.dialog.open(SettleInvoiceComponent, dialogConfig);
       this.settleComponent.settlePayment();
-      //[settleIsHidden]="settleInvoiceComponentIsHidden"
     }
   }
 
@@ -104,6 +102,7 @@ export class InvoicesComponent implements OnInit {
 
   // tslint:disable-next-line:typedef
   loadData() {
+    this.isHidden = !this.isHidden;
     const page = this.page - 1;
     this.invoiceService.getInvoicesListObservable(page, this.size);
     this.invoicesList$ = this.invoiceService.getInvoicesFromService();
@@ -162,6 +161,8 @@ export class InvoicesComponent implements OnInit {
        });
      }
  */
+
+
 
 }
 

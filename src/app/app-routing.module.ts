@@ -10,6 +10,7 @@ import {SettingsComponent} from './settings/settings.component';
 import {PrintInvoiceComponent} from './invoices/print-invoice/print-invoice.component';
 import {PaymentComponent} from './payment/payment.component';
 import {PaymentDetailsComponent} from './payment/payment-details/payment-details/payment-details.component';
+import {ProductsComponent} from './products/products.component';
 
 
 
@@ -23,6 +24,7 @@ const routes: Routes = [
   {path: 'invoices/print', component: PrintInvoiceComponent},
   {path: 'contractors', component: ContractorsComponent},
   {path: 'contractorsCatalog', component: ContractorsCatalogComponent},
+  {path: 'store', component: ProductsComponent},
   {path: 'login', component: LoginComponent },
   {path: 'registration', component: RegistrationComponent },
   {path: '**', component: PageNotFoundComponent },

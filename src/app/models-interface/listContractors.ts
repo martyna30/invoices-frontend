@@ -1,4 +1,4 @@
-import {Invoice} from './invoice';
+
 import {Contractor} from './contractor';
 
 export interface ListContractors {

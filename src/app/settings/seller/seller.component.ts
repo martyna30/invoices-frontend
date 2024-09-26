@@ -24,8 +24,7 @@ import {Router} from '@angular/router';
   styleUrls: ['./seller.component.scss']
 })
 export class SellerComponent implements OnInit {
-  @Input()
-  isHidden: boolean;
+  // [sellerIsHidden]="sellerComponentIsHidden"
   private mode: string;
   myFormModel: FormGroup;
   private isCreated: boolean;
@@ -38,6 +37,7 @@ export class SellerComponent implements OnInit {
   private sellerExist: boolean;
   @Output()
   settingsIsHidden: EventEmitter<boolean> = new EventEmitter<boolean>();
+  isHidden = true;
 
 
   constructor(private fb: FormBuilder, private sellerService: SellerService,
@@ -58,12 +58,8 @@ export class SellerComponent implements OnInit {
         countryInput: 'Poland'
       }),
     });
-    this.isHidden = true;
-    /*if (this.userService.isloggedin$.getValue() === true) {
-      this.userService.userName$.subscribe((username) => {
-        this.username = username;
-      });*/
     this.username = this.userService.getUsernameForLoggedInUser();
+    this.isHidden = true;
   }
 
 

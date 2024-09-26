@@ -49,6 +49,10 @@ import { PaymentDetailsComponent } from './payment/payment-details/payment-detai
 import { InvoicesMapComponent } from './checkbox-component/invoices-map/invoices-map/invoices-map.component';
 import { PaymentsMapComponent } from './checkbox-component/payments-map/payments-map/payments-map.component';
 import { DeletePaymentComponent } from './payment/delete-payment/delete-payment/delete-payment.component';
+import { CheckStatusComponent } from './checkStatusComponent/check-status/check-status.component';
+import { ProductsComponent } from './products/products.component';
+import { ProductsCatalogComponent } from './products/products-catalog/products-catalog.component';
+import { AddProductComponent } from './products/add-product/add-product.component';
 
 
 
@@ -87,6 +91,10 @@ export function jwtOptionsFactory(userAuthService: UserAuthService) {
     InvoicesMapComponent,
     PaymentsMapComponent,
     DeletePaymentComponent,
+    CheckStatusComponent,
+    ProductsComponent,
+    ProductsCatalogComponent,
+    AddProductComponent,
 
   ],
   imports: [

@@ -10,23 +10,18 @@
 @import 'src/scss/08-utilities/_utilities.scss';
 
 
-#productSelect {
+#nameId {
   display: flex;
-  width: 30px;
+  justify-content: flex-start;
+  margin-right: 5px;
 }
 
-.bi {
-  background-position: center;
-  padding: 5px 5px;
+#priceId {
+  display: flex;
+  justify-content: flex-start;
+  margin-right: 5px;
 }
 
-
-#menu {
-  display: inline-flex;
-}
-#menuSelect {
-  width: 22px;
-}
 
 .invalid-feedback {
   width: 100%;
@@ -35,23 +30,15 @@
   color: #dc3545;
 }
 
-
-#contractorInput {
-  display: flex;
-  width: 300px;
-}
-
 mat-form-field {
-  width: 300px;
+  width: 220px;
 }
 
 
 .input-fieldset {
-  margin-right:$gutter;
   margin-bottom: $gutter*3;
-
+  margin-right: $gutter*5;
 }
-
 
 .mat-dialog {
   label {
@@ -68,10 +55,11 @@ mat-label {
 }
 
 
-table td {
+
+td {
   position: relative;
-  max-width: 150px;
-  min-width: 50px;
+  width: 30px;
+  min-width: 30px;
   height: auto;
   vertical-align: middle;
   text-align: center;
@@ -79,9 +67,6 @@ table td {
   margin-left: auto;
   margin-right: auto;
   max-height: 100%;
-}
-table #td-amount {
-    max-width: 50px;
 }
 .bi-bi-x-circle {
   width: auto;
@@ -96,8 +81,13 @@ table #td-amount {
   cursor: pointer;
 }
 
+
+
 .button-group {
 
+  text-align: center;
+  margin: 0 auto;
+  justify-content: space-between;
 }
 
 table {
@@ -108,80 +98,14 @@ table {
 }
 
 
-
-
-.numberInput {
-  width: 50px;
-}
-
-
-
-table input.amount,
-table input.number {
-  width: 50px;
-}
-
-#nameId {
-  display: flex;
-  justify-content: flex-start;
-  margin-right: 5px;
-
-}
-
-#contractorId {
-  display: flex;
-  justify-content: flex-start;
-}
-
-#datesId{
-  display: flex;
-  margin-top: 40px;
-  justify-content: space-between;
-}
-#paymentsId {
-  margin-right: $grid-base*5;
-  display: flex;
-  justify-content: flex-start;
-}
-
-#addressId {
-  display: flex;
-  justify-content: space-between;
-}
-
-#currencyId {
-  display: flex;
-  justify-content: start;
-}
-
-.form-control1 {
-  width: $gutter*20;
-}
-
-
-
-.input-group mb-3 {
-  margin-bottom: 5px;
-}
-
 .modalbox {
   min-width: 800px;
   max-width: 1000px;
   min-height: 400px;
   max-height: 800px;
   overflow-y: visible;
-  bottom: 10%;
-  left: 50%;
+
 }
-
-
-
-
-
-
-
-
-
 
 
 

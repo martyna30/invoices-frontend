@@ -12,6 +12,7 @@ import {SellerService} from '../services/seller.service';
 import {AddInvoiceComponent} from '../invoices/add-invoice/add-invoice.component';
 import {RegistrationComponent} from './registration/registration.component';
 import {SellerComponent} from '../settings/seller/seller.component';
+import {Observable} from 'rxjs';
 
 
 
@@ -21,8 +22,6 @@ import {SellerComponent} from '../settings/seller/seller.component';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  //@Input()
-  //loginFormIsHidden: boolean;
   @Input()
   nip!: string;
   @Output()
@@ -31,8 +30,6 @@ export class LoginComponent implements OnInit {
   login: string;
   password: string;
   private isComming: boolean;
-  //@ViewChild('childRegistrationRef')
-  //registrationComponent: RegistrationComponent;
   @ViewChild('childSellerRef')
   sellerComponent: SellerComponent;
   @Output()
@@ -71,7 +68,7 @@ export class LoginComponent implements OnInit {
     };
     // @ts-ignore
     this.userAuthService.login(userDto).subscribe(
-      (tokenIsComming) => {
+      (tokenIsComming: boolean) => {
         this.isComming = tokenIsComming;
         if (this.isComming) {
           this.loginFormIsHidden = true;
@@ -84,6 +81,7 @@ export class LoginComponent implements OnInit {
         console.log(response.error);
         this.loggingValidationError = response.error;
         this.isloggedin = false;
+
       });
     // this.token = this.userAuthService.getTokenFromService();
     // console.log(this.token);

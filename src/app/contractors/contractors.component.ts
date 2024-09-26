@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {InvoiceService} from '../services/invoice.service';
 import {CheckboxService} from '../services/checkbox.service';
@@ -11,6 +11,7 @@ import {AddContractorComponent} from './add-contractor/add-contractor.component'
 import {DeleteContractorComponent} from './delete-contractor/delete-contractor.component';
 import {Contractor} from '../models-interface/contractor';
 import {UserAuthService} from '../services/user-auth.service';
+import {CheckStatusComponent} from '../checkStatusComponent/check-status/check-status.component';
 
 const FILTER_PAG_REGEX = /[^0-9]/g;
 @Component({
@@ -18,7 +19,9 @@ const FILTER_PAG_REGEX = /[^0-9]/g;
   templateUrl: './contractors.component.html',
   styleUrls: ['./contractors.component.scss']
 })
-export class ContractorsComponent implements OnInit {
+export class ContractorsComponent implements OnInit, AfterViewInit {
+  @ViewChild('checkStatusDataRef')
+  checkStatusComponent: CheckStatusComponent;
   @ViewChild('childAddRef')
   addContractorComponent: AddContractorComponent;
   @ViewChild('childDeleteRef')
@@ -35,24 +38,12 @@ export class ContractorsComponent implements OnInit {
   constructor(private dialog: MatDialog, private contractorService: ContractorService,
               private checkboxService: CheckboxService, private userService: UserAuthService) { }
 
-  ngOnInit(): void {
-    this.loadData();
-    this.checkStatus();
+  ngOnInit(): void {}
+
+  ngAfterViewInit(): void {
+    this.checkStatusComponent.checkStatus();
   }
 
-  private showContractorsComponent() {
-    if (this.isHidden) {
-      this.isHidden = !this.isHidden;
-    } else {
-      this.isHidden = true;
-    }
-  }
-  checkStatus() {
-    if (this.userService.isloggedin$.getValue() === true) {
-      this.isloggedin = true;
-      this.isHidden = false;
-    }
-  }
 
   getColor() {
     return 'blue';
@@ -92,6 +83,7 @@ export class ContractorsComponent implements OnInit {
   }
 
   loadData() {
+    this.isHidden = !this.isHidden;
     const page = this.page - 1;
     this.contractorService.getContractorsListObservable(page, this.size);
     this.contractorsList$ = this.contractorService.getContractorsFromService();

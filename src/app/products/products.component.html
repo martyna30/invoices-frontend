@@ -1,25 +1,26 @@
-
-<section id="contractors" [hidden]="isHidden">
-
+<section id="products" [hidden]="isHidden">
   <div class="sk-sidebar">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link sk-header-item-link"  (click)="openDialog('add')">Create a Contractor</a>
+        <a class="nav-link sk-header-item-link"  (click)="openDialog('add')">Create a Product</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link sk-header-item-link"  (click)="openDialog('edit')">Modify a Contractor</a>
+        <a class="nav-link sk-header-item-link"  (click)="openDialog('edit')">Modify a Product</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link sk-header-item-link" (click)="deleteContractor()">Delete a Contractor</a>
+        <a class="nav-link sk-header-item-link" (click)="deleteProduct()">Delete a Product</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link sk-header-item-link" (click)="acceptProduct()">Accept goods</a>
+      </li>
+
       <li class="nav-item-settings">
         <a class="nav-link sk-header-item-link" routerLinkActive="active"  routerLink="/settings">Settings</a>
       </li>
     </ul>
   </div>
-
   <div class ="table-container">
-    <ng-container *ngIf="contractorsList$ !== null; else NoContractors">
+    <ng-container *ngIf="productsList$ !== null; else NoProducts">
       <p [ngStyle]="{color: getColor()}"></p>
       <table class="table table-striped">
         <thead>
@@ -27,37 +28,41 @@
             value="" aria-label="..."  class="table-primary">
           <th scope="row"> # </th>
           <th scope="row">Lp</th>
-          <th scope="row">Name</th>
-          <th scope="row">VAT identification number</th>
-          <th scope="row">Street</th>
-          <th scope="row">Street number</th>
-          <th scope="row">Post code</th>
-          <th scope="row">City</th>
-          <th scope="row">Country</th>
+          <th scope="row">Code</th>
+          <th scope="row">Name of products</th>
+          <th scope="row">State</th>
+          <th scope="row">Net amount</th>
+          <th scope="row">Unit</th>
+          <th scope="row">Type</th>
+          <th scope="row">Net amount</th>
+          <th scope="row">Gross sum</th>
+          <th scope="row">Vat Rate</th>
+
         </tr>
         </thead>
         <tbody>
 
-        <tr *ngFor="let contractor of contractorsList$ | async;let i = index;">
+        <tr *ngFor="let product of productsList$ | async;let i = index;">
 
           <input #self class="form-check-input" type="checkbox"
-                 [value]="contractor.id" id="contractorIdInput"
+                 [value]="product.id" id="productIdInput"
                  (change)="changeCheckboxList(self)">
 
           <th scope="row">{{(page-1) * size + i+1}}</th>
-          <td>{{contractor.name}}</td>
-          <td>{{contractor.vatIdentificationNumber}}</td>
-          <td>{{contractor.address.street}}</td>
-          <td>{{contractor.address.streetNumber}}</td>
-          <td>{{contractor.address.postcode}}</td>
-          <td>{{contractor.address.city}}</td>
-          <td>{{contractor.address.country}}</td>
+          <td>{{product.code}}</td>
+          <td>{{product.nameOfProduct}}</td>
+          <td>{{product.netWorth}}</td>
+          <td>{{product.unit}}</td>
+          <td>{{product.type}}</td>
+          <td>{{product.netWorth}}</td>
+          <td>{{product.grossValue}}</td>
+          <td>{{product.vatRate}}</td>
         </tr>
         </tbody>
 
       </table>
     </ng-container>
-    <ng-template #NoContractors>
+    <ng-template #NoProducts>
       <p>No contractors</p>
     </ng-template>
 
@@ -92,15 +97,14 @@
           </li>
         </ng-template>
       </ngb-pagination>
-      <hr>
 
+      <hr>
       <pre>Current page: {{page}}</pre>
     </div>
   </div>
 
 
-<app-add-contractor #childAddRef (loadData)="loadData()" ></app-add-contractor>
-<app-delete-contractor #childDeleteRef  (loadContractorsData)="loadData()"  [page]="page" [size]="size"  ></app-delete-contractor>
-  <app-check-status #checkStatusDataRef (loadData)="loadData()"   ></app-check-status>
-
+<app-add-product  #childAddRef (loadData)="loadData()" ></app-add-product>
+  <app-check-status #checkStatusDataRef (loadData)="loadData()"  ></app-check-status>
 </section>
+

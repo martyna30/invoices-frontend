@@ -34,16 +34,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
 
   // tslint:disable-next-line:typedef
   intercept(request, next) {
-    // if (request.url.indexOf('logout')) {// (request.url.indexOf('login') > -1 || request.url.indexOf('token/refresh') > -1) {
-     // return next.handle(request);
-    // }
-
-    // let atoken;
-   // if (AuthTokenInterceptor.accessToken === null || AuthTokenInterceptor === undefined) {
-     //  atoken = this.userAuthService.getTokenFromService();
-   // }
-
-      const req = request.clone({
+    const req = request.clone({
         setHeaders: {
           Authorization: `Bearer ${AuthTokenInterceptor.accessToken}`
         }
@@ -76,6 +67,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
                   }));
                 })
               );
+
             }
             if (refreshExpired && (err.status === 403 || err.status === 401) && !AuthTokenInterceptor.isLogout) {
               AuthTokenInterceptor.isLogout = true;

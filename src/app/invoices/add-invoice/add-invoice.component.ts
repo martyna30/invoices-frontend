@@ -16,7 +16,8 @@ import {CheckboxService} from '../../services/checkbox.service';
 import {InvoiceService} from '../../services/invoice.service';
 import {Invoice} from '../../models-interface/invoice';
 import {Item} from '../../models-interface/item';
-import {async, Observable, of, Subscription} from 'rxjs';
+import {lastValueFrom, of, take, tap} from 'rxjs';
+import { Observable, Subscription} from 'rxjs';
 import {SellerService} from '../../services/seller.service';
 import {ContractorService} from '../../services/contractor.service';
 import {ProductService} from '../../services/product.service';
@@ -25,6 +26,7 @@ import {Address} from '../../models-interface/address';
 import {ContractorValidationError} from '../../models-interface/contractorValidationError';
 import {AddressValidationError} from '../../models-interface/addressValidationError';
 import {MethodOfPayment} from '../../models-interface/methodOfPayment';
+import {Currencies} from '../../models-interface/currencies';
 import {DatePipe, DecimalPipe, formatDate} from '@angular/common';
 import {ContractorDto} from '../../models-interface/contractorDto';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
@@ -35,12 +37,10 @@ import {GusContractorComponent} from '../../contractors/add-contractor/gus-contr
 import {Payment} from '../../models-interface/payment';
 import {InvoicesMapComponent} from '../../checkbox-component/invoices-map/invoices-map/invoices-map.component';
 import {Seller} from '../../models-interface/seller';
-import {InvoicesComponent} from '../invoices.component';
-import {SettingsComponent} from '../../settings/settings.component';
-import {SellerComponent} from '../../settings/seller/seller.component';
 import {UserAuthService} from '../../services/user-auth.service';
 import {RateService} from '../../services/rate.service';
 import {Rate} from '../../models-interface/rate';
+import {ProductsCatalogComponent} from '../../products/products-catalog/products-catalog.component';
 
 
 @Component({
@@ -50,11 +50,7 @@ import {Rate} from '../../models-interface/rate';
 
 })
 export class AddInvoiceComponent implements OnInit, OnDestroy {
-  //[value]="(rate$ | async)?.rateOfExchange"
-  //[hidden]="rateOfExchangeInputIsHidden"
-  //[formGroup]="myFormModel"
   rate$: Observable<Rate>;
-  //nameCurrency: FormControl;
   contractorFromGusIsHidden = true;
   contractorCatalogIsHidden = true;
   private positionRelativeToElement: ElementRef;
@@ -62,13 +58,14 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   contractors: Array<Contractor>;
   contractorWithName: Contractor;
   private subscriptions = new Subscription();
-  //effectiveDate: FormControl;
   @ViewChild('childInvoicesMap')
   invoicesMap: InvoicesMapComponent;
   @ViewChild('childContractorCatalogRef')
   contractorCatalog: ContractorsCatalogComponent;
   @ViewChild('childContractorFromGus')
   contractorFromGus: GusContractorComponent;
+  @ViewChild('childProductsCatalogRef')
+  productsCatalog: ProductsCatalogComponent;
   @Input()
   invoicesList$: Observable<Array<Invoice>>;
   @Input()
@@ -86,17 +83,14 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   private mode: string;
   private contractorMode: string;
   number: number;
+  numberOfItem: number;
   myFormModel: FormGroup;
-  //contractor: FormGroup;
   items: FormArray;
-  //address: FormGroup;
-  //datesGroup: FormGroup;
-  //payments: FormGroup;
-  //rateGroup: FormGroup;
   filteredSellers: string[] = [];
   filteredName: string[] = [];
   filteredProductsList: string[] = [];
   private idContractorFromTheCatalog: number;
+  private idProductFromTheCatalog: number;
   private showSellerPlaceholder: boolean;
   private showContractorPlaceholder = [];
   private showProductPlaceholder = [];
@@ -105,6 +99,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   addressValidationErrors: AddressValidationError;
   private checkedList: Map<number, number>;
   private checkedContractorList: Map<number, number>;
+  private checkedProductsList: Map<number, number>;
   private idInvoice: number;
   private invoiceToModified: Invoice;
   invoiceFromDb: Invoice;
@@ -120,8 +115,15 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   private showPaidPlaceholder: boolean;
   private showVATPlaceholder: boolean;
   rateOfExchangeInputIsHidden = true;
+  modeCurrency = 'euro';
   currency = 'złoty';
-  value = 'Transfer';
+  valueMethodOfPayment = 'Transfer';
+
+  currencies: Currencies [] = [
+    {value: 'złoty', viewValue: 'Złoty'},
+    {value: 'euro', viewValue: 'Euro'},
+  ];
+
   methodsOfPayment: MethodOfPayment[] = [
     {value: 'transfer', viewValue: 'Transfer'},
     {value: 'cash', viewValue: 'Cash'},
@@ -144,10 +146,11 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
               private contractorService: ContractorService, private productService: ProductService,
               private rateService: RateService, private datePipe: DatePipe,
               private decimal: DecimalPipe, private dialog: MatDialog,
-              private userAuthService: UserAuthService ) {
+              private userAuthService: UserAuthService) {
 
   }
-   ngOnInit(): void {
+
+  ngOnInit(): void {
     this.myFormModel = this.fb.group({
       contractor: this.fb.group({
         nameInput: '',
@@ -167,13 +170,13 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
         dateOfSaleInput: [formatDate(new Date(Date.now()), 'yyyy-MM-dd', 'en')]
       }),
       payments: this.fb.group({
-        periodOfPaymentInput : '7',
+        periodOfPaymentInput: '',
         methodOfPaymentInput: 'Transfer',
         paidInput: parseInt('0,00')
       }),
       rate: this.fb.group({
         currencyInput: 'złoty',
-        rateOfExchangeInput: ''
+        rateOfExchangeInput: ['']
       }),
       items: this.fb.array([]),
       netAmountInput: '',
@@ -183,28 +186,15 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     this.checkTheChangeContractorName();
     this.sumGrossValue();
     this.sumNetValue();
-    this.sellerService.currentSeller$.subscribe( async currentSeller => {
-      if (currentSeller !== undefined && currentSeller !== null) {
-        this.sellerFromService = currentSeller;
-      } else {
-        const sellerName = localStorage.getItem('currentSeller');
-        if (sellerName !== undefined && sellerName !== null) {
-          this.sellerService.getSellerByName(sellerName)
-            .subscribe(current => {
-              this.sellerFromService = current;
-            });
-        } else {
-          const username = this.userAuthService.getUsernameForLoggedInUser();
-          this.sellerService.getSellerByAppUser(username);
-        }
-      }
-    });
-   }
+    this.sellerFromService = this.sellerService.getSellerValue();
+    console.log(this.sellerFromService);
+  }
+
+
 
   addContratorFromTheCatalog() {
     this.checkedContractorList = this.checkboxservice.getContractorsFromTheCatalogMap();
     this.idContractorFromTheCatalog = this.checkedContractorList.keys().next().value;
-    // this.idContractorFromTheCatalog = this.checkboxservice.getContractorsFromTheCalogMap().keys().next().value;
     this.contractorService.getContractorById(this.idContractorFromTheCatalog).subscribe((contractorFromDb) => {
       this.myFormModel.get('contractor').get('nameInput').setValue(contractorFromDb.name);
       this.myFormModel.get('contractor').get('vatIdentificationNumberInput').setValue(contractorFromDb.vatIdentificationNumber);
@@ -213,7 +203,16 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       this.myFormModel.get('contractor').get('address').get('postcodeInput').setValue(contractorFromDb.address.postcode);
       this.myFormModel.get('contractor').get('address').get('cityInput').setValue(contractorFromDb.address.city);
       this.myFormModel.get('contractor').get('address').get('countryInput').setValue(contractorFromDb.address.country);
-      });
+    });
+  }
+
+  addProductFromTheCatalog() {
+    this.checkedProductsList = this.checkboxservice.getProductFromTheCatalogMap();
+    this.idProductFromTheCatalog = this.checkedProductsList.keys().next().value;
+    this.productService.getProductById(this.idProductFromTheCatalog).subscribe( (productFromDb) => {
+      // this.myFormModel.get('item').get('numberInput').setValue(productFromDb.);
+        this.myFormModel.get('items').value[this.numberOfItem].get('productInput').setValue(productFromDb.nameOfProduct);
+    });
   }
 
   addContractorFromTheGus(nip: string) {
@@ -232,7 +231,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     });
   }
 
-  setDate(){
+  setDate() {
     this.datePipe = new DatePipe('en-US');
     const sub3 = this.myFormModel.valueChanges.subscribe(form => {
       const dateOfInvoiceInput = this.datePipe.transform(form.dateOfInvoiceInput, 'MM/dd/yyyy');
@@ -297,7 +296,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
           if (index >= this.items.length) {
             this.addNextItem();
           }
-          this.items.at(index).get('productInput').setValue(product.product);
+          this.items.at(index).get('productInput').setValue(product.nameOfProduct);
           this.items.at(index).get('unitInput').setValue(product.unit);
           this.items.at(index).get('amountInput').setValue(product.amount);
           this.items.at(index).get('netWorthInput').setValue(product.netWorth);
@@ -317,7 +316,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   }
 
   roundNetWorth() {
-    this.items.controls.forEach((itemControl, index ) => {
+    this.items.controls.forEach((itemControl, index) => {
       const netWorth = itemControl.get('netWorthInput').value;
       const nettValue = parseFloat(netWorth).toFixed(2);
       itemControl.get('netWorthInput').patchValue(nettValue);
@@ -325,7 +324,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   }
 
   setGrossValue(selectElement: HTMLSelectElement) {
-    this.items.controls.forEach((itemControl, index ) => {
+    this.items.controls.forEach((itemControl, index) => {
       itemControl.get('grossValueInput').patchValue(
         (+selectElement.value / +100) * +itemControl.get('netWorthInput').value
         + +itemControl.get('netWorthInput').value
@@ -345,13 +344,13 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.add(subscription);
   }
+
   // const netInput = data.reduce((a, b) => a + (+b.netWorthInput) * +b.amountInput, 0);
   sumNetValue() {
     const subscription2 = this.items.valueChanges.subscribe(data => {
-      // tslint:disable-nex-line:only-arrow-functions
-      const netInput = data.reduce(function(a, b)  {
+      const netInput = data.reduce(function(a, b) {
         return a + (+b.netWorthInput) * +b.amountInput;
-        }, 0);
+      }, 0);
       const netInputRound = netInput.toFixed(2);
       this.myFormModel.get('netAmountInput').patchValue(netInputRound);
       // this.myFormModel.get('netAmountInput').patchValue(netInput);
@@ -360,6 +359,32 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.add(subscription2);
   }
+
+  public convertValueByCurrency(currency: string) {
+    const rateOfExchange = parseFloat(this.myFormModel.get('rate').get('rateOfExchangeInput').value);
+
+    console.log('rateOfExchange:', rateOfExchange);
+
+    if (currency !== this.currency && !isNaN(rateOfExchange)) {
+      this.items.controls.forEach((itemControl) => {
+          const netWorth = parseFloat(itemControl.get('netWorthInput').value);
+          const grossWorth = itemControl.get('grossValueInput').value;
+          console.log('netWorth:', netWorth);
+
+          if (!isNaN(netWorth) && !isNaN(grossWorth) && rateOfExchange !== 0) {
+            const convertedNetWorth = (netWorth / rateOfExchange).toFixed(2);
+            itemControl.get('netWorthInput').patchValue(convertedNetWorth);
+            console.log('convertedNetWorth:', convertedNetWorth);
+
+            const convertedGrossValueWorth = (grossWorth / rateOfExchange).toFixed(2);
+            itemControl.get('grossValueInput').patchValue(convertedGrossValueWorth);
+          }
+      });
+    } else {
+      console.error('Invalid netWorth or rateOfExchange');
+    }
+  }
+
 
   @HostListener('window:beforeunload')
   ngOnDestroy() {
@@ -370,9 +395,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   saveInvoice() {
     if (this.mode === 'edit') {
       this.changeInvoice();
-    }
-    else if (this.saveInvoiceWithContractor === false) {
-        this.saveInvoiceWithoutContractor();
+    } else if (this.saveInvoiceWithContractor === false) {
+      this.saveInvoiceWithoutContractor();
     } else {
       const invoice = this.setInvoiceWithContractor();
       this.setItems(invoice);
@@ -447,6 +471,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
        }*/
     });
   }
+
   public setInvoiceWithContractor(): Invoice {
     const invoice: Invoice = {
       id: this.mode === 'edit' ? this.idInvoice : null,
@@ -465,7 +490,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       },
       seller: {
         id: null,
-        name: this.sellerFromService.name ,
+        name: this.sellerFromService.name,
         vatIdentificationNumber: this.sellerFromService.vatIdentificationNumber,
       },
       dateOfInvoice: this.myFormModel.get('dates').get('dateOfInvoiceInput').value,
@@ -490,7 +515,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       id: null,
       seller: {
         id: null,
-        name: this.sellerFromService.name ,
+        name: this.sellerFromService.name,
         vatIdentificationNumber: this.sellerFromService.vatIdentificationNumber,
       },
       dateOfInvoice: this.myFormModel.get('dates').get('dateOfInvoiceInput').value,
@@ -515,7 +540,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       const item: Item = {
         id: null,
         number: productControl.get('numberInput').value,
-        product: productControl.get('productInput').value,
+        nameOfProduct: productControl.get('productInput').value,
         unit: productControl.get('unitInput').value,
         amount: productControl.get('amountInput').value,
         netWorth: productControl.get('netWorthInput').value,
@@ -529,6 +554,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   createProduct(): FormGroup {
     return this.fb.group({
       productInput: '',
+      productSelect: '',
       numberInput: '',
       unitInput: 'pc',
       amountInput: '1',
@@ -538,8 +564,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     });
   }
 
-  saveNumber(number) {
-   this.number = number;
+  saveNumber(numberItem) {
+    this.number = numberItem;
   }
 
   addNextItem() {
@@ -594,11 +620,10 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       this.myFormModel.get('contractor').get('address').get('postcodeInput').setValue(this.contractorWithName.address.postcode);
       this.myFormModel.get('contractor').get('address').get('cityInput').setValue(this.contractorWithName.address.city);
       this.myFormModel.get('contractor').get('address').get('countryInput').setValue(this.contractorWithName.address.country);
-      } else {
-        this.contractorFormIsHidden = false;
-      }
+    } else {
+      this.contractorFormIsHidden = false;
     }
-
+  }
 
 
   /*getContractorByName(name) {
@@ -620,10 +645,10 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 // Contractor
 
 
-
   toggleNamePlaceholder() {
     this.showNamePlaceholder = (this.myFormModel.get('contractor').get('nameInput').value === '');
   }
+
   toggleVATPlaceholder() {
     this.showVATPlaceholder = (this.myFormModel.get('contractor').get('vatIdentificationNumberInput').value === '');
   }
@@ -636,13 +661,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   toggleDateOfSalePlaceholder() {
     this.showDateOfSalePlaceholder = (this.myFormModel.get('dateOfSaleInput').value === '');
   }*/
-
-
-
-
-
-
-
 
 
 
@@ -671,7 +689,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
   private clearInvoiceForm() {
     this.clearContractorForm();
-    this.myFormModel.get('paidInput').setValue( parseInt('0,00')),
+    this.myFormModel.get('paidInput').setValue(parseInt('0,00')),
       this.myFormModel.get('netAmountInput').setValue(''),
       this.myFormModel.get('sumTotalInput').setValue(''),
       this.items.controls.forEach(productControl => {
@@ -687,7 +705,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   }
 
 
-  openDialog(mode: string) {
+  openDialog(mode: string, numberOfItem: number) {
+    this.numberOfItem = numberOfItem;
     this.mode = mode;
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -703,7 +722,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       left: '1200px',
       right: '1000px'
     };*/
-    if (mode === 'catalog') {
+    if (mode === 'catalogOfContractors') {
       this.dialog.open(ContractorsCatalogComponent, dialogConfig);
       this.contractorCatalog.showContractorCatalog();
     }
@@ -711,7 +730,15 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
       this.dialog.open(GusContractorComponent, gusDialogConfig);
       this.contractorFromGus.showContractorForm();
     }
-}
+    if (mode === 'catalogOfProducts') {
+      this.dialog.open(ProductsCatalogComponent, dialogConfig);
+      this.productsCatalog.showProductCatalog();
+    }
+    /*if (mode === 'addProduct') {
+      this.dialog.open(AddProductComponent, gusDialogConfig);
+      this.contractorFromGus.showContractorForm();
+    }*/
+  }
 
   deleteDateFromForm() {
     this.clearContractorForm();
@@ -725,37 +752,47 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
 
 
   clearContractorForm() {
-   this.myFormModel.get('contractor').get('nameInput').setValue(''),
-   this.myFormModel.get('contractor').get('vatIdentificationNumberInput').setValue(''),
-   this.myFormModel.get('contractor').get('address').get('streetInput').setValue(''),
-   this.myFormModel.get('contractor').get('address').get('streetNumberInput').setValue(''),
-   this.myFormModel.get('contractor').get('address').get('postcodeInput').setValue(''),
-   this.myFormModel.get('contractor').get('address').get('cityInput').setValue(''),
-   this.myFormModel.get('contractor').get('address').get('countryInput').setValue('');
+    this.myFormModel.get('contractor').get('nameInput').setValue(''),
+      this.myFormModel.get('contractor').get('vatIdentificationNumberInput').setValue(''),
+      this.myFormModel.get('contractor').get('address').get('streetInput').setValue(''),
+      this.myFormModel.get('contractor').get('address').get('streetNumberInput').setValue(''),
+      this.myFormModel.get('contractor').get('address').get('postcodeInput').setValue(''),
+      this.myFormModel.get('contractor').get('address').get('cityInput').setValue(''),
+      this.myFormModel.get('contractor').get('address').get('countryInput').setValue('');
   }
 
 
   savingChanges(contractorInput: HTMLInputElement) {
     if (contractorInput.checked) {
-     this.saveInvoiceWithContractor = true;
-    }
-    else {
-     this.saveInvoiceWithContractor = false;
-    }
- }
-
-
-  toggleCurrency() {
-    const currency = this.myFormModel.get('rate').get('currencyInput').value;
-    const effectiveDate = this.myFormModel.get('dates').get('dateOfInvoiceInput').value;
-    if (currency !== this.currency) {
-      this.rateOfExchangeInputIsHidden = !this.rateOfExchangeInputIsHidden;
-      this.rateService.getRateByCurrencyAndEffectiveDate(currency, effectiveDate);
-      this.rate$ = this.rateService.getRateFromService();
-
-     // });
+      this.saveInvoiceWithContractor = true;
+    } else {
+      this.saveInvoiceWithContractor = false;
     }
   }
+
+
+    async toggleCurrency() {
+     const currency = this.myFormModel.get('rate').get('currencyInput').value;
+     const effectiveDate = this.myFormModel.get('dates').get('dateOfInvoiceInput').value;
+     if (currency !== this.currency) {
+       this.modeCurrency = 'euro';
+       this.rateOfExchangeInputIsHidden = !this.rateOfExchangeInputIsHidden;
+       try {
+         this.rate$ = await
+           lastValueFrom(this.rateService.getRateByCurrencyAndEffectiveDate(currency, effectiveDate)).then(
+               (rate: { rateOfExchange: any; }) => {
+               this.myFormModel.get('rate').get('rateOfExchangeInput').setValue(rate.rateOfExchange);
+             });
+
+         this.convertValueByCurrency(currency);
+       } catch (error) {
+         console.error('Error fetching rate:', error);
+       }
+     }
+   }
+
+
+
 }
 
 

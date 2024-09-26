@@ -1,0 +1,54 @@
+@import 'src/styles.scss';
+
+@import 'src/scss/01-settings/_settings.scss';
+@import 'src/scss/02-tools/_tools.scss';
+@import 'src/scss/03-generic/_generic.scss';
+@import 'src/scss/04-elements/_elements.scss';
+@import 'src/scss/05-objects/_objects.scss';
+@import 'src/scss/06-components/_components.scss';
+@import 'src/scss/07-templates/_templates.scss';
+@import 'src/scss/08-utilities/_utilities.scss';
+
+
+button {
+  width: 100px;
+  height: 50px;
+}
+
+
+
+td {
+  width: 150px;
+  min-width: 30px;
+
+}
+
+.table-container {
+  width: 700px;
+}
+
+table {
+  padding: 2em;
+  flex-wrap: wrap;
+  margin-top: $grid-base*3;
+  width: auto;
+
+}
+
+
+.modalbox {
+
+  height: 500px;
+  width: 800px;
+  //background-color: #fff;
+  //position: absolute;
+  bottom: 20%;
+  left: 50%;
+
+}
+
+#productIdInput {
+  color: black;
+  background-color: #d3dfd3;
+
+}

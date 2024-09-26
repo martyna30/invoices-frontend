@@ -11,6 +11,8 @@ export class CheckboxService {
   private contractorsMap = new Map<number, number>();
   private contractorsFromTheCatalogMap = new Map<number, number>();
   private paymentsMap = new Map<number, number>();
+  private productsMap = new Map<number, number>();
+  private productsFromTheCatalogMap = new Map<number, number>();
 
   getInvoicesMap(): Map<number, number> {
     return this.invoicesMap;
@@ -76,5 +78,42 @@ export class CheckboxService {
   lengthPaymentsMap(): number {
     return this.paymentsMap.size;
   }
+
+  getProductMap(): Map<number, number> {
+    return this.productsMap;
+  }
+
+  addToProductsMap(id: number) {
+    this.productsMap.set(id, 1);
+  }
+
+  removeFromProductsMap(id: number) {
+    this.productsMap.delete(id);
+  }
+
+  lengthProductsMap() {
+    return this.productsMap.size;
+  }
+
+
+  getProductFromTheCatalogMap(): Map<number, number> {
+    return this.productsFromTheCatalogMap;
+  }
+
+  addToProductsFromTheCatalogMap(id: number) {
+    this.productsFromTheCatalogMap.set(id, 1);
+  }
+
+  removeProductsFromTheCatalogMap(id: number) {
+    this.productsFromTheCatalogMap.delete(id);
+  }
+
+  lengthProductsFromTheCatalogMap() {
+    return this.productsFromTheCatalogMap.size;
+  }
+
+
+
+
 }
 

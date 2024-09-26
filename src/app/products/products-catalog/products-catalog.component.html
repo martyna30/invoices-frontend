@@ -1,0 +1,97 @@
+<section class="modalbox" [hidden]="productsCatalogIsHidden" >
+  <mat-dialog-content class="mat-dialog" method="post">
+    <div class ="table-container">
+      <button type="button" class="c-btn c-btn--primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+              mat-raised-button (click)="choose()">Choose</button>
+
+      <ng-container *ngIf="productsList$ !== null; else NoProducts">
+          <p [ngStyle]="{color: getColor()}"></p>
+          <table class="table table-striped">
+            <thead>
+            <tr input class="form-check-input me-1" type="checkbox"
+                value="" aria-label="..."  class="table-primary">
+              <th scope="row"> # </th>
+              <th scope="row">Lp</th>
+              <th scope="row">Code</th>
+              <th scope="row">Name of products</th>
+              <th scope="row">State</th>
+              <th scope="row">Net amount</th>
+              <th scope="row">Unit</th>
+              <th scope="row">Type</th>
+              <th scope="row">Net amount</th>
+              <th scope="row">Gross sum</th>
+              <th scope="row">Vat Rate</th>
+
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr *ngFor="let product of productsList$ | async;let i = index;">
+
+              <input #self class="form-check-input" type="checkbox"
+                     [value]="product.id" id="productIdInput"
+                     (change)="changeCheckboxList(self)">
+
+
+              <th scope="row">{{(page-1) * size + i+1}}</th>
+              <td>{{product.code}}</td>
+              <td>{{product.nameOfProduct}}</td>
+              <td>{{product.state}}</td>
+              <td>{{product.netWorth}}</td>
+              <td>{{product.unit}}</td>
+              <td>{{product.type}}</td>
+              <td>{{product.netWorth}}</td>
+              <td>{{product.grossValue}}</td>
+              <td>{{product.vatRate}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </ng-container>
+        <ng-template #NoProducts>
+          <p>No contractors</p>
+        </ng-template>
+
+
+        <div class=pagination>
+          <ngb-pagination [collectionSize]="total | async" [pageSize]="size" [(page)]="page" [boundaryLinks]="true"  [disabled]='isDisabled'  (pageChange)="loadPage($event)" >
+
+            <ng-template ngbPaginationPages let-page let-pages="pages">
+              <li class="ngb-custom-pages-item" *ngIf="pages.length > 0">
+                <div class="mb-3 d-flex flex-nowrap px-2">
+                  <label
+                    id="paginationInputLabel"
+                    for="paginationInput"
+                    class="col-form-label me-2 ms-1"
+                  >Page</label>
+                  <input #i
+                         type="text"
+                         inputmode="numeric"
+                         pattern="[0-9]*"
+                         class="form-control custom-pages-input"
+                         id="paginationInput"
+                         [value]="page"
+                         (keyup.enter)="selectPage(i.value)"
+                         (blur)="selectPage(i.value)"
+                         (input)="formatInput($any($event).target)"
+                         aria-labelledby="paginationInputLabel paginationDescription"
+                         style="width: 2.5rem"
+                  />
+                  <span id="paginationDescription" class="col-form-label text-nowrap px-2">
+                  of {{pages.length}}</span>
+                </div>
+              </li>
+            </ng-template>
+          </ngb-pagination>
+          <hr>
+
+          <pre>Current page: {{page}}</pre>
+        </div>
+      </div>
+
+      <button type="button" class="c-btn c-btn--primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+              mat-raised-button (click)="closeDialog()">Close </button>
+  </mat-dialog-content>
+</section>
+
+
+

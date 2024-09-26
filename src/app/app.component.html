@@ -15,7 +15,7 @@
         <a class="nav-link text-white sk-header-item-link" routerLinkActive="active" routerLink="/contractors">Kontrahenci</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-white sk-header-item-link">Produkty</a>
+        <a class="nav-link text-white sk-header-item-link" routerLinkActive="active" routerLink="/store">Store</a>
       </li>
           <li class="nav-item">
             <a class="nav-link text-white sk-header-item-link" routerLinkActive="active" routerLink="/payment"  >Płatności</a>
@@ -25,16 +25,16 @@
     <div class="o-col--lg50">
       <ul class="nav flex-md-row text-uppercase justify-content-md-end">
     <li class="nav-item">
-          <a  routerLink="/login" routerLinkActive="active" class="nav-link text-white sk-header-item-link text-uppercase" *ngIf="!(isloggedin$ | async)" >Sign in</a>
+          <a  routerLink="/login" routerLinkActive="active" class="nav-link text-white sk-header-item-link text-uppercase" *ngIf="!(isLoggedIn$ | async)" >Sign in</a>
         </li>
         <li class="nav-item">
-          <a routerLink="/registration" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"   *ngIf="!(isloggedin$| async)"  >Register</a>
+          <a routerLink="/registration" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"   *ngIf="!(isLoggedIn$ | async)"  >Register</a>
         </li>
         <li class="nav-item">
-          <a routerLink="/login" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"  *ngIf="isloggedin$ | async" (click)="logout()">Log out</a>
+          <a routerLink="/login" routerLinkActive="active"  class="nav-link text-white sk-header-item-link text-uppercase"  *ngIf="isLoggedIn$ | async" (click)="logout()">Log out</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white sk-header-item-link text-uppercase font-weight-bold" routerLinkActive="active" *ngIf="isloggedin$ | async" >{{username$ | async}}</a>
+          <a class="nav-link text-white sk-header-item-link text-uppercase font-weight-bold" routerLinkActive="active" *ngIf="isLoggedIn$ | async" >{{username$ | async}}</a>
         </li>
       </ul>
     </div>
@@ -57,5 +57,6 @@
     </div>
   </div>
 </div>
+<app-check-status #checkStatusDataRef ></app-check-status>
 
 

@@ -16,6 +16,8 @@ import {map, max} from 'rxjs/operators';
 import {Payment} from '../models-interface/payment';
 import {Rate} from '../models-interface/rate';
 import {FormControl} from '@angular/forms';
+import {ListProducts} from '../models-interface/listProduct';
+import {Product} from '../models-interface/product';
 
 
 @Injectable({
@@ -25,26 +27,32 @@ export class HttpService {
   private URL_DB = 'http://localhost:8080/v1/invoice/';
   private URL_DB_NBP = 'http://localhost:8080/v1/nbp/';
   private URL_DB_CONTRACTOR = 'http://localhost:8080/v1/contractor/';
+  private URL_DB_PRODUCT = 'http://localhost:8080/v1/product/';
   private URL_DB_SELLER = 'http://localhost:8080/v1/seller/';
   private URL_DB_GUS = 'http://localhost:8080/v1/gus/';
   private URL_DB_PRINT = 'http://localhost:8080/v1/invoice/printer/';
   private URL_DB_PAYMENT = 'http://localhost:8080/v1/payment/';
-  private httpHeader = {headers: new HttpHeaders({'Content-Type': 'application/json'}), headers2: new HttpHeaders({'Access-Control-Allow-Origin': '*'})};
+  private httpHeader = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*'
+  });
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
 
   saveInvoice(invoice: Invoice): Observable<Invoice> {
     return this.http.post<Invoice>(this.URL_DB + 'createInvoice', invoice, {
-      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      headers: this.httpHeader
     });
   }
 
-  saveInvoiceWithoutContractor(invoice: Invoice): Observable<Invoice>{
+  saveInvoiceWithoutContractor(invoice: Invoice): Observable<Invoice> {
     return this.http.post<Invoice>(this.URL_DB + 'createInvoiceWithoutContractor', invoice, {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
     });
   }
+
   getInvoiceById(id: number): Observable<Invoice> {
     const param = new HttpParams()
       .set('invoiceId', id + '');
@@ -64,7 +72,6 @@ export class HttpService {
   }
 
 
-
   getInvoices(page: number, size: number): Observable<ListInvoices> {
     const param = new HttpParams()
       .set('page', page + '')
@@ -77,7 +84,7 @@ export class HttpService {
 
   }
 
-  deleteInvoice(id: number): Observable<Invoice>{
+  deleteInvoice(id: number): Observable<Invoice> {
     const param = new HttpParams()
       .set('invoiceId', id + '');
     return this.http.delete<Invoice>(this.URL_DB + 'deleteInvoice', {
@@ -98,7 +105,7 @@ export class HttpService {
     });
   }
 
-  getContractors(page: number, size: number): Observable<ListContractors>{
+  getContractors(page: number, size: number): Observable<ListContractors> {
     const param = new HttpParams()
       .set('page', page + '')
       .set('size', size + '');
@@ -109,7 +116,7 @@ export class HttpService {
     });
   }
 
-  getContractorById(id: number): Observable<Contractor>  {
+  getContractorById(id: number): Observable<Contractor> {
     const param = new HttpParams()
       .set('contractorId', id + '');
     const Headers = this.httpHeader;
@@ -120,9 +127,9 @@ export class HttpService {
     });
   }
 
-  getContractorByName(name: string): Observable<Contractor>  {
+  getContractorByName(name: string): Observable<Contractor> {
     const param = new HttpParams()
-      .set('name', name );
+      .set('name', name);
     const Headers = this.httpHeader;
     return this.http.get<Contractor>(this.URL_DB_CONTRACTOR + 'getContractorByName', {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
@@ -130,12 +137,14 @@ export class HttpService {
       observe: 'body',
     });
   }
+
   // tslint:disable-next-line:typedef
   saveContractor(contractor: Contractor): Observable<Contractor> {
     return this.http.post<Contractor>(this.URL_DB_CONTRACTOR + 'createContractor', contractor, {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
     });
   }
+
   updateContractor(contractor: Contractor): Observable<Contractor> {
     return this.http.put<Contractor>(this.URL_DB_CONTRACTOR + 'updateContractor', contractor, {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
@@ -179,7 +188,7 @@ export class HttpService {
 
   getSellerByName(name) {
     const param = new HttpParams()
-      .set('name', name );
+      .set('name', name);
     const Headers = this.httpHeader;
     return this.http.get<Seller>(this.URL_DB_SELLER + 'getSellerByName', {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
@@ -210,6 +219,7 @@ export class HttpService {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
     });
   }
+
   deleteSeller(idSeller: number) {
     const param = new HttpParams()
       .set('sellerId', idSeller + '');
@@ -235,7 +245,7 @@ export class HttpService {
   // tslint:disable-next-line:typedef
   getSellerByAppUser(username: string) {
     const param = new HttpParams()
-      .set('username', username );
+      .set('username', username);
     const Headers = this.httpHeader;
     return this.http.get<Seller>(this.URL_DB_SELLER + 'getSellerByAppUser', {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
@@ -246,7 +256,7 @@ export class HttpService {
 
   getUserByUsername(username: string) {
     const param = new HttpParams()
-      .set('username', username );
+      .set('username', username);
     const Headers = this.httpHeader;
     return this.http.get<AppUser>(this.URL_DB + 'getAppUserByUsername', {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
@@ -276,7 +286,7 @@ export class HttpService {
     });
   }
 
-  generateInvoice(idInvoice: number, currentSellerId: number): Observable<any>{
+  generateInvoice(idInvoice: number, currentSellerId: number): Observable<any> {
     const param = new HttpParams()
       .set('invoiceId', idInvoice + '')
       .set('currentSellerId', String(currentSellerId));
@@ -299,8 +309,6 @@ export class HttpService {
   }
 
 
-
-
   getPaymentsByInvoiceId(invoiceId: number): Observable<Array<Payment>> {
     const param = new HttpParams()
       .set('invoiceId', invoiceId + '');
@@ -314,7 +322,7 @@ export class HttpService {
 
   deletePayment(paymentId: number): Observable<Payment> {
     const param = new HttpParams()
-      .set('paymentId' , paymentId.toString());
+      .set('paymentId', paymentId.toString());
     return this.http.delete<Payment>(this.URL_DB_PAYMENT + 'deletePayment', {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
       observe: 'body',
@@ -325,9 +333,9 @@ export class HttpService {
 
 
   settlePayment(payment: Payment, idInvoice: number) {
-   const param = new HttpParams()
+    const param = new HttpParams()
       .set('invoiceId', idInvoice + '');
-   return this.http.post<Payment>(this.URL_DB_PAYMENT + 'settlePayment', payment, {
+    return this.http.post<Payment>(this.URL_DB_PAYMENT + 'settlePayment', payment, {
       headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
       params: param,
     });
@@ -347,9 +355,38 @@ export class HttpService {
   }
 
 
+  getProducts(page: number, size: number) {
+    const param = new HttpParams()
+      .set('page', page + '')
+      .set('size', size + '');
+    return this.http.get<ListProducts>(this.URL_DB_PRODUCT + 'getProducts', {
+      headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+      observe: 'body',
+      params: param
+    });
+  }
 
+  getProductById(idProductFromTheCatalog: number) {
+    const param = new HttpParams()
+      .set('productId', idProductFromTheCatalog + '');
+    const Headers = this.httpHeader;
+    return this.http.get<Product>(this.URL_DB_SELLER + 'getProduct', {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+      params: param,
+      observe: 'body',
+    });
+  }
 
+  saveProduct(product: Product) {
+    return this.http.post<Product>(this.URL_DB_PRODUCT + 'createProduct', product, {
+      headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+    });
+  }
 
-
+  updateProduct(product: Product): Observable<Product> {
+    return this.http.put<Product>(this.URL_DB_PRODUCT + 'updateProduct', product, {
+      headers: this.httpHeader
+    });
+  }
 }
 

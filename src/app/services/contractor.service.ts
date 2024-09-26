@@ -9,12 +9,12 @@ import {Contractor} from '../models-interface/contractor';
   providedIn: 'root'
 })
 export class ContractorService {
-
+ //unsubscribe
   private contractorsListObs$ = new BehaviorSubject<Array<Contractor>>([]);
   private totalCountContractors$ = new BehaviorSubject<number>(0);
 
   constructor(private httpService: HttpService) {
-    this.getContractorsFromService();
+    //this.getContractorsFromService();
   }
 
   getContractorsListObservable(page: number, size: number) {
