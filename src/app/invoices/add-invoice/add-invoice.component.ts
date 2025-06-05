@@ -74,6 +74,8 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   loadData: EventEmitter<any> = new EventEmitter<any>();
   @Output()
   loadPaymentData: EventEmitter<any> = new EventEmitter<any>();
+  @Input()
+  saveInvoiceWithContractor: boolean;
   isHidden = true;
   settingsIsHidden = true;
   contractorFormIsHidden = true;
@@ -106,7 +108,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   contractorToModified: ContractorDto;
   contractorFromDB: Contractor;
   sellerFromService: Seller;
-  saveInvoiceWithContractor: boolean;
   private addressToModified: Address;
   private isCreated: boolean;
   private invoiceExist: boolean;
@@ -580,18 +581,7 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
     this.items.removeAt(Number(circle.id));
   }
 
-  /*private checkTheChangeSeller() {
-    this.myFormModel.get('sellerInput').valueChanges.subscribe(
-      response => this.filterSellers(response)
-    );
-  }*/
 
-  /*private filterSellers(response) {
-    // tslint:disable-next-line:no-shadowed-variable
-    this.sellerService.getSellerWithSpecifiedName(response).subscribe(seller => {
-      this.filteredSellers = seller.map(seller => seller.name);
-    });
-  }*/
   checkTheChangeContractorName() {
     this.myFormModel.get('contractor').get('nameInput').valueChanges.subscribe(
       response => this.filterContractor(response)
@@ -626,25 +616,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   }
 
 
-  /*getContractorByName(name) {
-   // const subscribtion4 =
-     return this.contractorService.getContractorByName(name).subscribe((contractorFromDb) => {  }
-    });
-
-  /* private checkTheChangeProduct() {
-     this.myFormModel.get('productInput').valueChanges.subscribe(
-       product => this.filterProduct(product)
-     );
-   }*/
-  /*private filterProduct(product) {
-    this.productService.getProductWithSpecifiedName(product).subscribe(product => {
-      this.filteredProductsList = product.map(product => product.name);
-    });
-  }*/
-
-// Contractor
-
-
   toggleNamePlaceholder() {
     this.showNamePlaceholder = (this.myFormModel.get('contractor').get('nameInput').value === '');
   }
@@ -652,16 +623,6 @@ export class AddInvoiceComponent implements OnInit, OnDestroy {
   toggleVATPlaceholder() {
     this.showVATPlaceholder = (this.myFormModel.get('contractor').get('vatIdentificationNumberInput').value === '');
   }
-
-
-  /*toggleDateOfIssuePlaceholder() {
-    this.showDateOfIssuePlaceholder = (this.myFormModel.get('dateOfInvoiceInput').value === '');
-  }
-
-  toggleDateOfSalePlaceholder() {
-    this.showDateOfSalePlaceholder = (this.myFormModel.get('dateOfSaleInput').value === '');
-  }*/
-
 
 
   toggleMethodOfPaymentPlaceholder() {

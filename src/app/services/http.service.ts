@@ -388,5 +388,16 @@ export class HttpService {
       headers: this.httpHeader
     });
   }
+
+  acceptProducts(productId: any) {
+    const param = new HttpParams()
+      .set('productId', productId + '');
+    return this.http.put<Product>(this.URL_DB_PRODUCT + 'acceptProduct', productId, {
+      headers: this.httpHeader
+    });
+
+
+  }
+
 }
 

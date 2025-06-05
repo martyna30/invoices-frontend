@@ -72,7 +72,7 @@ export class AddProductComponent implements OnInit {
   closeDialog(): void {
     this.isHidden = true;
     this.clearProductForm();
-    this.checkboxservice.removeFromProductsMap(this.checkbox);
+    // this.checkboxservice.removeFromProductsMap(this.checkbox);
   }
 
   saveProduct() {
@@ -81,20 +81,21 @@ export class AddProductComponent implements OnInit {
       ? this.productService.updateProduct(product)
       : this.productService.saveProduct(product);
 
-    operation.subscribe((response: any) => {
+    operation.pipe(
+      catchError(err => {
+        console.error('Error', err);
+        if (err instanceof HttpErrorResponse) {
+          this.validationErrors = err.error;
+        }
+        this.isCreated = false;
+        return of(null);
+      })
+    ).subscribe(response => {
       if (response !== null && response !== undefined) {
         this.isCreated = true;
         this.loadData.emit();
         this.closeDialog();
       }
-      catchError(err => {
-          console.error('Wystąpił błąd', err);
-          if (err instanceof HttpErrorResponse) {
-            this.validationErrors = err.error;
-            this.isCreated = false;
-            return of(null);
-          }
-        });
     });
   }
 
@@ -124,15 +125,6 @@ export class AddProductComponent implements OnInit {
       this.StocksOfProductIsHidden = true;
     }
   }
-
-  /*setGrossValue(vatRate: string) {
-    const netWorth = this.myFormModel.get('netWorthInput').value;
-    const grossNewValue = (+vatRate / +100) * +netWorth + +netWorth;
-    const grossNewValueFloatRound = parseFloat(String(grossNewValue)).toFixed(2);
-    const grossValueControl = this.myFormModel.get('grossValueInput').value;
-    grossValueControl.patchValue(grossNewValueFloatRound);
-  }*/
-
 
 
   setGrossValue(vatRate: string) {

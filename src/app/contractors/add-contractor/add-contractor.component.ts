@@ -156,7 +156,6 @@ export class AddContractorComponent implements OnInit {
         }
       }, (response: HttpErrorResponse) => {
         this.validationErrors = response.error;
-        //console.log(response.error.contractorDto.name[0]);
         console.log(this.validationErrors);
       });
       this.isCreated = false;

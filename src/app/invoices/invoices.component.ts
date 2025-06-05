@@ -38,10 +38,7 @@ export class InvoicesComponent implements OnInit , AfterViewInit {
   total: Observable<number>;
   invoicesList$: Observable<Array<Invoice>>;
   checkboxOfInvoice: number;
-  isHidden = true;
   settleInvoiceComponentIsHidden = true;
-  paymentIsHidden = true;
-  isloggedin: boolean;
   private invoiceIdFromMap: number;
 
 
@@ -49,7 +46,9 @@ export class InvoicesComponent implements OnInit , AfterViewInit {
               private checkboxService: CheckboxService, private userService: UserAuthService) {
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadData();
+  }
 
   ngAfterViewInit(): void {
    this.checkStatusComponent.checkStatus();
@@ -102,10 +101,13 @@ export class InvoicesComponent implements OnInit , AfterViewInit {
 
   // tslint:disable-next-line:typedef
   loadData() {
-    this.isHidden = !this.isHidden;
+    // this.isHidden = !this.isHidden;
     const page = this.page - 1;
     this.invoiceService.getInvoicesListObservable(page, this.size);
     this.invoicesList$ = this.invoiceService.getInvoicesFromService();
+    this.invoicesList$.subscribe(list => {
+      console.log(list);
+    });
     // @ts-ignore
     this.total = this.invoiceService.getTotalCountInvoices();
     if (this.checkboxService.lengthInvoicesMap() > 0) {

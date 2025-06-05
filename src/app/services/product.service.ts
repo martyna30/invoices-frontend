@@ -18,7 +18,7 @@ export class ProductService {
 
   getProductsListObservable(page: number, size: number) {
     this.httpService.getProducts(page, size).subscribe((listProducts) => {
-      this.productsListObs$.next(listProducts.invoices);
+      this.productsListObs$.next(listProducts.products);
       this.totalCountProducts$.next(listProducts.total);
     });
   }
@@ -42,5 +42,9 @@ export class ProductService {
 
   updateProduct(product: Product) {
     return this.httpService.updateProduct(product);
+  }
+
+  acceptProducts(idProduct: any) {
+    return this.httpService.acceptProducts(idProduct);
   }
 }

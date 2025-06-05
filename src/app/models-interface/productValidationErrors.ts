@@ -1,4 +1,5 @@
 export interface ProductValidationErrors {
+  paid: string;
   nameOfProduct: string;
   type: string;
   unit: string;

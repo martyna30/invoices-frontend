@@ -53,6 +53,9 @@ import { CheckStatusComponent } from './checkStatusComponent/check-status/check-
 import { ProductsComponent } from './products/products.component';
 import { ProductsCatalogComponent } from './products/products-catalog/products-catalog.component';
 import { AddProductComponent } from './products/add-product/add-product.component';
+import { AcceptProductComponent } from './products/accept-product/accept-product.component';
+
+import { AddContractorDocumentComponent } from './shared/components/addContractorDocument/add-contractor-document.component';
 
 
 
@@ -95,6 +98,9 @@ export function jwtOptionsFactory(userAuthService: UserAuthService) {
     ProductsComponent,
     ProductsCatalogComponent,
     AddProductComponent,
+    AcceptProductComponent,
+    AddContractorDocumentComponent,
+    AddContractorDocumentComponent,
 
   ],
   imports: [

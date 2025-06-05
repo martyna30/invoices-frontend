@@ -1,4 +1,4 @@
-<section id="invoices"[hidden]="isHidden">
+<section id="invoices">
 
   <div class="sk-sidebar">
     <ul class="nav flex-column">
@@ -114,7 +114,7 @@
 
 </div>
 
-<app-add-invoice #childAddRef (loadData)="loadData()" [invoicesList$]="invoicesList$" [checkboxOfInvoice]="checkboxOfInvoice"></app-add-invoice>
+<app-add-invoice #childAddRef (loadData)="loadData()" ></app-add-invoice>
 
 
   <app-settle-invoice #childSettleComponentRef [hidden]="settleInvoiceComponentIsHidden" ></app-settle-invoice>

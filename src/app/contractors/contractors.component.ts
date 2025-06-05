@@ -26,9 +26,8 @@ export class ContractorsComponent implements OnInit, AfterViewInit {
   addContractorComponent: AddContractorComponent;
   @ViewChild('childDeleteRef')
   deleteComponent: DeleteContractorComponent;
-  isHidden = true;
+ //  isHidden = true;
   isDisabled: false;
-  isloggedin: boolean;
   page = 1;
   size = 10;
   total: Observable<number>;
@@ -38,7 +37,9 @@ export class ContractorsComponent implements OnInit, AfterViewInit {
   constructor(private dialog: MatDialog, private contractorService: ContractorService,
               private checkboxService: CheckboxService, private userService: UserAuthService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadData();
+  }
 
   ngAfterViewInit(): void {
     this.checkStatusComponent.checkStatus();
@@ -83,7 +84,7 @@ export class ContractorsComponent implements OnInit, AfterViewInit {
   }
 
   loadData() {
-    this.isHidden = !this.isHidden;
+    //this.isHidden = !this.isHidden;
     const page = this.page - 1;
     this.contractorService.getContractorsListObservable(page, this.size);
     this.contractorsList$ = this.contractorService.getContractorsFromService();

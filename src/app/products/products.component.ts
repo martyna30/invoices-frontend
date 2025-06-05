@@ -8,6 +8,7 @@ import {CheckStatusComponent} from '../checkStatusComponent/check-status/check-s
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {AddInvoiceComponent} from '../invoices/add-invoice/add-invoice.component';
 import {AddProductComponent} from './add-product/add-product.component';
+import {AcceptProductComponent} from './accept-product/accept-product.component';
 
 
 
@@ -22,12 +23,12 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   checkStatusComponent: CheckStatusComponent;
   @ViewChild('childAddRef')
   addProductComponent: AddProductComponent;
+  acceptProductComponent: AcceptProductComponent;
   productsList$: Observable<Array<Product>>;
   isDisabled: false;
   page = 1;
   size = 10;
   total: Observable<number>;
-  isHidden = true;
   private productIdFromMap: number;
   private checkbox: number;
 
@@ -37,6 +38,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
               private checkboxService: CheckboxService) { }
 
   ngOnInit(): void {
+    this.loadData();
   }
 
   ngAfterViewInit(): void {
@@ -53,6 +55,8 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     this.dialog.open(AddInvoiceComponent, dialogConfig);
     if (mode === 'edit') {
       this.addProductComponent.showEditProductForm();
+    } else if (mode === 'accept') {
+      this.acceptProductComponent.acceptProduct();
     } else {
       this.addProductComponent.showAddProductForm();
     }
@@ -81,11 +85,12 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
   // tslint:disable-next-line:typedef
   loadData() {
-    this.isHidden = !this.isHidden;
     const page = this.page - 1;
     this.productService.getProductsListObservable(page, this.size);
     this.productsList$ = this.productService.getProductsFromService();
-    // @ts-ignore
+    this.productsList$.subscribe((list: any) => {
+      console.log(list);
+    });
     this.total = this.productService.getTotalCountProducts();
     if (this.checkboxService.lengthProductsMap() > 0) {
       this.productIdFromMap = this.checkboxService.getProductMap().keys().next().value;
@@ -112,7 +117,5 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
   }
 
-  acceptProduct() {
 
-  }
 }

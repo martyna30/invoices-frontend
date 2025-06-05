@@ -32,7 +32,13 @@
               "src/scss/01-settings/_settings.scss"
 
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src",
+                "src/scss"
+                ]
+            }
           },
           "configurations": {
             "production": {
